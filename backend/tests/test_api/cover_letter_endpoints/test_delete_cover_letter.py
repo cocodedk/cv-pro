@@ -11,7 +11,7 @@ class TestDeleteCoverLetter:
 
     async def test_delete_cover_letter_success(self, client, mock_neo4j_connection):
         """Test successful cover letter deletion."""
-        with patch("backend.app_helpers.routes.cover_letter.endpoints.delete_cover_letter") as mock_delete:
+        with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.return_value = True
 
             response = await client.delete("/api/cover-letters/test-id")
@@ -21,7 +21,7 @@ class TestDeleteCoverLetter:
 
     async def test_delete_cover_letter_not_found(self, client, mock_neo4j_connection):
         """Test deleting non-existent cover letter."""
-        with patch("backend.app_helpers.routes.cover_letter.endpoints.delete_cover_letter") as mock_delete:
+        with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.return_value = False  # Indicates not found
 
             response = await client.delete("/api/cover-letters/non-existent-id")
@@ -31,7 +31,7 @@ class TestDeleteCoverLetter:
 
     async def test_delete_cover_letter_database_error(self, client, mock_neo4j_connection):
         """Test delete cover letter with database error."""
-        with patch("backend.app_helpers.routes.cover_letter.endpoints.delete_cover_letter") as mock_delete:
+        with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.side_effect = Exception("Database error")
 
             response = await client.delete("/api/cover-letters/test-id")

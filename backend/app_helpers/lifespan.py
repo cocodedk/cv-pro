@@ -4,6 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from backend.database.connection import Neo4jConnection
+from backend.database.provider import get_provider
 
 logger = logging.getLogger(__name__)
 
@@ -16,22 +17,39 @@ async def lifespan(app: FastAPI):
     max_retries = 5
     retry_count = 0
 
+    provider = get_provider()
     while retry_count < max_retries:
-        if Neo4jConnection.verify_connectivity():
-            logger.info("Successfully connected to Neo4j database")
-            break
+        if provider == "supabase":
+            try:
+                from backend.database.supabase.client import get_admin_client
+
+                client = get_admin_client()
+                client.table("user_profiles").select("id").limit(1).execute()
+                logger.info("Successfully connected to Supabase database")
+                break
+            except Exception:
+                pass
+        else:
+            if Neo4jConnection.verify_connectivity():
+                logger.info("Successfully connected to Neo4j database")
+                break
+
         retry_count += 1
         logger.warning(
-            f"Failed to connect to Neo4j database (attempt {retry_count}/{max_retries})"
+            "Failed to connect to %s database (attempt %d/%d)",
+            provider,
+            retry_count,
+            max_retries,
         )
         if retry_count < max_retries:
             await asyncio.sleep(2)
 
     if retry_count >= max_retries:
-        logger.error("Failed to connect to Neo4j database after multiple attempts")
-        raise RuntimeError("Failed to connect to Neo4j database")
+        logger.error("Failed to connect to %s database after multiple attempts", provider)
+        raise RuntimeError(f"Failed to connect to {provider} database")
 
     yield
 
     # Shutdown
-    Neo4jConnection.close()
+    if provider != "supabase":
+        Neo4jConnection.close()

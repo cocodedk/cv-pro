@@ -1,0 +1,3 @@
+-- Optional seed actions after creating your first user in Supabase Auth.
+-- Uncomment and update the email to promote an admin.
+-- update public.user_profiles set role = 'admin' where email = 'admin@example.com';

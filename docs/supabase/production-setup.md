@@ -1,60 +1,49 @@
 # Production Supabase Setup
 
 ## Prerequisites
+- Supabase account and project created in the dashboard
+- Supabase CLI installed and linked to the project
 
-- Supabase account at https://supabase.com
-- Project created in Supabase dashboard
+## Project Configuration
+1. In the Supabase dashboard:
+   - Set `Site URL` and allowed redirect URLs for auth callbacks.
+   - Configure email templates and SMTP (optional).
+   - Enable OAuth providers (optional).
+2. In this repo:
+   ```bash
+   supabase link --project-ref your-project-ref
+   supabase db push
+   ```
 
-## Configuration
-
-Production Supabase provides:
-- **Database**: Managed PostgreSQL
-- **API Gateway**: `https://your-project.supabase.co`
-- **Studio**: `https://supabase.com/dashboard/project/your-project`
-- **Storage**: `https://your-project.supabase.co/storage/v1`
-- **Edge Functions**: `https://your-project.supabase.co/functions/v1`
-
-## Environment Variables
-
+## Environment Variables (Backend)
 ```env
-# Production configuration
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key-from-dashboard
+SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_JWT_SECRET=your-jwt-secret-from-dashboard
+DATABASE_PROVIDER=supabase
 ```
 
-## Security Setup
-
-### Row Level Security (RLS)
-
-Enable RLS on all tables:
-```sql
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE cvs ENABLE ROW LEVEL SECURITY;
--- etc for all tables
+## Environment Variables (Frontend)
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_API_BASE_URL=https://api.yourdomain.com
 ```
 
-### Policies
+## RLS and Policies
+- Enable RLS on all tables.
+- Apply policies from `multi-user-architecture.md`.
 
-Create policies for authenticated users:
-```sql
--- Example policy for profiles
-CREATE POLICY "Users can view own profile"
-ON profiles FOR SELECT
-USING (auth.uid() = user_id);
-```
+## Storage (Optional, Later Phase)
+Create buckets if you want to store generated files or avatars:
+- `cv-files`
+- `cv-showcase`
+- `avatars`
 
-## Database Schema
+Add per-user policies for read/write access.
 
-Apply migrations to production:
-```bash
-# Link project
-supabase link --project-ref your-project-ref
-
-# Push schema changes
-supabase db push
-```
-
-## Migration from Neo4j
-
-Production uses hosted Supabase instead of self-managed Neo4j instance.
+## Operational Notes
+- Keep the service role key server-only.
+- Rotate keys periodically and store secrets in your deployment system.
+- Monitor auth logs and database usage in the Supabase dashboard.

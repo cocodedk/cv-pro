@@ -1,83 +1,74 @@
 # Environment Switching
 
-## Intelligent Environment Detection
+This repo will support running either Neo4j or Supabase during the migration period.
 
-The application automatically switches between local and production Supabase based on environment variables and configuration.
+## Configuration Contract
 
-## Environment Variables Strategy
+Backend environment variables:
+- `DATABASE_PROVIDER=neo4j|supabase`
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_JWT_SECRET` (for verifying access tokens)
+- `NEO4J_*` (keep until cutover)
 
+Frontend environment variables:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_API_BASE_URL`
+- `VITE_AUTH_ENABLED=true|false` (optional feature flag)
+
+## Backend Provider Selection
+
+Add a provider switch and keep the API surface stable.
+
+Example (`backend/database/provider.py`):
 ```python
-# config.py
 import os
+from backend.database import queries as neo4j_queries
+from backend.database.supabase import queries as supabase_queries
 
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_ANON_KEY = os.getenv('SUPABASE_ANON_KEY')
 
-# Auto-detect environment
-IS_PRODUCTION = SUPABASE_URL and 'supabase.co' in SUPABASE_URL
-IS_LOCAL = SUPABASE_URL and 'localhost' in SUPABASE_URL
+def get_queries():
+    provider = os.getenv("DATABASE_PROVIDER", "neo4j")
+    if provider == "supabase":
+        return supabase_queries
+    return neo4j_queries
 ```
 
-## Docker Compose Changes
+Update routes to use `get_queries()` instead of importing Neo4j queries directly.
 
-### Current (Neo4j)
-```yaml
-services:
-  neo4j:
-    image: neo4j:5.15
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-```
+## Supabase Client Creation
 
-### Future (Supabase Local)
-```yaml
-services:
-  supabase:
-    image: supabase/supabase-local:latest
-    ports:
-      - "54321:54321"  # API
-      - "54322:54322"  # Database
-      - "54323:54323"  # Studio
-```
-
-## Runtime Detection
-
+Example (`backend/database/supabase_client.py`):
 ```python
+import os
 from supabase import create_client
 
-def get_supabase_client():
-    url = os.getenv('SUPABASE_URL')
-    key = os.getenv('SUPABASE_ANON_KEY')
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
-    if not url or not key:
-        if os.getenv('NODE_ENV') == 'development':
-            # Use local Supabase defaults
-            url = "http://localhost:54321"
-            key = "local-anon-key"
-        else:
-            raise ValueError("Supabase credentials required")
 
-    return create_client(url, key)
+def get_admin_client():
+    return create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 ```
 
-## Development vs Production Behavior
+## Docker Compose (Local)
 
-### Development
-- Uses local Supabase container
-- Auto-reload on schema changes
-- Debug logging enabled
-- Test data available
+When backend runs in Docker and Supabase runs via CLI on the host:
+```yaml
+services:
+  app:
+    environment:
+      - DATABASE_PROVIDER=supabase
+      - SUPABASE_URL=http://host.docker.internal:54321
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+```
 
-### Production
-- Uses hosted Supabase
-- Optimized queries
-- Caching enabled
-- Error logging to external service
-
-## Migration Path
-
-1. **Phase 1**: Environment detection logic
-2. **Phase 2**: Local Supabase setup
-3. **Phase 3**: Production Supabase configuration
-4. **Phase 4**: Seamless switching based on environment
+## Cutover Plan
+1. Run both providers behind `DATABASE_PROVIDER`.
+2. Migrate data and verify.
+3. Switch `DATABASE_PROVIDER` to `supabase` in all environments.
+4. Remove Neo4j containers and env vars.

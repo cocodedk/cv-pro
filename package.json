@@ -2,6 +2,10 @@
   "name": "cv-generator",
   "version": "1.0.0",
   "description": "CV Generator with React frontend and Python backend",
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
   "scripts": {
     "dev": "vite",
     "dev:full": "./scripts/run-dev.sh",

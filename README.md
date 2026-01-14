@@ -95,7 +95,7 @@ Choose from 10 professional CV themes:
 
 - **Docker Engine**: Version 20.10 or higher
 - **Docker Compose**: Version 2.0 or higher
-- **Node.js**: Version 18 or higher (for frontend development)
+- **Node.js**: Version 20 or higher (for frontend development)
 - **npm**: Version 9 or higher
 
 Optional:

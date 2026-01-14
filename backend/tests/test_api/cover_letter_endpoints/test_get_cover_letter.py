@@ -27,7 +27,7 @@ class TestGetCoverLetter:
             "selected_skills": ["Python"]
         }
 
-        with patch("backend.app_helpers.routes.cover_letter.endpoints.get_cover_letter_by_id") as mock_get:
+        with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.get_cover_letter_by_id") as mock_get:
             mock_get.return_value = mock_cover_letter
 
             response = await client.get("/api/cover-letters/test-id")
@@ -44,7 +44,7 @@ class TestGetCoverLetter:
 
     async def test_get_cover_letter_database_error(self, client, mock_neo4j_connection):
         """Test get cover letter with database error."""
-        with patch("backend.app_helpers.routes.cover_letter.endpoints.get_cover_letter_by_id") as mock_get:
+        with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.get_cover_letter_by_id") as mock_get:
             mock_get.side_effect = Exception("Database error")
 
             response = await client.get("/api/cover-letters/test-id")
