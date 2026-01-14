@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.dockerignore
+
+# Output files
+backend/output/*
+!backend/output/.gitkeep
+
+# Generated showcase files (regenerated with timestamps on each CV save/update)
+frontend/public/showcase/**/*.json
+frontend/public/showcase/**/*.html
+!frontend/public/showcase/.gitkeep
+
+# Allow template files to be committed
+!frontend/public/templates/
+
+# Logs
+*.log
+logs/
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+test-results/
+playwright-report/
+.playwright-mcp/*.png
+*.png
+!frontend/public/*.png
+
+# CSV files
+*.csv
+coverage*.json
+coverage/
+frontend/coverage/
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Scripts
+.build-watcher.pid

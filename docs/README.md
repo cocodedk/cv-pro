@@ -1,0 +1,77 @@
+# CV Generator Documentation
+
+Welcome to the CV Generator documentation. This documentation is organized by topic for easy navigation.
+
+## Documentation Structure
+
+### Getting Started
+
+- [Overview](getting-started/overview.md) - Application overview and purpose
+- [Prerequisites](getting-started/prerequisites.md) - System requirements
+- [Quick Start](getting-started/quick-start.md) - Get up and running quickly
+
+### Architecture
+
+- [System Overview](architecture/system-overview.md) - High-level architecture
+- [Execution Environments](architecture/execution-environments.md) - Where components run
+- [Data Flow](architecture/data-flow.md) - Request/response flows
+
+### Backend
+
+- [API Endpoints](backend/api-endpoints.md) - REST API documentation
+- [Database Schema](backend/database-schema.md) - Neo4j graph schema
+- [CV Generation](backend/cv-generation.md) - DOCX document generation
+- [DOCX Generation](backend/docx-generation.md) - Markdown -> DOCX pipeline option
+- [Print HTML Generation](backend/print-html-generation.md) - Browser-printable HTML output
+- [Data Models](backend/models.md) - Pydantic models
+- [Scripts](backend/scripts.md) - Utility scripts for database inspection and maintenance
+
+### Frontend
+
+- [Components](frontend/components.md) - React component structure
+- [Rich Text Editor](frontend/rich-text-editor.md) - RichTextarea component and HTML handling
+- [TypeScript Types](frontend/types.md) - Type definitions
+- [State Management](frontend/state-management.md) - Form and app state
+
+### CV Layouts
+
+- [HTML Layout Options](cv-layouts/README.md) - Alternative HTML CV looks (print and web)
+
+### Development
+
+- [Setup](development/setup.md) - Development environment setup
+- [Workflow](development/workflow.md) - Development best practices
+- [Testing](development/testing.md) - Testing strategy and execution
+
+### Deployment
+
+- [Docker Setup](deployment/docker.md) - Docker configuration
+- [Production Deployment](deployment/production.md) - Production deployment guide
+
+### AI
+
+- [AI Overview](ai/overview.md) - JD-based draft flow and guardrails
+- [In-Form AI Assist](ai/in-form-assist.md) - Per-field rewrite/bullets helpers (Edit CV)
+- [AI Configuration](ai/configuration.md) - `.env` variables and provider setup
+- [AI API](ai/api.md) - Endpoints and payloads
+- [AI Rollout](ai/rollout.md) - Incremental implementation plan
+
+### Troubleshooting
+
+- [Common Issues](troubleshooting/common-issues.md) - Common problems and solutions
+- [Debugging Guide](troubleshooting/debugging.md) - Advanced debugging techniques
+
+## Quick Links
+
+- **API Documentation**: http://localhost:8000/docs (when running)
+- **Neo4j Browser**: http://localhost:7474 (when running)
+- **Main README**: [../README.md](../README.md)
+
+## Contributing
+
+When adding or updating documentation:
+- Keep files under 100 lines
+- Organize by topic in appropriate folders
+- Use clear, concise language
+- Include code examples where helpful
+- Cross-reference related documents

@@ -1,0 +1,78 @@
+services:
+  neo4j:
+    image: neo4j:5.15-community
+    container_name: cv-neo4j
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-cvpassword}
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_dbms_security_procedures_allowlist=apoc.*
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/var/lib/neo4j/import
+      - neo4j_plugins:/plugins
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "${NEO4J_USER:-neo4j}", "-p", "${NEO4J_PASSWORD:-cvpassword}", "RETURN 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cv-network
+    restart: unless-stopped
+
+  app:
+    # Backend service (FastAPI with auto-reload enabled)
+    # Note: For development, frontend runs separately with `npm run dev` (Vite HMR)
+    # In production, backend serves the built frontend from /app/frontend/dist
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cv-app
+    ports:
+      - "8000:8000"
+    environment:
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=${NEO4J_USER:-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-cvpassword}
+      - NEO4J_DATABASE=${NEO4J_DATABASE:-neo4j}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:5173,http://localhost:8000}
+      - CV_SHOWCASE_ENABLED=${CV_SHOWCASE_ENABLED:-true}
+      - CV_SHOWCASE_OUTPUT_DIR=${CV_SHOWCASE_OUTPUT_DIR:-frontend/public/showcase}
+      - CV_SHOWCASE_KEYS_DIR=${CV_SHOWCASE_KEYS_DIR:-backend/output/showcase_keys}
+      - CV_SHOWCASE_SCRAMBLE_KEY=${CV_SHOWCASE_SCRAMBLE_KEY:-}
+      - AI_ENABLED=${AI_ENABLED:-false}
+      - AI_BASE_URL=${AI_BASE_URL:-}
+      - AI_API_KEY=${AI_API_KEY:-}
+      - AI_MODEL=${AI_MODEL:-gpt-3.5-turbo}
+      - AI_TEMPERATURE=${AI_TEMPERATURE:-0.7}
+      - AI_REQUEST_TIMEOUT_S=${AI_REQUEST_TIMEOUT_S:-30}
+    volumes:
+      - ./backend:/app/backend  # Mount backend for auto-reload on code changes
+      - ./backend/output:/app/backend/output
+      - ./frontend/public:/app/frontend/public
+      - ./.flake8:/app/.flake8  # Mount flake8 config for linting
+    command: ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    networks:
+      - cv-network
+    restart: unless-stopped
+
+volumes:
+  neo4j_data:
+    name: cv_neo4j_data
+  neo4j_logs:
+    name: cv_neo4j_logs
+  neo4j_import:
+    name: cv_neo4j_import
+  neo4j_plugins:
+    name: cv_neo4j_plugins
+
+networks:
+  cv-network:
+    driver: bridge

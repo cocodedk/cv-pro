@@ -1,0 +1,26 @@
+<table style="width: 100%; border-collapse: collapse; border: 0;">
+    <tr>
+        <td style="vertical-align: top; border: 0; padding: 0;">
+            {% if personal_info.email %}
+            <p custom-style="Contact Info">✉ {{ personal_info.email }}</p>
+            {% endif %}
+            {% if personal_info.phone %}
+            <p custom-style="Contact Info">☎ {{ personal_info.phone }}</p>
+            {% endif %}
+            {% if personal_info.website %}
+            <p custom-style="Contact Info">🌐 {{ personal_info.website }}</p>
+            {% endif %}
+        </td>
+        <td style="vertical-align: top; border: 0; padding: 0;">
+            {% if personal_info.linkedin %}
+            <p custom-style="Contact Info">🔗 {{ personal_info.linkedin }}</p>
+            {% endif %}
+            {% if personal_info.github %}
+            <p custom-style="Contact Info">💻 {{ personal_info.github }}</p>
+            {% endif %}
+            {% if personal_info.address %}
+            <p custom-style="Contact Info">📍 {{ personal_info.address }}</p>
+            {% endif %}
+        </td>
+    </tr>
+</table>
