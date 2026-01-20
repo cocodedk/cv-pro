@@ -4,6 +4,7 @@ import BasicFields from './BasicFields'
 import AddressFields from './AddressFields'
 import PhotoUpload from './PhotoUpload'
 import SummaryField from './SummaryField'
+import { useTranslation } from 'react-i18next'
 
 interface PersonalInfoProps {
   register: UseFormRegister<CVData>
@@ -18,10 +19,12 @@ export default function PersonalInfo({
   control,
   showAiAssist,
 }: PersonalInfoProps) {
+  const { t } = useTranslation('cv')
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-        Personal Information
+        {t('sections.personalInfo')}
       </h3>
 
       <BasicFields register={register} errors={errors} />

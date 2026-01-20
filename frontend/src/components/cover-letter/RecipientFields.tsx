@@ -1,4 +1,5 @@
 import { CoverLetterRequest } from '../../types/coverLetter'
+import { useTranslation } from 'react-i18next'
 
 interface RecipientFieldsProps {
   payload: CoverLetterRequest
@@ -7,6 +8,8 @@ interface RecipientFieldsProps {
 }
 
 export default function RecipientFields({ payload, isGenerating, onChange }: RecipientFieldsProps) {
+  const { t } = useTranslation('coverLetter')
+
   return (
     <div className="space-y-4">
       <div className="grid gap-2">
@@ -14,14 +17,14 @@ export default function RecipientFields({ payload, isGenerating, onChange }: Rec
           className="text-sm font-medium text-gray-700 dark:text-gray-300"
           htmlFor="cl_company_name"
         >
-          Company Name *
+          {t('recipient.companyName.label')}
         </label>
         <input
           id="cl_company_name"
           value={payload.company_name}
           onChange={e => onChange('company_name', e.target.value)}
           className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          placeholder="e.g. Acme Corporation"
+          placeholder={t('recipient.companyName.placeholder')}
           disabled={isGenerating}
           required
         />
@@ -32,14 +35,14 @@ export default function RecipientFields({ payload, isGenerating, onChange }: Rec
           className="text-sm font-medium text-gray-700 dark:text-gray-300"
           htmlFor="cl_hiring_manager"
         >
-          Hiring Manager Name (optional)
+          {t('recipient.hiringManager.label')}
         </label>
         <input
           id="cl_hiring_manager"
           value={payload.hiring_manager_name || ''}
           onChange={e => onChange('hiring_manager_name', e.target.value || undefined)}
           className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          placeholder="e.g. Jane Smith"
+          placeholder={t('recipient.hiringManager.placeholder')}
           disabled={isGenerating}
         />
       </div>
@@ -49,21 +52,21 @@ export default function RecipientFields({ payload, isGenerating, onChange }: Rec
           className="text-sm font-medium text-gray-700 dark:text-gray-300"
           htmlFor="cl_company_address"
         >
-          Company Address (optional)
+          {t('recipient.companyAddress.label')}
         </label>
         <textarea
           id="cl_company_address"
           value={payload.company_address || ''}
           onChange={e => onChange('company_address', e.target.value || undefined)}
           className="min-h-[80px] w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          placeholder="Street Address&#10;City, State ZIP"
+          placeholder={t('recipient.companyAddress.placeholder')}
           disabled={isGenerating}
         />
       </div>
 
       <div className="grid gap-2">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="cl_tone">
-          Tone
+          {t('recipient.tone.label')}
         </label>
         <select
           id="cl_tone"
@@ -72,9 +75,9 @@ export default function RecipientFields({ payload, isGenerating, onChange }: Rec
           className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           disabled={isGenerating}
         >
-          <option value="professional">Professional</option>
-          <option value="enthusiastic">Enthusiastic</option>
-          <option value="conversational">Conversational</option>
+          <option value="professional">{t('recipient.tone.options.professional')}</option>
+          <option value="enthusiastic">{t('recipient.tone.options.enthusiastic')}</option>
+          <option value="conversational">{t('recipient.tone.options.conversational')}</option>
         </select>
       </div>
 
@@ -83,14 +86,14 @@ export default function RecipientFields({ payload, isGenerating, onChange }: Rec
           className="text-sm font-medium text-gray-700 dark:text-gray-300"
           htmlFor="cl_llm_instructions"
         >
-          LLM Instructions (optional)
+          {t('recipient.instructions.label')}
         </label>
         <textarea
           id="cl_llm_instructions"
           value={payload.llm_instructions || ''}
           onChange={e => onChange('llm_instructions', e.target.value || undefined)}
           className="min-h-[80px] w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          placeholder="e.g., Write in Spanish, Keep it under 200 words, Use a formal tone"
+          placeholder={t('recipient.instructions.placeholder')}
           disabled={isGenerating}
         />
       </div>
@@ -100,18 +103,20 @@ export default function RecipientFields({ payload, isGenerating, onChange }: Rec
           className="text-sm font-medium text-gray-700 dark:text-gray-300"
           htmlFor="cl_job_description"
         >
-          Job Description *
+          {t('recipient.jobDescription.label')}
         </label>
         <textarea
           id="cl_job_description"
           value={payload.job_description}
           onChange={e => onChange('job_description', e.target.value)}
           className="min-h-[180px] w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          placeholder="Paste the job description here..."
+          placeholder={t('recipient.jobDescription.placeholder')}
           disabled={isGenerating}
           required
         />
-        <p className="text-xs text-gray-500 dark:text-gray-400">Minimum 20 characters.</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          {t('recipient.jobDescription.minLength')}
+        </p>
       </div>
     </div>
   )

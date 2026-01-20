@@ -163,7 +163,7 @@ describe('useProfileManager', () => {
         experience: [{ title: 'Lead' }],
       })
     )
-    expect(mockOnSuccess).toHaveBeenCalledWith('Profile data loaded successfully!')
+    expect(mockOnSuccess).toHaveBeenCalledWith('Profile loaded successfully!')
   })
 
   it('closes profile loader and resets selections', async () => {

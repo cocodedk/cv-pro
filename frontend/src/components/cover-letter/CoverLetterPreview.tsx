@@ -1,5 +1,6 @@
 import { CoverLetterResponse } from '../../types/coverLetter'
 import { downloadCoverLetterPDF } from '../../services/coverLetterService'
+import { useTranslation } from 'react-i18next'
 
 interface CoverLetterPreviewProps {
   result: CoverLetterResponse
@@ -14,11 +15,13 @@ export default function CoverLetterPreview({
   onRegenerate,
   isRegenerating = false,
 }: CoverLetterPreviewProps) {
+  const { t } = useTranslation('coverLetter')
+
   const handleDownloadPDF = async () => {
     try {
       await downloadCoverLetterPDF(result.cover_letter_html)
     } catch (error: unknown) {
-      onError(error instanceof Error ? error.message : 'Failed to download PDF')
+      onError(error instanceof Error ? error.message : t('errors.downloadPdf'))
     }
   }
 
@@ -26,7 +29,9 @@ export default function CoverLetterPreview({
     <div className="space-y-4">
       <div className="rounded-md border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
         <div className="mb-3 flex items-center justify-between">
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Preview</h4>
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            {t('preview.title')}
+          </h4>
           <div className="flex items-center gap-2">
             {onRegenerate && (
               <button
@@ -35,7 +40,7 @@ export default function CoverLetterPreview({
                 disabled={isRegenerating}
                 className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
               >
-                {isRegenerating ? 'Regenerating...' : 'Regenerate'}
+                {isRegenerating ? t('actions.regenerating') : t('actions.regenerate')}
               </button>
             )}
             <button
@@ -43,7 +48,7 @@ export default function CoverLetterPreview({
               onClick={handleDownloadPDF}
               className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 dark:hover:bg-blue-500"
             >
-              Download PDF
+              {t('actions.downloadPdf')}
             </button>
           </div>
         </div>
@@ -76,7 +81,7 @@ export default function CoverLetterPreview({
       {result.highlights_used.length > 0 && (
         <div className="rounded-md border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
           <h4 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-            Profile Highlights Used
+            {t('preview.highlights')}
           </h4>
           <ul className="list-disc space-y-1 pl-5 text-xs text-gray-700 dark:text-gray-300">
             {result.highlights_used.map((highlight, idx) => (

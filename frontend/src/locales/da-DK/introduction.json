@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "title": "Velkommen til {{appName}}",
+    "subtitle": "Opret professionelle CV'er og resuméer nemt. Din seneste profil bliver automatisk omdannet til smukt designede CV-skabeloner."
+  },
+  "templates": {
+    "title": "CV-skabeloner",
+    "subtitle": "{{name}}s professionelle CV i {{count}} forskellige stilarter",
+    "previewTitle": "{{name}} forhåndsvisning",
+    "fullPreviewTitle": "{{name}} fuld forhåndsvisning"
+  },
+  "filters": {
+    "all": "Alle ({{count}})",
+    "web": "Web ({{count}})",
+    "print": "Print ({{count}})"
+  },
+  "badges": {
+    "webOptimized": "Weboptimeret",
+    "printFriendly": "Printvenlig"
+  },
+  "actions": {
+    "preview": "Forhåndsvis",
+    "viewFull": "Vis fuld",
+    "createProfile": "Opret profil",
+    "openNewTab": "Åbn i ny fane",
+    "close": "Luk",
+    "browseTemplates": "Gennemse skabeloner",
+    "viewApiDocs": "Se API-dokumentation"
+  },
+  "empty": {
+    "filtered": "Ingen skabeloner matcher det valgte filter.",
+    "title": "Ingen skabeloner tilgængelige",
+    "subtitle": "Opret din profil for automatisk at generere professionelle CV-skabeloner."
+  },
+  "featureCards": {
+    "profile": {
+      "title": "Opret din profil",
+      "description": "Opbyg din professionelle profil med personlige oplysninger, erfaring, uddannelse og kompetencer."
+    },
+    "templates": {
+      "title": "Skabelongalleri",
+      "description": "Vælg mellem professionelle skabeloner optimeret til webvisning eller print."
+    },
+    "export": {
+      "title": "Eksportmuligheder",
+      "description": "Download enkelte skabeloner eller brug vores API til at generere tilpassede versioner."
+    }
+  }
+}

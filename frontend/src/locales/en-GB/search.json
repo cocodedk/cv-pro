@@ -1,0 +1,24 @@
+{
+  "title": "Search CVs",
+  "subtitle": "Find CVs by name, role, location, or skills. Search is privacy-safe and GDPR-compliant.",
+  "filters": {
+    "personName": {"label": "Person Name", "placeholder": "e.g. John Doe"},
+    "targetRole": {"label": "Target Role", "placeholder": "e.g. Software Engineer"},
+    "location": {"label": "Location", "placeholder": "e.g. Copenhagen"},
+    "skills": {"label": "Skills", "placeholder": "Add a skill...", "popular": "Popular skills:"}
+  },
+  "actions": {"searching": "Searching...", "search": "Search", "clear": "Clear"},
+  "results": {
+    "title": "Search Results ({{count}})",
+    "anonymous": "Anonymous",
+    "location": "📍 {{location}}",
+    "more": "+{{count}} more",
+    "experience": "💼 Experience: {{companies}}"
+  },
+  "empty": "No CVs found matching your criteria. Try adjusting your search terms.",
+  "privacyNotice": "🔒 Search is privacy-safe: Only non-sensitive metadata is searchable. Full CV details remain encrypted and protected.",
+  "errors": {
+    "searchFailed": "Search failed: {{statusText}}",
+    "requestFailed": "Failed to search CVs"
+  }
+}

@@ -27,8 +27,24 @@ if [ -f "$SUPABASE_HELPER" ]; then
     . "$SUPABASE_HELPER"
 fi
 
-# PID file for build watcher
+# PID files for build watcher and dev server
 BUILD_WATCHER_PID_FILE="$PROJECT_ROOT/.build-watcher.pid"
+DEV_SERVER_PID_FILE="$PROJECT_ROOT/.dev-server.pid"
+
+kill_tree() {
+    local pid="$1"
+    if [ -z "$pid" ]; then
+        return
+    fi
+    if command -v pgrep > /dev/null 2>&1; then
+        local children
+        children=$(pgrep -P "$pid" || true)
+        for child in $children; do
+            kill_tree "$child"
+        done
+    fi
+    kill "$pid" 2>/dev/null || true
+}
 
 # Function to cleanup on exit
 cleanup() {
@@ -40,9 +56,19 @@ cleanup() {
         BUILD_WATCHER_PID=$(cat "$BUILD_WATCHER_PID_FILE")
         if ps -p "$BUILD_WATCHER_PID" > /dev/null 2>&1; then
             echo -e "${BLUE}Stopping build watcher...${NC}"
-            kill "$BUILD_WATCHER_PID" 2>/dev/null || true
+            kill_tree "$BUILD_WATCHER_PID"
         fi
         rm -f "$BUILD_WATCHER_PID_FILE"
+    fi
+
+    # Stop dev server if running
+    if [ -f "$DEV_SERVER_PID_FILE" ]; then
+        DEV_SERVER_PID=$(cat "$DEV_SERVER_PID_FILE")
+        if ps -p "$DEV_SERVER_PID" > /dev/null 2>&1; then
+            echo -e "${BLUE}Stopping frontend dev server...${NC}"
+            kill_tree "$DEV_SERVER_PID"
+        fi
+        rm -f "$DEV_SERVER_PID_FILE"
     fi
 
     if [ "$(type -t supabase_stop)" = "function" ]; then
@@ -92,10 +118,37 @@ if [ $attempt -eq $max_attempts ]; then
     echo -e "${YELLOW}⚠️  Backend health check timeout, but continuing anyway...${NC}"
 fi
 
-# Check if node_modules exists
+# Check if dependencies need installing
+SHOULD_INSTALL=false
+NODE_MODULES_LOCK="node_modules/.package-lock.json"
+
 if [ ! -d "node_modules" ]; then
+    SHOULD_INSTALL=true
+else
+    if [ -f "$NODE_MODULES_LOCK" ]; then
+        if [ -f "package-lock.json" ] && [ "package-lock.json" -nt "$NODE_MODULES_LOCK" ]; then
+            SHOULD_INSTALL=true
+        fi
+        if [ -f "package.json" ] && [ "package.json" -nt "$NODE_MODULES_LOCK" ]; then
+            SHOULD_INSTALL=true
+        fi
+    else
+        if [ -f "package-lock.json" ] && [ "package-lock.json" -nt "node_modules" ]; then
+            SHOULD_INSTALL=true
+        fi
+        if [ -f "package.json" ] && [ "package.json" -nt "node_modules" ]; then
+            SHOULD_INSTALL=true
+        fi
+    fi
+fi
+
+if [ "$SHOULD_INSTALL" = true ]; then
     echo -e "${BLUE}📦 Installing frontend dependencies...${NC}"
-    npm install
+    if [ -f "package-lock.json" ]; then
+        npm ci
+    else
+        npm install
+    fi
 fi
 
 # Start build watcher in background
@@ -123,5 +176,9 @@ echo ""
 echo -e "${YELLOW}Press Ctrl+C to stop all services${NC}"
 echo ""
 
-# Start frontend (this will block)
-npm run dev
+# Start frontend (wait on dev server)
+npm run dev &
+DEV_SERVER_PID=$!
+echo "$DEV_SERVER_PID" > "$DEV_SERVER_PID_FILE"
+wait "$DEV_SERVER_PID"
+rm -f "$DEV_SERVER_PID_FILE"

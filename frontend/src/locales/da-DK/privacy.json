@@ -1,0 +1,107 @@
+{
+  "title": "Privatlivspolitik",
+  "sections": {
+    "introduction": {
+      "title": "1. Introduktion",
+      "body": "CV Pro (\"vi\", \"vores\" eller \"os\") forpligter sig til at beskytte dit privatliv og sikre overholdelse af Databeskyttelsesforordningen (GDPR). Denne privatlivspolitik forklarer, hvordan vi indsamler, bruger og beskytter dine personoplysninger, når du bruger vores CV-tjeneste."
+    },
+    "dataController": {
+      "title": "2. Dataansvarlig",
+      "labels": {"controller": "Dataansvarlig:", "contact": "Kontakt:", "address": "Adresse:"},
+      "address": "Danmark"
+    },
+    "dataCollected": {
+      "title": "3. Personoplysninger vi indsamler",
+      "intro": "Vi indsamler følgende kategorier af personoplysninger:",
+      "items": {
+        "personal": {"label": "Personlige oplysninger:", "text": "Navn, e-mailadresse, telefonnummer, adresse, LinkedIn/GitHub-profiler, hjemmeside, professionelt resumé, foto"},
+        "professional": {"label": "Professionelle oplysninger:", "text": "Erhvervserfaring, uddannelse, kompetencer, jobtitler, virksomhedsnavne, ansættelsesdatoer"},
+        "technical": {"label": "Tekniske oplysninger:", "text": "IP-adresse, browsertype, enhedsoplysninger, brugsanalyse"},
+        "account": {"label": "Kontodata:", "text": "Brugernavn, adgangskode (krypteret), kontopræferencer"}
+      }
+    },
+    "legalBasis": {
+      "title": "4. Retsgrundlag for behandling",
+      "intro": "Vi behandler dine personoplysninger på følgende retsgrundlag:",
+      "items": {
+        "contract": {"label": "Kontrakt:", "text": "For at levere CV-generering og relaterede tjenester"},
+        "consent": {"label": "Samtykke:", "text": "For ikke-essentielle funktioner som analyse og marketing"},
+        "legitimate": {"label": "Legitim interesse:", "text": "For at forbedre vores tjenester og sikre sikkerhed"},
+        "legal": {"label": "Juridisk forpligtelse:", "text": "For at overholde gældende love og regler"}
+      }
+    },
+    "dataUse": {
+      "title": "5. Hvordan vi bruger dine data",
+      "items": {
+        "create": "Oprette og tilpasse CV-dokumenter",
+        "coverLetters": "Generere målrettede ansøgningsbreve ved hjælp af AI",
+        "storeProfile": "Gem dine profildata til fremtidig brug",
+        "support": "Yde kundesupport",
+        "analytics": "Analysere brugen af tjenesten for at forbedre funktionalitet",
+        "security": "Sikre platformens sikkerhed og forhindre svindel"
+      }
+    },
+    "dataSharing": {
+      "title": "6. Datadeling og tredjeparter",
+      "intro": "Vi kan dele dine data med:",
+      "items": {
+        "ai": {"label": "AI-tjenesteudbydere:", "text": "Til CV-tilpasning og generering af ansøgningsbreve (data behandles sikkert og gemmes ikke)"},
+        "hosting": {"label": "Hostingudbydere:", "text": "Supabase (EU-baseret, GDPR-kompatibel)"},
+        "analytics": {"label": "Analysetjenester:", "text": "Kun med dit udtrykkelige samtykke"}
+      },
+      "noSell": "Vi sælger ikke dine personoplysninger til tredjeparter."
+    },
+    "dataRetention": {
+      "title": "7. Opbevaring af data",
+      "intro": "Vi opbevarer dine personoplysninger så længe det er nødvendigt for at levere vores tjenester og overholde juridiske forpligtelser. Typisk:",
+      "items": {
+        "cv": "CV- og profildata: Indtil du sletter din konto",
+        "account": "Kontodata: I hele kontoperioden plus 3 år for juridisk compliance",
+        "analytics": "Analydata: Maksimalt 2 år"
+      }
+    },
+    "gdprRights": {
+      "title": "8. Dine GDPR-rettigheder",
+      "intro": "I henhold til GDPR har du følgende rettigheder:",
+      "items": {
+        "access": {"label": "Ret til indsigt:", "text": "Anmod om en kopi af dine personoplysninger"},
+        "rectification": {"label": "Ret til berigtigelse:", "text": "Korriger unøjagtige eller ufuldstændige data"},
+        "erasure": {"label": "Ret til sletning:", "text": "Slet dine personoplysninger (\"retten til at blive glemt\")"},
+        "restriction": {"label": "Ret til begrænsning:", "text": "Begræns hvordan vi behandler dine data"},
+        "portability": {"label": "Ret til dataportabilitet:", "text": "Modtag dine data i et portabelt format"},
+        "object": {"label": "Ret til indsigelse:", "text": "Gør indsigelse mod behandling baseret på legitime interesser"},
+        "withdraw": {"label": "Ret til at trække samtykke tilbage:", "text": "Træk dit samtykke tilbage når som helst"}
+      },
+      "contact": "For at udøve disse rettigheder, kontakt os på {{email}}"
+    },
+    "cookies": {
+      "title": "9. Cookies og sporing",
+      "body": "Vi bruger cookies til essentiel funktionalitet og, med dit samtykke, til analyse. Du kan administrere dine cookiepræferencer via samtykkebanneret eller dine browserindstillinger."
+    },
+    "security": {
+      "title": "10. Datasikkerhed",
+      "intro": "Vi implementerer passende tekniske og organisatoriske foranstaltninger for at beskytte dine personoplysninger:",
+      "items": {
+        "encryption": "Kryptering af data under overførsel og i hvile",
+        "access": "Adgangskontrol og brugergodkendelse",
+        "audits": "Regelmæssige sikkerhedsrevisioner og opdateringer",
+        "euDataCenters": "Sikre datacentre i EU"
+      }
+    },
+    "international": {
+      "title": "11. Internationale dataoverførsler",
+      "body": "Dine data opbevares og behandles inden for EU. Eventuelle overførsler uden for EU sker med passende sikkerhedsforanstaltninger."
+    },
+    "changes": {
+      "title": "12. Ændringer i denne politik",
+      "body": "Vi kan opdatere denne privatlivspolitik fra tid til anden. Vi vil underrette dig om væsentlige ændringer via e-mail eller gennem vores platform."
+    },
+    "contact": {
+      "title": "13. Kontakt os",
+      "intro": "Hvis du har spørgsmål om denne privatlivspolitik eller vores datapraksis, kontakt os på {{email}}:",
+      "labels": {"email": "E-mail:", "address": "Adresse:"},
+      "address": "Danmark"
+    }
+  },
+  "lastUpdated": "Sidst opdateret: {{date}}"
+}

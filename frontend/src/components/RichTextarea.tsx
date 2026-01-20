@@ -6,6 +6,7 @@ import { useEditorExtensions, getEditorProps } from '../app_helpers/richTextarea
 import { useEditorSync } from '../app_helpers/richTextarea/useEditorSync'
 import { useAiAssist } from '../app_helpers/richTextarea/useAiAssist'
 import { AiRewriteModal } from '../app_helpers/richTextarea/AiRewriteModal'
+import { useTranslation } from 'react-i18next'
 
 interface RichTextareaProps {
   id: string
@@ -32,6 +33,7 @@ export default function RichTextarea({
   className = '',
   showAiAssist = false,
 }: RichTextareaProps) {
+  const { t } = useTranslation('ai')
   const minHeight = rows * 24
   const lastKnownHtmlRef = useRef<string>(value || '')
   const lastEmittedValueRef = useRef<string>(value || '')
@@ -110,14 +112,14 @@ export default function RichTextarea({
             onClick={() => applyAiAssist('rewrite')}
             className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
           >
-            AI rewrite
+            {t('actions.rewriteAi')}
           </button>
           <button
             type="button"
             onClick={() => applyAiAssist('bullets')}
             className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
           >
-            AI bullets
+            {t('actions.bulletsAi')}
           </button>
         </div>
       ) : null}
@@ -138,7 +140,7 @@ export default function RichTextarea({
         <p
           className={`mt-1 text-xs ${textLength > maxLength ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`}
         >
-          {textLength} / {maxLength} characters
+          {t('characterCount', { count: textLength, max: maxLength })}
         </p>
       )}
     </div>

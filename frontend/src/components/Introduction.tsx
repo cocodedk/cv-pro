@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BRANDING } from '../app_helpers/branding'
 
 type CVTemplate = {
@@ -20,6 +21,7 @@ type TemplateIndex = {
 type FilterType = 'all' | 'web' | 'print'
 
 export default function Introduction() {
+  const { t } = useTranslation('introduction')
   const [templateData, setTemplateData] = useState<TemplateIndex | null>(null)
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('all')
   const [previewTemplate, setPreviewTemplate] = useState<CVTemplate | null>(null)
@@ -57,11 +59,10 @@ export default function Introduction() {
       {/* Hero Section */}
       <div className="text-center space-y-6">
         <h1 className="text-5xl font-bold text-gray-900 dark:text-gray-100">
-          Welcome to {BRANDING.appName}
+          {t('hero.title', { appName: BRANDING.appName })}
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-          Create professional CVs and resumes with ease. Your latest profile is automatically
-          transformed into beautifully designed CV templates.
+          {t('hero.subtitle')}
         </p>
       </div>
 
@@ -72,11 +73,13 @@ export default function Introduction() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                  CV Templates
+                  {t('templates.title')}
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">
-                  {templateData.profile_name}&apos;s professional CV in{' '}
-                  {templateData.templates.length} different styles
+                  {t('templates.subtitle', {
+                    name: templateData.profile_name,
+                    count: templateData.templates.length,
+                  })}
                 </p>
               </div>
 
@@ -90,7 +93,7 @@ export default function Introduction() {
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
-                  All ({templateData.templates.length})
+                  {t('filters.all', { count: templateData.templates.length })}
                 </button>
                 <button
                   onClick={() => setSelectedFilter('web')}
@@ -100,7 +103,9 @@ export default function Introduction() {
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
-                  Web ({templateData.templates.filter(t => t.web_optimized).length})
+                  {t('filters.web', {
+                    count: templateData.templates.filter(t => t.web_optimized).length,
+                  })}
                 </button>
                 <button
                   onClick={() => setSelectedFilter('print')}
@@ -110,7 +115,9 @@ export default function Introduction() {
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
-                  Print ({templateData.templates.filter(t => t.print_friendly).length})
+                  {t('filters.print', {
+                    count: templateData.templates.filter(t => t.print_friendly).length,
+                  })}
                 </button>
               </div>
             </div>
@@ -135,7 +142,7 @@ export default function Introduction() {
                         transform: 'scale(0.28)',
                         transformOrigin: 'top center',
                       }}
-                      title={`${template.name} preview`}
+                      title={t('templates.previewTitle', { name: template.name })}
                       loading="lazy"
                       scrolling="no"
                     />
@@ -156,12 +163,12 @@ export default function Introduction() {
                   <div className="flex flex-wrap gap-2 mb-4">
                     {template.web_optimized && (
                       <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full">
-                        Web Optimized
+                        {t('badges.webOptimized')}
                       </span>
                     )}
                     {template.print_friendly && (
                       <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
-                        Print Friendly
+                        {t('badges.printFriendly')}
                       </span>
                     )}
                   </div>
@@ -172,7 +179,7 @@ export default function Introduction() {
                       onClick={() => setPreviewTemplate(template)}
                       className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
                     >
-                      Preview
+                      {t('actions.preview')}
                     </button>
                     <a
                       href={`${templatesBase}${template.file}`}
@@ -180,7 +187,7 @@ export default function Introduction() {
                       rel="noopener noreferrer"
                       className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center text-sm"
                     >
-                      View Full
+                      {t('actions.viewFull')}
                     </a>
                   </div>
                 </div>
@@ -190,9 +197,7 @@ export default function Introduction() {
 
           {filteredTemplates.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">
-                No templates match the selected filter.
-              </p>
+              <p className="text-gray-500 dark:text-gray-400">{t('empty.filtered')}</p>
             </div>
           )}
         </div>
@@ -213,18 +218,16 @@ export default function Introduction() {
               />
             </svg>
             <h3 className="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-              No Templates Available
+              {t('empty.title')}
             </h3>
-            <p className="text-yellow-700 dark:text-yellow-300 mb-6">
-              Create your profile to generate professional CV templates automatically.
-            </p>
+            <p className="text-yellow-700 dark:text-yellow-300 mb-6">{t('empty.subtitle')}</p>
             <button
               onClick={() => {
                 window.location.hash = 'profile'
               }}
               className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
             >
-              Create Profile
+              {t('actions.createProfile')}
             </button>
           </div>
         </div>
@@ -256,7 +259,7 @@ export default function Introduction() {
               <iframe
                 src={`${templatesBase}${previewTemplate.file}`}
                 className="w-full h-96 border-0 rounded"
-                title={`${previewTemplate.name} full preview`}
+                title={t('templates.fullPreviewTitle', { name: previewTemplate.name })}
               />
               <div className="flex justify-end gap-3 mt-6">
                 <a
@@ -265,13 +268,13 @@ export default function Introduction() {
                   rel="noopener noreferrer"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
                 >
-                  Open in New Tab
+                  {t('actions.openNewTab')}
                 </a>
                 <button
                   onClick={() => setPreviewTemplate(null)}
                   className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
                 >
-                  Close
+                  {t('actions.close')}
                 </button>
               </div>
             </div>
@@ -298,11 +301,10 @@ export default function Introduction() {
             </svg>
           </div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Create Your Profile
+            {t('featureCards.profile.title')}
           </h3>
           <p className="text-gray-600 dark:text-gray-400">
-            Build your professional profile with personal information, experience, education, and
-            skills.
+            {t('featureCards.profile.description')}
           </p>
           <button
             onClick={() => {
@@ -310,7 +312,7 @@ export default function Introduction() {
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
-            Create Profile
+            {t('actions.createProfile')}
           </button>
         </div>
 
@@ -331,16 +333,16 @@ export default function Introduction() {
             </svg>
           </div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Template Gallery
+            {t('featureCards.templates.title')}
           </h3>
           <p className="text-gray-600 dark:text-gray-400">
-            Choose from professional templates optimized for web viewing or print production.
+            {t('featureCards.templates.description')}
           </p>
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
-            Browse Templates
+            {t('actions.browseTemplates')}
           </button>
         </div>
 
@@ -360,17 +362,17 @@ export default function Introduction() {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Export Options</h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            Download individual templates or use our API to generate custom versions.
-          </p>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            {t('featureCards.export.title')}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">{t('featureCards.export.description')}</p>
           <a
             href="https://github.com/cocodedk/cv-generator/tree/main/docs"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
-            View API Docs
+            {t('actions.viewApiDocs')}
           </a>
         </div>
       </div>

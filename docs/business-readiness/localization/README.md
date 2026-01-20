@@ -47,22 +47,22 @@ Localization transforms CV Pro from a generic tool into a culturally-resonant Da
 
 ## Current Status
 
-### ✅ Completed (10%)
-- Basic i18n infrastructure prepared
-- Language detection logic implemented
-- Translation file structure created
+### ✅ Completed (Phase 1: Danish UI Localization)
+- i18n infrastructure integrated in frontend
+- Language detection, persistence, and document lang updates
+- Translation resources for da-DK and en-GB
+- UI strings localized across core flows (navigation, CV, profile, search, admin, privacy)
+- Language switcher added to navigation
 
-### 🟡 In Progress (Phase 2, Action 2)
-- UI translation to Danish (professional translators)
-- Danish keyboard and input optimization
-- MobilePay integration planning
-- Cultural icon and visual adaptation
+### 🟡 In Progress (Phase 2)
+- Professional translation review (optional)
+- Danish UX validation and user testing
 
-### ❌ Remaining (90%)
-- Full Danish translation completion
-- Cultural UX testing with Danish users
-- Localized CV templates
-- Danish customer support setup
+### ❌ Remaining (Phase 2+)
+- Localized CV templates and examples
+- Danish customer support and documentation
+- MobilePay integration
+- SEO localization (hreflang/meta)
 
 ## Success Metrics
 
@@ -140,11 +140,11 @@ Localization transforms CV Pro from a generic tool into a culturally-resonant Da
 
 ## Next Steps
 
-1. **Immediate**: Finalize translation agency partnership
-2. **Week 1**: Begin UI string extraction and translation
-3. **Week 2**: Implement i18n architecture
-4. **Week 3**: Start cultural adaptation research
-5. **Week 4**: Begin MobilePay integration
+1. **Immediate**: Run a Danish UI QA pass and fix any missing strings
+2. **Week 1**: Arrange translation review and Danish user validation
+3. **Week 2**: Start localized CV templates and examples
+4. **Week 3**: Plan MobilePay integration scope
+5. **Week 4**: Add SEO localization (meta/hreflang)
 
 ## Contact
 

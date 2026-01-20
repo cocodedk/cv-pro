@@ -2,6 +2,11 @@
 
 *Professional Translation Implementation for CV Pro*
 
+## Status
+
+- ✅ UI i18n implementation and Danish translations integrated in the frontend.
+- 🟡 Optional follow-ups: professional translation review and Danish user validation.
+
 ## Translation Scope
 
 ### 📱 User Interface (Primary Focus)
@@ -64,39 +69,40 @@
 
 #### File Structure
 ```
-frontend/src/locales/
-├── da-DK/
-│   ├── common.json          # General UI strings
-│   ├── cv.json             # CV-specific terms
-│   ├── auth.json           # Authentication messages
-│   ├── errors.json         # Error messages
-│   └── help.json           # Help and guidance
-├── en-GB/
-│   └── ... (same structure)
-└── index.ts                # i18n configuration
+frontend/src/
+├── locales/
+│   ├── da-DK/
+│   │   ├── common.json
+│   │   ├── navigation.json
+│   │   ├── footer.json
+│   │   ├── introduction.json
+│   │   ├── auth.json
+│   │   ├── cv.json
+│   │   ├── profile.json
+│   │   ├── cvList.json
+│   │   ├── search.json
+│   │   ├── ai.json
+│   │   ├── coverLetter.json
+│   │   ├── admin.json
+│   │   ├── consent.json
+│   │   └── privacy.json
+│   └── en-GB/
+│       └── ... (same structure)
+└── i18n/
+    ├── index.ts
+    └── resources.ts
 ```
 
 #### Translation Files Example
 
-**common.json (Danish)**
+**navigation.json (Danish)**
 ```json
 {
-  "navigation": {
-    "home": "Hjem",
-    "create_cv": "Opret CV",
-    "my_cvs": "Mine CV'er",
-    "search": "Søg CV'er",
-    "profile": "Profil",
-    "settings": "Indstillinger"
-  },
-  "actions": {
-    "save": "Gem",
-    "cancel": "Annuller",
-    "delete": "Slet",
-    "edit": "Rediger",
-    "download": "Download",
-    "share": "Del"
-  }
+  "introduction": "Introduktion",
+  "createCv": "Opret CV",
+  "myCvs": "Mine CV'er",
+  "profile": "Profil",
+  "language": "Sprog"
 }
 ```
 
@@ -104,21 +110,14 @@ frontend/src/locales/
 ```json
 {
   "sections": {
-    "personal_info": "Personlige oplysninger",
+    "personalInfo": "Personlige oplysninger",
     "experience": "Erfaring",
     "education": "Uddannelse",
-    "skills": "Kompetencer",
-    "summary": "Resumé"
+    "skills": "Kompetencer"
   },
-  "fields": {
-    "name": "Fulde navn",
-    "email": "E-mail adresse",
-    "phone": "Telefonnummer",
-    "address": "Adresse",
-    "title": "Jobtitel",
-    "company": "Virksomhed",
-    "location": "Lokation",
-    "description": "Beskrivelse"
+  "actions": {
+    "generateCv": "Generer CV",
+    "updateCv": "Opdater CV"
   }
 }
 ```
@@ -127,24 +126,30 @@ frontend/src/locales/
 
 #### React i18n Integration
 ```typescript
-// i18n configuration
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import { namespaces, resources, supportedLngs } from './resources'
 
-i18n
-  .use(initReactI18next)
-  .init({
-    lng: 'da-DK', // Default to Danish
-    fallbackLng: 'en-GB',
-    resources: {
-      'da-DK': {
-        translation: danishTranslations
-      },
-      'en-GB': {
-        translation: englishTranslations
-      }
-    }
-  })
+const getInitialLanguage = () => {
+  const stored = window.localStorage.getItem('cv-pro-language')
+  return stored?.startsWith('da') ? 'da-DK' : 'en-GB'
+}
+
+i18n.use(initReactI18next).init({
+  resources,
+  lng: getInitialLanguage(),
+  fallbackLng: 'en-GB',
+  supportedLngs,
+  defaultNS: 'common',
+  ns: namespaces,
+  interpolation: {
+    escapeValue: false,
+  },
+  initImmediate: false,
+  react: {
+    useSuspense: false,
+  },
+})
 ```
 
 #### Component Usage
@@ -152,13 +157,13 @@ i18n
 import { useTranslation } from 'react-i18next'
 
 function CVForm() {
-  const { t } = useTranslation()
+  const { t } = useTranslation('cv')
 
   return (
     <div>
-      <h2>{t('cv.sections.personal_info')}</h2>
+      <h2>{t('sections.personalInfo')}</h2>
       <input
-        placeholder={t('cv.fields.name')}
+        placeholder={t('personalInfo.fields.name.label')}
         // ...
       />
     </div>
@@ -221,27 +226,26 @@ function CVForm() {
 ## Timeline & Milestones
 
 ### Week 1: Preparation
-- [ ] String extraction from codebase
-- [ ] Translation partner selection
-- [ ] Glossary and style guide creation
-- [ ] Context documentation preparation
+- [x] String extraction from codebase
+- [x] Translation approach confirmed (in-house)
+- [x] Glossary captured in translation keys
 
 ### Week 2: Translation
-- [ ] Core UI strings translation (80%)
-- [ ] CV-specific terminology translation
-- [ ] Error messages and help text
+- [x] Core UI strings translation (100%)
+- [x] CV-specific terminology translation
+- [x] Error messages and help text
 - [ ] Initial quality review
 
 ### Week 3: Review & Refinement
 - [ ] Technical accuracy review
 - [ ] Cultural appropriateness validation
-- [ ] Consistency checking
+- [x] Key consistency check across locales
 - [ ] Final revisions
 
 ### Week 4: Implementation & Testing
-- [ ] Translation file integration
+- [x] Translation file integration
 - [ ] UI testing in Danish
-- [ ] Fallback language testing
+- [x] Fallback language wiring
 - [ ] User acceptance testing
 
 ## Quality Metrics
@@ -290,9 +294,9 @@ function CVForm() {
 ## Success Criteria
 
 ### Functional Success
-- [ ] 100% UI strings translated to Danish
-- [ ] All user-facing text in Danish
-- [ ] Proper fallback to English when needed
+- [x] 100% UI strings translated to Danish
+- [x] All user-facing text in Danish
+- [x] Proper fallback to English when needed
 - [ ] No broken translations or missing strings
 
 ### Quality Success

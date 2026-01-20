@@ -1,0 +1,24 @@
+{
+  "title": "Søg CV'er",
+  "subtitle": "Find CV'er efter navn, rolle, lokation eller kompetencer. Søgning er privatlivssikker og GDPR-kompatibel.",
+  "filters": {
+    "personName": {"label": "Navn", "placeholder": "f.eks. Jens Jensen"},
+    "targetRole": {"label": "Ønsket rolle", "placeholder": "f.eks. Softwareudvikler"},
+    "location": {"label": "Lokation", "placeholder": "f.eks. København"},
+    "skills": {"label": "Kompetencer", "placeholder": "Tilføj en kompetence...", "popular": "Populære kompetencer:"}
+  },
+  "actions": {"searching": "Søger...", "search": "Søg", "clear": "Ryd"},
+  "results": {
+    "title": "Søgeresultater ({{count}})",
+    "anonymous": "Anonym",
+    "location": "📍 {{location}}",
+    "more": "+{{count}} flere",
+    "experience": "💼 Erfaring: {{companies}}"
+  },
+  "empty": "Ingen CV'er matcher dine kriterier. Prøv at justere dine søgeord.",
+  "privacyNotice": "🔒 Søgning er privatlivssikker: Kun ikke-følsomme metadata er søgbare. Fulde CV-detaljer forbliver krypterede og beskyttede.",
+  "errors": {
+    "searchFailed": "Søgning mislykkedes: {{statusText}}",
+    "requestFailed": "Kunne ikke søge i CV'er"
+  }
+}

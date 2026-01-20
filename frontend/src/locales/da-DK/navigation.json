@@ -1,0 +1,16 @@
+{
+  "introduction": "Introduktion",
+  "signIn": "Log ind",
+  "signOut": "Log ud",
+  "lightMode": "Lys tilstand",
+  "darkMode": "Mørk tilstand",
+  "editCv": "Rediger CV",
+  "createCv": "Opret CV",
+  "myCvs": "Mine CV'er",
+  "searchCvs": "🔍 Søg CV'er",
+  "myProfiles": "Mine profiler",
+  "profile": "Profil",
+  "settings": "Indstillinger",
+  "admin": "Admin",
+  "language": "Sprog"
+}

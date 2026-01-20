@@ -2,6 +2,7 @@ import { Control, UseFormRegister, FieldErrors, useController } from 'react-hook
 import { CVData } from '../types/cv'
 import ExperienceProjects from './ExperienceProjects'
 import RichTextarea, { stripHtml } from './RichTextarea'
+import { useTranslation } from 'react-i18next'
 
 interface ExperienceItemProps {
   control: Control<CVData>
@@ -20,6 +21,7 @@ export default function ExperienceItem({
   errors,
   showAiAssist,
 }: ExperienceItemProps) {
+  const { t } = useTranslation('cv')
   const descriptionError = errors?.experience?.[index]?.description
   const descriptionController = useController({
     control,
@@ -28,10 +30,7 @@ export default function ExperienceItem({
       validate: (value: string | undefined) => {
         if (!value) return true
         const textLength = stripHtml(value).length
-        return (
-          textLength <= 300 ||
-          'Maximum 300 characters allowed. Please shorten or move details to projects.'
-        )
+        return textLength <= 300 || t('experience.validation.descriptionMax')
       },
     },
   })
@@ -40,14 +39,14 @@ export default function ExperienceItem({
     <div className="border border-gray-200 rounded-lg p-4 space-y-4 dark:border-gray-800 dark:bg-gray-900/40">
       <div className="flex justify-between items-center">
         <h4 className="text-md font-medium text-gray-900 dark:text-gray-100">
-          Experience {index + 1}
+          {t('experience.item.title', { index: index + 1 })}
         </h4>
         <button
           type="button"
           onClick={onRemove}
           className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
         >
-          Remove
+          {t('actions.remove')}
         </button>
       </div>
 
@@ -57,12 +56,14 @@ export default function ExperienceItem({
             htmlFor={`experience-title-${index}`}
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Job Title *
+            {t('experience.fields.title.label')}
           </label>
           <input
             id={`experience-title-${index}`}
             type="text"
-            {...register(`experience.${index}.title` as const, { required: 'Title is required' })}
+            {...register(`experience.${index}.title` as const, {
+              required: t('experience.fields.title.required'),
+            })}
             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400"
           />
         </div>
@@ -72,13 +73,13 @@ export default function ExperienceItem({
             htmlFor={`experience-company-${index}`}
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Company *
+            {t('experience.fields.company.label')}
           </label>
           <input
             id={`experience-company-${index}`}
             type="text"
             {...register(`experience.${index}.company` as const, {
-              required: 'Company is required',
+              required: t('experience.fields.company.required'),
             })}
             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400"
           />
@@ -89,15 +90,15 @@ export default function ExperienceItem({
             htmlFor={`experience-start-date-${index}`}
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Start Date (YYYY-MM) *
+            {t('experience.fields.startDate.label')}
           </label>
           <input
             id={`experience-start-date-${index}`}
             type="text"
             {...register(`experience.${index}.start_date` as const, {
-              required: 'Start date is required',
+              required: t('experience.fields.startDate.required'),
             })}
-            placeholder="2020-01"
+            placeholder={t('experience.fields.startDate.placeholder')}
             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
           />
         </div>
@@ -107,13 +108,13 @@ export default function ExperienceItem({
             htmlFor={`experience-end-date-${index}`}
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            End Date (YYYY-MM or &quot;Present&quot;)
+            {t('experience.fields.endDate.label')}
           </label>
           <input
             id={`experience-end-date-${index}`}
             type="text"
             {...register(`experience.${index}.end_date` as const)}
-            placeholder="2023-12 or Present"
+            placeholder={t('experience.fields.endDate.placeholder')}
             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
           />
         </div>
@@ -123,7 +124,7 @@ export default function ExperienceItem({
             htmlFor={`experience-location-${index}`}
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Location
+            {t('experience.fields.location.label')}
           </label>
           <input
             id={`experience-location-${index}`}
@@ -140,14 +141,14 @@ export default function ExperienceItem({
           htmlFor={`experience-description-${index}`}
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Role Summary (short)
+          {t('experience.fields.summary.label')}
         </label>
         <RichTextarea
           id={`experience-description-${index}`}
           value={descriptionController.field.value || ''}
           onChange={descriptionController.field.onChange}
           rows={10}
-          placeholder="Brief summary of your role..."
+          placeholder={t('experience.fields.summary.placeholder')}
           error={descriptionError}
           maxLength={300}
           className="mt-1"

@@ -1,0 +1,25 @@
+{
+  "errors": {
+    "loadFailed": "Failed to load CVs",
+    "deleteFailed": "Failed to delete CV",
+    "generateFailed": "Failed to generate CV file",
+    "downloadPdf": "Failed to download PDF"
+  },
+  "confirmDelete": "Are you sure you want to delete this CV?",
+  "title": "My CVs ({{count}})",
+  "search": {"placeholder": "Search CVs...", "action": "Search"},
+  "actions": {
+    "exportCsv": "Export CSV",
+    "edit": "Edit",
+    "download": "Download",
+    "generateFile": "Generate File",
+    "generating": "Generating...",
+    "downloadPdf": "Download PDF",
+    "delete": "Delete"
+  },
+  "loading": "Loading CVs...",
+  "empty": "No CVs found.",
+  "unnamed": "Unnamed CV",
+  "created": "Created: {{date}}",
+  "id": "ID: {{id}}"
+}

@@ -17,6 +17,8 @@ export default function CvFormHeader({
   onDownloadPdf,
   isGeneratingPdf = false,
 }: CvFormHeaderProps) {
+  const { t } = useTranslation('cv')
+
   return (
     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
       <div className="flex justify-between items-center">
@@ -27,21 +29,21 @@ export default function CvFormHeader({
             onClick={onLoadProfile}
             className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
           >
-            Load from Profile
+            {t('header.loadProfile')}
           </button>
           <button
             type="button"
             onClick={onSaveProfile}
             className="px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
           >
-            Save to Profile
+            {t('header.saveProfile')}
           </button>
           <button
             type="button"
             onClick={onGenerateFromJd}
             className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
           >
-            Generate from JD
+            {t('header.generateFromJobDescription')}
           </button>
           {onGenerateCoverLetter && (
             <button
@@ -49,7 +51,7 @@ export default function CvFormHeader({
               onClick={onGenerateCoverLetter}
               className="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
-              Cover Letter
+              {t('header.coverLetter')}
             </button>
           )}
           {onDownloadPdf && (
@@ -59,7 +61,7 @@ export default function CvFormHeader({
               disabled={isGeneratingPdf}
               className="px-4 py-2 text-sm font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isGeneratingPdf ? 'Generating...' : 'Download PDF'}
+              {isGeneratingPdf ? t('header.generatingPdf') : t('header.downloadPdf')}
             </button>
           )}
         </div>
@@ -67,3 +69,4 @@ export default function CvFormHeader({
     </div>
   )
 }
+import { useTranslation } from 'react-i18next'

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Control, UseFormRegister, useController } from 'react-hook-form'
 import { CVData } from '../types/cv'
 import RichTextarea from './RichTextarea'
+import { useTranslation } from 'react-i18next'
 
 interface ProjectEditorProps {
   control: Control<CVData>
@@ -53,11 +54,12 @@ export default function ProjectEditor({
   onRemove,
   showAiAssist,
 }: ProjectEditorProps) {
+  const { t } = useTranslation('cv')
   const base = `experience.${experienceIndex}.projects.${projectIndex}` as const
   const nameField = useController({
     control,
     name: `${base}.name` as const,
-    rules: { required: 'Project name is required' },
+    rules: { required: t('experience.projects.fields.name.required') },
   })
   const description = useController({ control, name: `${base}.description` as const })
   const technologies = useController({ control, name: `${base}.technologies` as const })
@@ -77,14 +79,14 @@ export default function ProjectEditor({
     <div className="border border-gray-200 rounded-md p-3 space-y-3 dark:border-gray-800 dark:bg-gray-900/30">
       <div className="flex justify-between items-center">
         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          Project {projectIndex + 1}
+          {t('experience.projects.itemTitle', { index: projectIndex + 1 })}
         </p>
         <button
           type="button"
           onClick={onRemove}
           className="text-xs text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
         >
-          Remove
+          {t('actions.remove')}
         </button>
       </div>
 
@@ -94,7 +96,7 @@ export default function ProjectEditor({
             htmlFor={`project-name-${experienceIndex}-${projectIndex}`}
             className="block text-xs font-medium text-gray-700 dark:text-gray-300"
           >
-            Project Name *
+            {t('experience.projects.fields.name.label')}
           </label>
           <input
             id={`project-name-${experienceIndex}-${projectIndex}`}
@@ -112,7 +114,7 @@ export default function ProjectEditor({
             htmlFor={`project-url-${experienceIndex}-${projectIndex}`}
             className="block text-xs font-medium text-gray-700 dark:text-gray-300"
           >
-            URL
+            {t('experience.projects.fields.url.label')}
           </label>
           <input
             id={`project-url-${experienceIndex}-${projectIndex}`}
@@ -128,14 +130,14 @@ export default function ProjectEditor({
           htmlFor={`project-description-${experienceIndex}-${projectIndex}`}
           className="block text-xs font-medium text-gray-700 dark:text-gray-300"
         >
-          Description
+          {t('experience.projects.fields.description.label')}
         </label>
         <RichTextarea
           id={`project-description-${experienceIndex}-${projectIndex}`}
           value={description.field.value || ''}
           onChange={description.field.onChange}
           rows={4}
-          placeholder="Enter project description..."
+          placeholder={t('experience.projects.fields.description.placeholder')}
           className="mt-1"
           showAiAssist={showAiAssist}
         />
@@ -146,7 +148,7 @@ export default function ProjectEditor({
           htmlFor={`project-tech-${experienceIndex}-${projectIndex}`}
           className="block text-xs font-medium text-gray-700 dark:text-gray-300"
         >
-          Technologies (comma-separated)
+          {t('experience.projects.fields.technologies.label')}
         </label>
         <input
           id={`project-tech-${experienceIndex}-${projectIndex}`}
@@ -164,7 +166,7 @@ export default function ProjectEditor({
           htmlFor={`project-highlights-${experienceIndex}-${projectIndex}`}
           className="block text-xs font-medium text-gray-700 dark:text-gray-300"
         >
-          Highlights
+          {t('experience.projects.fields.highlights.label')}
         </label>
         <RichTextarea
           id={`project-highlights-${experienceIndex}-${projectIndex}`}
@@ -181,7 +183,7 @@ export default function ProjectEditor({
             highlights.field.onChange(highlightsFromText(plainText))
           }}
           rows={3}
-          placeholder="Enter highlights (one per line)..."
+          placeholder={t('experience.projects.fields.highlights.placeholder')}
           className="mt-1"
           showAiAssist={showAiAssist}
         />

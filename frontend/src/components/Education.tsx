@@ -1,5 +1,6 @@
 import { useFieldArray, Control, UseFormRegister } from 'react-hook-form'
 import { CVData } from '../types/cv'
+import { useTranslation } from 'react-i18next'
 
 interface EducationProps {
   control: Control<CVData>
@@ -7,6 +8,7 @@ interface EducationProps {
 }
 
 export default function Education({ control, register }: EducationProps) {
+  const { t } = useTranslation('cv')
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'education',
@@ -25,20 +27,20 @@ export default function Education({ control, register }: EducationProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Education</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {t('sections.education')}
+        </h3>
         <button
           type="button"
           onClick={addEducation}
           className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
         >
-          + Add Education
+          {t('education.add')}
         </button>
       </div>
 
       {fields.length === 0 && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          No education added. Click &quot;Add Education&quot; to add one.
-        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t('education.empty')}</p>
       )}
 
       {fields.map((field, index) => (
@@ -48,14 +50,14 @@ export default function Education({ control, register }: EducationProps) {
         >
           <div className="flex justify-between items-center">
             <h4 className="text-md font-medium text-gray-900 dark:text-gray-100">
-              Education {index + 1}
+              {t('education.item.title', { index: index + 1 })}
             </h4>
             <button
               type="button"
               onClick={() => remove(index)}
               className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
             >
-              Remove
+              {t('actions.remove')}
             </button>
           </div>
 
@@ -65,13 +67,13 @@ export default function Education({ control, register }: EducationProps) {
                 htmlFor={`education-degree-${index}`}
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Degree *
+                {t('education.fields.degree.label')}
               </label>
               <input
                 id={`education-degree-${index}`}
                 type="text"
                 {...register(`education.${index}.degree` as const, {
-                  required: 'Degree is required',
+                  required: t('education.fields.degree.required'),
                 })}
                 className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400"
               />
@@ -82,13 +84,13 @@ export default function Education({ control, register }: EducationProps) {
                 htmlFor={`education-institution-${index}`}
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Institution *
+                {t('education.fields.institution.label')}
               </label>
               <input
                 id={`education-institution-${index}`}
                 type="text"
                 {...register(`education.${index}.institution` as const, {
-                  required: 'Institution is required',
+                  required: t('education.fields.institution.required'),
                 })}
                 className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400"
               />
@@ -99,7 +101,7 @@ export default function Education({ control, register }: EducationProps) {
                 htmlFor={`education-year-${index}`}
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Year
+                {t('education.fields.year.label')}
               </label>
               <input
                 id={`education-year-${index}`}
@@ -114,7 +116,7 @@ export default function Education({ control, register }: EducationProps) {
                 htmlFor={`education-field-${index}`}
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Field of Study
+                {t('education.fields.field.label')}
               </label>
               <input
                 id={`education-field-${index}`}
@@ -129,13 +131,13 @@ export default function Education({ control, register }: EducationProps) {
                 htmlFor={`education-gpa-${index}`}
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                GPA
+                {t('education.fields.gpa.label')}
               </label>
               <input
                 id={`education-gpa-${index}`}
                 type="text"
                 {...register(`education.${index}.gpa` as const)}
-                placeholder="3.8/4.0"
+                placeholder={t('education.fields.gpa.placeholder')}
                 className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
               />
             </div>

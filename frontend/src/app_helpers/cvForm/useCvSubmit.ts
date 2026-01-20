@@ -4,6 +4,7 @@ import { Path, UseFormSetError } from 'react-hook-form'
 import { CVData } from '../../types/cv'
 import { normalizeCvDataForApi } from './normalizeCvData'
 import { getErrorDetail, getErrorResponse } from '../axiosError'
+import i18n from '../../i18n'
 
 interface UseCvSubmitProps {
   cvId: string | null | undefined
@@ -57,7 +58,7 @@ function _extractFieldPath(loc?: Array<string | number>): string | null {
 function _extractErrorMessage(error: ValidationErrorItem): string {
   const msg = error.msg || ''
   if (error.type === 'string_too_long' && error.ctx?.max_length) {
-    return `Maximum ${error.ctx.max_length} characters allowed. Please shorten or move details to projects.`
+    return i18n.t('cv:validation.maxLength', { max: error.ctx.max_length })
   }
   return msg
 }
@@ -121,16 +122,16 @@ export function useCvSubmit({
       if (isEditMode && cvId) {
         await axios.put(`/api/cv/${cvId}`, payload)
         openPrintable(cvId)
-        onSuccess('CV updated. Printable view opened.')
+        onSuccess(i18n.t('cv:messages.updatedPrintable'))
       } else {
         const response = await axios.post('/api/save-cv', payload)
         const createdCvId: string | undefined = response.data?.cv_id
         if (createdCvId) {
           window.location.hash = `edit/${createdCvId}`
           openPrintable(createdCvId)
-          onSuccess('CV saved. Printable view opened.')
+          onSuccess(i18n.t('cv:messages.savedPrintable'))
         } else {
-          onSuccess('CV saved successfully!')
+          onSuccess(i18n.t('cv:messages.saved'))
         }
       }
     } catch (error: unknown) {
@@ -166,7 +167,8 @@ export function useCvSubmit({
 
       // Handle both string and array error messages for notification
       const errorMessage =
-        errorDetail || (isEditMode ? 'Failed to update CV' : 'Failed to generate CV')
+        errorDetail ||
+        (isEditMode ? i18n.t('cv:errors.updateFailed') : i18n.t('cv:errors.generateFailed'))
       onError(errorMessage)
     } finally {
       setIsSubmitting(false)

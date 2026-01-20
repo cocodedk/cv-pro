@@ -3,6 +3,7 @@ import { cleanup } from '@testing-library/react'
 import React from 'react'
 import { afterEach, vi } from 'vitest'
 import { installNoNetworkGuards } from './noNetwork'
+import '../i18n'
 ;(
   globalThis as typeof globalThis & {
     IS_REACT_ACT_ENVIRONMENT?: boolean

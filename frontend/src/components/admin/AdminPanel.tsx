@@ -3,6 +3,7 @@ import axios from 'axios'
 import AdminStats from './AdminStats'
 import AdminUsersTable from './AdminUsersTable'
 import type { AdminUser, DailyStat, ThemeStat, UserRole } from './types'
+import { useTranslation } from 'react-i18next'
 
 interface AdminPanelProps {
   isAdmin: boolean
@@ -17,6 +18,7 @@ const resolveError = (err: unknown, fallback: string) => {
 }
 
 export default function AdminPanel({ isAdmin }: AdminPanelProps) {
+  const { t } = useTranslation('admin')
   const [users, setUsers] = useState<AdminUser[]>([])
   const [stats, setStats] = useState<DailyStat[]>([])
   const [themes, setThemes] = useState<ThemeStat[]>([])
@@ -37,11 +39,11 @@ export default function AdminPanel({ isAdmin }: AdminPanelProps) {
       setThemes(themesRes.data.themes ?? [])
       setError(null)
     } catch (err: unknown) {
-      setError(resolveError(err, 'Failed to load admin data'))
+      setError(resolveError(err, t('errors.loadFailed')))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     if (isAdmin) {
@@ -57,7 +59,7 @@ export default function AdminPanel({ isAdmin }: AdminPanelProps) {
       await axios.put(`/api/admin/users/${userId}/role`, { role })
       await loadAdminData()
     } catch (err: unknown) {
-      setError(resolveError(err, 'Failed to update role'))
+      setError(resolveError(err, t('errors.updateRoleFailed')))
     } finally {
       setUpdatingUserId(null)
     }
@@ -69,7 +71,7 @@ export default function AdminPanel({ isAdmin }: AdminPanelProps) {
       await axios.put(`/api/admin/users/${userId}/deactivate`)
       await loadAdminData()
     } catch (err: unknown) {
-      setError(resolveError(err, 'Failed to deactivate user'))
+      setError(resolveError(err, t('errors.deactivateFailed')))
     } finally {
       setUpdatingUserId(null)
     }
@@ -78,13 +80,13 @@ export default function AdminPanel({ isAdmin }: AdminPanelProps) {
   if (!isAdmin) {
     return (
       <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-700">
-        Admin access required.
+        {t('accessRequired')}
       </div>
     )
   }
 
   if (loading) {
-    return <div className="text-sm text-gray-500">Loading admin data...</div>
+    return <div className="text-sm text-gray-500">{t('loading')}</div>
   }
 
   return (

@@ -3,6 +3,7 @@ import { UseFormReset } from 'react-hook-form'
 import axios from 'axios'
 import { CVData, ProfileData } from '../../types/cv'
 import { getErrorDetail, getErrorMessage, getErrorResponse } from '../axiosError'
+import i18n from '../../i18n'
 
 interface UseProfileManagerProps {
   reset: UseFormReset<CVData>
@@ -35,14 +36,14 @@ export function useProfileManager({
         setSelectedExperiences(expIndices)
         setSelectedEducations(eduIndices)
       } else {
-        onError('No profile found. Please save a profile first.')
+        onError(i18n.t('profile:errors.noProfile'))
       }
     } catch (error: unknown) {
       const { status, data } = getErrorResponse(error)
       if (status === 404) {
-        onError('No profile found. Please save a profile first.')
+        onError(i18n.t('profile:errors.noProfile'))
       } else {
-        onError(getErrorDetail(data) || 'Failed to load profile')
+        onError(getErrorDetail(data) || i18n.t('profile:errors.loadFailedPlain'))
       }
     } finally {
       setLoading(false)
@@ -67,7 +68,7 @@ export function useProfileManager({
     setProfileData(null)
     setSelectedExperiences(new Set())
     setSelectedEducations(new Set())
-    onSuccess('Profile data loaded successfully!')
+    onSuccess(i18n.t('profile:messages.loaded'))
   }
 
   const saveToProfile = async (data: CVData) => {
@@ -80,9 +81,9 @@ export function useProfileManager({
         skills: data.skills,
       }
       await axios.post('/api/profile', profileData)
-      onSuccess('Current form data saved to profile!')
+      onSuccess(i18n.t('profile:messages.savedToProfile'))
     } catch (error: unknown) {
-      onError(getErrorMessage(error, 'Failed to save to profile'))
+      onError(getErrorMessage(error, i18n.t('profile:errors.saveToProfileFailed')))
     } finally {
       setLoading(false)
     }

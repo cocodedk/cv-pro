@@ -1,0 +1,66 @@
+{
+  "actions": {
+    "edit": "Rediger",
+    "delete": "Slet",
+    "reset": "Nulstil",
+    "saving": "Gemmer...",
+    "update": "Opdater profil",
+    "save": "Gem profil",
+    "cancel": "Annuller",
+    "close": "Luk"
+  },
+  "header": {
+    "title": "Hovedprofil",
+    "subtitleSaved": "Din profil er gemt. Opdater den nedenfor.",
+    "subtitleEmpty": "Gem dine oplysninger én gang og genbrug dem til alle CV'er.",
+    "loading": "Indlæser...",
+    "reload": "Genindlæs profil",
+    "load": "Indlæs profil",
+    "delete": "Slet profil"
+  },
+  "loading": "Indlæser profil...",
+  "confirmDelete": "Er du sikker på, at du vil slette din profil? Denne handling kan ikke fortrydes.",
+  "messages": {
+    "saved": "Profil gemt!",
+    "loaded": "Profil indlæst!",
+    "deleted": "Profil slettet!",
+    "savedToProfile": "Nuværende formulardata gemt i profilen!"
+  },
+  "errors": {
+    "saveFailed": "Kunne ikke gemme profil",
+    "deleteFailed": "Kunne ikke slette profil",
+    "loadFailed": "Kunne ikke indlæse profil: {{message}}",
+    "loadFailedPlain": "Kunne ikke indlæse profil",
+    "unknown": "Ukendt fejl",
+    "noProfile": "Ingen profil fundet. Gem en profil først.",
+    "saveToProfileFailed": "Kunne ikke gemme til profil",
+    "listFailed": "Kunne ikke hente profiler"
+  },
+  "profileList": {
+    "title": "Mine profiler ({{count}})",
+    "search": {"placeholder": "Søg profiler...", "action": "Søg"},
+    "loading": "Indlæser profiler...",
+    "empty": {"default": "Ingen profiler fundet.", "search": "Ingen profiler matcher din søgning."},
+    "updated": "Opdateret: {{date}}",
+    "confirmDelete": "Er du sikker på, at du vil slette denne profil?",
+    "errors": {"loadFailed": "Kunne ikke indlæse profiler", "deleteFailed": "Kunne ikke slette profil"}
+  },
+  "profileSelection": {
+    "title": "Vælg profil der skal indlæses",
+    "loading": "Indlæser profiler...",
+    "empty": "Ingen profiler fundet.",
+    "errors": {
+      "loadProfiles": "Kunne ikke indlæse profiler",
+      "notFound": "Profil ikke fundet",
+      "loadProfile": "Kunne ikke indlæse profil"
+    }
+  },
+  "profileLoader": {
+    "title": "Vælg elementer der skal medtages",
+    "experience": "Erfaring",
+    "education": "Uddannelse",
+    "at": "hos",
+    "from": "fra",
+    "loadSelected": "Indlæs valgte"
+  }
+}

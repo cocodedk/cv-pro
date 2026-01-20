@@ -1,0 +1,12 @@
+{
+  "checkingSession": "Checking session...",
+  "error": "Error",
+  "success": "Success",
+  "close": "Close",
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please refresh the page or contact support if the problem persists.",
+    "refresh": "Refresh Page",
+    "details": "Error details"
+  }
+}

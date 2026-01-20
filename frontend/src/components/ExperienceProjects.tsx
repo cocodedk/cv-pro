@@ -1,6 +1,7 @@
 import { Control, UseFormRegister, useFieldArray } from 'react-hook-form'
 import { CVData } from '../types/cv'
 import ProjectEditor from './ProjectEditor'
+import { useTranslation } from 'react-i18next'
 
 interface ExperienceProjectsProps {
   control: Control<CVData>
@@ -15,6 +16,7 @@ export default function ExperienceProjects({
   experienceIndex,
   showAiAssist,
 }: ExperienceProjectsProps) {
+  const { t } = useTranslation('cv')
   const { fields, append, remove } = useFieldArray({
     control,
     name: `experience.${experienceIndex}.projects` as const,
@@ -23,7 +25,9 @@ export default function ExperienceProjects({
   return (
     <div className="mt-4 space-y-3">
       <div className="flex justify-between items-center">
-        <h5 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Projects</h5>
+        <h5 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          {t('experience.projects.title')}
+        </h5>
         <button
           type="button"
           onClick={() =>
@@ -37,14 +41,12 @@ export default function ExperienceProjects({
           }
           className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
         >
-          + Add Project
+          {t('experience.projects.add')}
         </button>
       </div>
 
       {fields.length === 0 && (
-        <p className="text-xs text-gray-500 dark:text-gray-400">
-          No projects added. Add projects to move details out of the role description.
-        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{t('experience.projects.empty')}</p>
       )}
 
       {fields.map((projectField, projectIndex) => (

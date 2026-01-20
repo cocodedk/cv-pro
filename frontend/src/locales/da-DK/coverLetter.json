@@ -1,0 +1,48 @@
+{
+  "title": "Generer ansøgningsbrev",
+  "actions": {
+    "close": "Luk",
+    "cancel": "Annuller",
+    "saving": "Gemmer...",
+    "save": "Gem",
+    "regenerating": "Regenererer...",
+    "regenerate": "Regenerer",
+    "generating": "Genererer...",
+    "generate": "Generer",
+    "downloadPdf": "Download PDF"
+  },
+  "errors": {
+    "generateFailed": "Kunne ikke generere ansøgningsbrev",
+    "regenerateFailed": "Kunne ikke regenerere ansøgningsbrev",
+    "saveFailed": "Kunne ikke gemme ansøgningsbrev",
+    "downloadPdf": "Kunne ikke downloade PDF"
+  },
+  "messages": {
+    "saved": "Ansøgningsbrev gemt!"
+  },
+  "preview": {
+    "title": "Forhåndsvisning",
+    "highlights": "Profilhøjdepunkter brugt"
+  },
+  "recipient": {
+    "companyName": {"label": "Virksomhedsnavn *", "placeholder": "f.eks. Acme Corporation"},
+    "hiringManager": {"label": "Navn på ansættelsesansvarlig (valgfri)", "placeholder": "f.eks. Jane Smith"},
+    "companyAddress": {
+      "label": "Virksomhedsadresse (valgfri)",
+      "placeholder": "Gadeadresse\nBy, postnummer"
+    },
+    "tone": {
+      "label": "Tone",
+      "options": {"professional": "Professionel", "enthusiastic": "Entusiastisk", "conversational": "Samtalende"}
+    },
+    "instructions": {
+      "label": "LLM-instruktioner (valgfri)",
+      "placeholder": "f.eks. Skriv på dansk, Hold det under 200 ord, Brug en formel tone"
+    },
+    "jobDescription": {
+      "label": "Jobbeskrivelse *",
+      "placeholder": "Indsæt jobbeskrivelsen her...",
+      "minLength": "Minimum 20 tegn."
+    }
+  }
+}

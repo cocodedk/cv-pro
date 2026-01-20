@@ -1,9 +1,15 @@
 import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../config/supabase'
 
 type AuthMode = 'sign-in' | 'sign-up'
 
-export default function AuthView() {
+interface AuthViewProps {
+  onSignUpSuccess?: () => void
+}
+
+export default function AuthView({ onSignUpSuccess }: AuthViewProps) {
+  const { t } = useTranslation('auth')
   const [mode, setMode] = useState<AuthMode>('sign-in')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -34,11 +40,12 @@ export default function AuthView() {
         if (signUpError) {
           setError(signUpError.message)
         } else {
-          setMessage('Check your email to confirm your account.')
+          setMessage(t('messages.confirmEmail'))
+          onSignUpSuccess?.()
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unexpected error')
+      setError(err instanceof Error ? err.message : t('errors.unexpected'))
       console.error(err)
     } finally {
       setStatus('idle')
@@ -48,17 +55,15 @@ export default function AuthView() {
   return (
     <div className="max-w-md mx-auto bg-white dark:bg-gray-900 shadow-sm rounded-lg p-6">
       <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-        {mode === 'sign-in' ? 'Sign in' : 'Create account'}
+        {mode === 'sign-in' ? t('titles.signIn') : t('titles.signUp')}
       </h2>
       <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-        {mode === 'sign-in'
-          ? 'Use your Supabase account to continue.'
-          : 'Create a new account to start saving CVs.'}
+        {mode === 'sign-in' ? t('subtitles.signIn') : t('subtitles.signUp')}
       </p>
 
       <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-          Email
+          {t('fields.email')}
           <input
             type="email"
             required
@@ -68,7 +73,7 @@ export default function AuthView() {
           />
         </label>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-          Password
+          {t('fields.password')}
           <input
             type="password"
             required
@@ -87,15 +92,15 @@ export default function AuthView() {
           className="w-full rounded-md bg-blue-600 text-white py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-60"
         >
           {status === 'loading'
-            ? 'Please wait...'
+            ? t('actions.loading')
             : mode === 'sign-in'
-              ? 'Sign in'
-              : 'Create account'}
+              ? t('actions.signIn')
+              : t('actions.signUp')}
         </button>
       </form>
 
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-        {mode === 'sign-in' ? "Don't have an account?" : 'Already have an account?'}
+        {mode === 'sign-in' ? t('footer.noAccount') : t('footer.hasAccount')}
         <button
           type="button"
           onClick={() => {
@@ -105,7 +110,7 @@ export default function AuthView() {
           }}
           className="ml-2 text-blue-600 hover:text-blue-700"
         >
-          {mode === 'sign-in' ? 'Sign up' : 'Sign in'}
+          {mode === 'sign-in' ? t('actions.signUp') : t('actions.signIn')}
         </button>
       </div>
     </div>

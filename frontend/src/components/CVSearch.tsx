@@ -1,5 +1,6 @@
 /** GDPR-compliant CV search component */
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   SearchFilters,
   SearchResult,
@@ -14,6 +15,7 @@ interface CVSearchProps {
 }
 
 const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, className = '' }) => {
+  const { t } = useTranslation('search')
   const [filters, setFilters] = useState<SearchFilters>({})
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
@@ -81,10 +83,8 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
     <div className={`bg-white dark:bg-gray-900 rounded-lg shadow-lg ${className}`}>
       {/* Search Header */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Search CVs</h2>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          Find CVs by name, role, location, or skills. Search is privacy-safe and GDPR-compliant.
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('title')}</h2>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">{t('subtitle')}</p>
       </div>
 
       {/* Search Filters */}
@@ -92,13 +92,13 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
         {/* Person Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Person Name
+            {t('filters.personName.label')}
           </label>
           <input
             type="text"
             value={filters.person_name || ''}
             onChange={e => handleFilterChange('person_name', e.target.value)}
-            placeholder="e.g. John Doe"
+            placeholder={t('filters.personName.placeholder')}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
           />
         </div>
@@ -106,13 +106,13 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
         {/* Target Role */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Target Role
+            {t('filters.targetRole.label')}
           </label>
           <input
             type="text"
             value={filters.target_role || ''}
             onChange={e => handleFilterChange('target_role', e.target.value)}
-            placeholder="e.g. Software Engineer"
+            placeholder={t('filters.targetRole.placeholder')}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
           />
         </div>
@@ -120,13 +120,13 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
         {/* Location */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Location
+            {t('filters.location.label')}
           </label>
           <input
             type="text"
             value={filters.location || ''}
             onChange={e => handleFilterChange('location', e.target.value)}
-            placeholder="e.g. Copenhagen"
+            placeholder={t('filters.location.placeholder')}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
           />
         </div>
@@ -134,7 +134,7 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
         {/* Skills */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Skills
+            {t('filters.skills.label')}
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
             {(filters.skills || []).map(skill => (
@@ -154,7 +154,7 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
           </div>
           <input
             type="text"
-            placeholder="Add a skill..."
+            placeholder={t('filters.skills.placeholder')}
             onKeyPress={e => {
               if (e.key === 'Enter') {
                 const input = e.target as HTMLInputElement
@@ -168,7 +168,9 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
           />
           {suggestions.popular_skills.length > 0 && (
             <div className="mt-2">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Popular skills:</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                {t('filters.skills.popular')}
+              </p>
               <div className="flex flex-wrap gap-1">
                 {suggestions.popular_skills.slice(0, 8).map(skill => (
                   <button
@@ -191,14 +193,14 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
             disabled={loading || !hasActiveFilters}
             className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
-            {loading ? 'Searching...' : 'Search'}
+            {loading ? t('actions.searching') : t('actions.search')}
           </button>
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
               className="px-4 py-2 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800"
             >
-              Clear
+              {t('actions.clear')}
             </button>
           )}
         </div>
@@ -209,7 +211,7 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
         <div className="border-t border-gray-200 dark:border-gray-700">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Search Results ({results.length})
+              {t('results.title', { count: results.length })}
             </h3>
             <div className="space-y-4">
               {results.map(result => (
@@ -221,7 +223,7 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-semibold text-gray-900 dark:text-white">
-                        {result.person_name || 'Anonymous'}
+                        {result.person_name || t('results.anonymous')}
                       </h4>
                       {result.target_role && (
                         <p className="text-sm text-blue-600 dark:text-blue-400">
@@ -236,7 +238,7 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
 
                   {result.location && (
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      📍 {result.location}
+                      {t('results.location', { location: result.location })}
                     </p>
                   )}
 
@@ -252,7 +254,7 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
                       ))}
                       {result.skills.length > 5 && (
                         <span className="text-xs px-2 py-1 text-gray-500">
-                          +{result.skills.length - 5} more
+                          {t('results.more', { count: result.skills.length - 5 })}
                         </span>
                       )}
                     </div>
@@ -260,9 +262,12 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
 
                   {result.company_names && result.company_names.length > 0 && (
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      💼 Experience: {result.company_names.slice(0, 2).join(', ')}
-                      {result.company_names.length > 2 &&
-                        ` +${result.company_names.length - 2} more`}
+                      {t('results.experience', {
+                        companies: result.company_names.slice(0, 2).join(', '),
+                      })}
+                      {result.company_names.length > 2
+                        ? t('results.more', { count: result.company_names.length - 2 })
+                        : null}
                     </p>
                   )}
                 </div>
@@ -275,16 +280,13 @@ const CVSearch: React.FC<CVSearchProps> = ({ onResultsFound, onCVSelected, class
       {/* No Results */}
       {hasActiveFilters && !loading && results.length === 0 && (
         <div className="border-t border-gray-200 dark:border-gray-700 p-6 text-center text-gray-500 dark:text-gray-400">
-          No CVs found matching your criteria. Try adjusting your search terms.
+          {t('empty')}
         </div>
       )}
 
       {/* Privacy Notice */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
-        <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
-          🔒 Search is privacy-safe: Only non-sensitive metadata is searchable. Full CV details
-          remain encrypted and protected.
-        </p>
+        <p className="text-xs text-gray-600 dark:text-gray-400 text-center">{t('privacyNotice')}</p>
       </div>
     </div>
   )

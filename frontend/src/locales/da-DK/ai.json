@@ -1,0 +1,64 @@
+{
+  "actions": {
+    "rewriteAi": "AI omskrivning",
+    "bulletsAi": "AI punkter",
+    "cancel": "Annuller",
+    "rewrite": "Omskriv",
+    "rewriting": "Omskriver...",
+    "close": "Luk",
+    "applyDraft": "Anvend udkast i formular",
+    "generating": "Genererer...",
+    "generate": "Generer",
+    "regenerating": "Regenererer...",
+    "regenerate": "Regenerer",
+    "regenerateWithContext": "Regenerer med denne kontekst"
+  },
+  "characterCount": "{{count}} / {{max}} tegn",
+  "rewriteModal": {
+    "title": "AI-omskrivning",
+    "description": "Indtast din prompt/instruktion til omskrivning af teksten:",
+    "placeholder": "f.eks. Gør det mere professionelt, Gør det kortere, Forbedr klarheden...",
+    "ariaLabel": "Prompt til AI-omskrivning"
+  },
+  "toolbar": {"link": "Link", "linkPrompt": "Link-URL", "clear": "Ryd"},
+  "generateModal": {"title": "Generer CV ud fra jobbeskrivelse"},
+  "messages": {
+    "draftApplied": "Udkast anvendt. Gennemgå og gem, når du er klar."
+  },
+  "errors": {
+    "generateDraftFailed": "Kunne ikke generere CV-udkast",
+    "regenerateDraftFailed": "Kunne ikke regenerere CV-udkast",
+    "missingText": "Indtast noget tekst at omskrive",
+    "rewriteFailed": "Kunne ikke omskrive tekst"
+  },
+  "fields": {
+    "targetRole": {"label": "Målrolle (valgfri)", "placeholder": "f.eks. Senior frontendudvikler"},
+    "seniority": {"label": "Senioritet (valgfri)", "placeholder": "f.eks. Midt / Senior"},
+    "style": {
+      "label": "Stil",
+      "options": {
+        "selectReorder": "Vælg og omarrangér",
+        "rewriteBullets": "Omskriv punkter (heuristisk)",
+        "llmTailor": "AI-tilpasning (omskriver til jobbeskrivelse)"
+      }
+    },
+    "maxExperiences": {"label": "Maks. erfaringer"},
+    "jobDescription": {
+      "label": "Jobbeskrivelse",
+      "placeholder": "Indsæt jobbeskrivelsen her...",
+      "minLength": "Minimum 20 tegn.",
+      "ready": "Klar til at generere.",
+      "keepPasting": "Fortsæt med at indsætte."
+    },
+    "additionalContext": {
+      "label": "Yderligere kontekst (valgfri)",
+      "placeholder": "f.eks. Gør det mere enterprise-fokuseret, Fremhæv Python-kompetencer, Fokusér på ledelseserfaring...",
+      "helper": "Instruktion til at styre CV-tilpasningen (f.eks. stilfokus, kompetencefokus, brancheorientering)."
+    }
+  },
+  "panels": {
+    "summary": "Resumé",
+    "questions": "Spørgsmål",
+    "answersPlaceholder": "Skriv dine svar her (f.eks. 'Reducerede API-latens med 40 %, øgede testdækning fra 50 % til 85 %')..."
+  }
+}

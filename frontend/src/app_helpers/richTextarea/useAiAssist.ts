@@ -4,6 +4,7 @@ import { Editor } from '@tiptap/react'
 import { buildAiRewriteHtml } from '../ai/aiTextAssist'
 import { rewriteText } from '../../services/aiService'
 import { stripHtml } from './htmlUtils'
+import i18n from '../../i18n'
 
 interface UseAiAssistOptions {
   editor: Editor | null
@@ -61,7 +62,7 @@ export function useAiAssist({
       const plainText = stripHtml(currentHtml || '').trim()
 
       if (!plainText) {
-        setRewriteError('Please enter some text to rewrite')
+        setRewriteError(i18n.t('ai:errors.missingText'))
         setIsRewriting(false)
         return
       }
@@ -89,7 +90,7 @@ export function useAiAssist({
 
       setShowPromptModal(false)
     } catch (error: unknown) {
-      setRewriteError(getErrorMessage(error, 'Failed to rewrite text'))
+      setRewriteError(getErrorMessage(error, i18n.t('ai:errors.rewriteFailed')))
     } finally {
       setIsRewriting(false)
     }

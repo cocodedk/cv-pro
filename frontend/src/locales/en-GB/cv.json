@@ -1,0 +1,165 @@
+{
+  "titles": {"edit": "Edit CV", "create": "Create Your CV"},
+  "sections": {"personalInfo": "Personal Information", "experience": "Work Experience", "education": "Education", "skills": "Skills"},
+  "header": {
+    "loadProfile": "Load from Profile",
+    "saveProfile": "Save to Profile",
+    "generateFromJobDescription": "Generate from JD",
+    "coverLetter": "Cover Letter",
+    "generatingPdf": "Generating...",
+    "downloadPdf": "Download PDF"
+  },
+  "fields": {
+    "theme": {
+      "label": "Theme",
+      "options": {
+        "accented": "Accented",
+        "classic": "Classic",
+        "colorful": "Colorful",
+        "creative": "Creative",
+        "elegant": "Elegant",
+        "executive": "Executive",
+        "minimal": "Minimal",
+        "modern": "Modern",
+        "professional": "Professional",
+        "tech": "Tech"
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "groups": {"printFirst": "Print-First", "webFirst": "Web-First", "special": "Special"},
+      "options": {
+        "classicTwoColumn": "Classic Two-Column",
+        "atsSingleColumn": "ATS Single Column",
+        "modernSidebar": "Modern Sidebar",
+        "sectionCardsGrid": "Section Cards Grid",
+        "projectCaseStudies": "Project Case Studies",
+        "portfolioSpa": "Portfolio SPA",
+        "darkModeTech": "Dark Mode Tech",
+        "careerTimeline": "Career Timeline",
+        "interactiveSkillsMatrix": "Interactive Skills Matrix",
+        "academicCv": "Academic CV"
+      }
+    },
+    "targetRole": {"label": "Job Title", "placeholder": "e.g. Senior Software Engineer"},
+    "targetCompany": {"label": "Target Company", "placeholder": "e.g. Google"}
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "updating": "Updating...",
+    "generating": "Generating...",
+    "updateCv": "Update CV",
+    "generateCv": "Generate CV",
+    "remove": "Remove"
+  },
+  "loadingCvData": "Loading CV data...",
+  "personalInfo": {
+    "fields": {
+      "name": {"label": "Full Name *", "required": "Name is required"},
+      "title": {"label": "Professional Title"},
+      "email": {"label": "Email"},
+      "phone": {"label": "Phone"},
+      "linkedin": {"label": "LinkedIn"},
+      "github": {"label": "GitHub"},
+      "website": {"label": "Website"}
+    },
+    "address": {
+      "title": "Address",
+      "street": {"label": "Street Address", "placeholder": "House number and street name"},
+      "city": "City",
+      "state": "State / Province",
+      "zip": "ZIP / Postal Code",
+      "country": "Country"
+    },
+    "photo": {
+      "label": "Photo",
+      "previewAlt": "Preview",
+      "noPhoto": "No photo",
+      "helper": "JPEG, PNG or WebP. Max size 2MB.",
+      "remove": "Remove photo",
+      "errors": {
+        "invalidType": "Please select an image file",
+        "tooLarge": "Image size must be less than 2MB",
+        "readFailed": "Error reading file"
+      }
+    },
+    "summary": {
+      "label": "Professional Summary",
+      "placeholder": "Brief summary of your professional background..."
+    }
+  },
+  "experience": {
+    "add": "+ Add Experience",
+    "empty": "No experience added. Click \"Add Experience\" to add one.",
+    "item": {"title": "Experience {{index}}"},
+    "fields": {
+      "title": {"label": "Job Title *", "required": "Title is required"},
+      "company": {"label": "Company *", "required": "Company is required"},
+      "startDate": {
+        "label": "Start Date (YYYY-MM) *",
+        "required": "Start date is required",
+        "placeholder": "2020-01"
+      },
+      "endDate": {"label": "End Date (YYYY-MM or \"Present\")", "placeholder": "2023-12 or Present"},
+      "location": {"label": "Location"},
+      "summary": {"label": "Role Summary (short)", "placeholder": "Brief summary of your role..."}
+    },
+    "validation": {
+      "descriptionMax": "Maximum 300 characters allowed. Please shorten or move details to projects."
+    },
+    "projects": {
+      "title": "Projects",
+      "add": "+ Add Project",
+      "empty": "No projects added. Add projects to move details out of the role description.",
+      "itemTitle": "Project {{index}}",
+      "fields": {
+        "name": {"label": "Project Name *", "required": "Project name is required"},
+        "url": {"label": "URL"},
+        "description": {"label": "Description", "placeholder": "Enter project description..."},
+        "technologies": {"label": "Technologies (comma-separated)"},
+        "highlights": {"label": "Highlights", "placeholder": "Enter highlights (one per line)..."}
+      }
+    }
+  },
+  "education": {
+    "add": "+ Add Education",
+    "empty": "No education added. Click \"Add Education\" to add one.",
+    "item": {"title": "Education {{index}}"},
+    "fields": {
+      "degree": {"label": "Degree *", "required": "Degree is required"},
+      "institution": {"label": "Institution *", "required": "Institution is required"},
+      "year": {"label": "Year"},
+      "field": {"label": "Field of Study"},
+      "gpa": {"label": "GPA", "placeholder": "3.8/4.0"}
+    }
+  },
+  "skills": {
+    "add": "+ Add Skill",
+    "empty": "No skills added. Click \"Add Skill\" to add one.",
+    "item": {"title": "Skill {{index}}"},
+    "fields": {
+      "name": {"label": "Skill Name *", "required": "Skill name is required"},
+      "category": {"label": "Category", "placeholder": "e.g., Programming Languages"},
+      "level": {"label": "Level", "placeholder": "e.g., Expert, Advanced"}
+    }
+  },
+  "messages": {
+    "updatedPrintable": "CV updated. Printable view opened.",
+    "savedPrintable": "CV saved. Printable view opened.",
+    "saved": "CV saved successfully!"
+  },
+  "errors": {
+    "notFound": "CV not found",
+    "loadFailed": "Failed to load CV",
+    "updateFailed": "Failed to update CV",
+    "generateFailed": "Failed to generate CV",
+    "downloadPdf": "Failed to download PDF",
+    "pdfGenerationFailed": "PDF generation failed: {{statusText}}",
+    "tooManyRequests": "Too many requests. Please wait a moment.",
+    "pdfServiceUnavailable": "PDF generation service unavailable",
+    "downloadPdfRetry": "Failed to download PDF. Please try again."
+  },
+  "validation": {
+    "maxLength": "Maximum {{max}} characters allowed. Please shorten or move details to projects."
+  }
+}

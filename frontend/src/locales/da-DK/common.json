@@ -1,0 +1,12 @@
+{
+  "checkingSession": "Tjekker session...",
+  "error": "Fejl",
+  "success": "Succes",
+  "close": "Luk",
+  "errorBoundary": {
+    "title": "Noget gik galt",
+    "description": "Der opstod en uventet fejl. Opdater siden eller kontakt support, hvis problemet fortsætter.",
+    "refresh": "Opdater side",
+    "details": "Fejldetaljer"
+  }
+}

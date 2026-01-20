@@ -4,12 +4,14 @@ import { CVListResponse, CVListItem } from '../types/cv'
 import { openDownload } from '../app_helpers/download'
 import { downloadPdf } from '../app_helpers/pdfDownload'
 import { getErrorMessage } from '../app_helpers/axiosError'
+import { useTranslation } from 'react-i18next'
 
 interface CVListProps {
   onError: (message: string) => void
 }
 
 export default function CVList({ onError }: CVListProps) {
+  const { t, i18n } = useTranslation('cvList')
   const [cvs, setCvs] = useState<CVListItem[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -34,12 +36,12 @@ export default function CVList({ onError }: CVListProps) {
         setCvs(response.data.cvs)
         setTotal(response.data.total)
       } catch (error: unknown) {
-        onError(getErrorMessage(error, 'Failed to load CVs'))
+        onError(getErrorMessage(error, t('errors.loadFailed')))
       } finally {
         setLoading(false)
       }
     },
-    [onError]
+    [onError, t]
   )
 
   useEffect(() => {
@@ -70,14 +72,14 @@ export default function CVList({ onError }: CVListProps) {
   }
 
   const handleDelete = async (cvId: string) => {
-    if (!confirm('Are you sure you want to delete this CV?')) {
+    if (!confirm(t('confirmDelete'))) {
       return
     }
     try {
       await axios.delete(`/api/cv/${cvId}`)
       fetchCVs(search || undefined)
     } catch (error: unknown) {
-      onError(getErrorMessage(error, 'Failed to delete CV'))
+      onError(getErrorMessage(error, t('errors.deleteFailed')))
     }
   }
 
@@ -94,7 +96,7 @@ export default function CVList({ onError }: CVListProps) {
       // Refresh the list to show the download button
       fetchCVs(search || undefined)
     } catch (error: unknown) {
-      onError(getErrorMessage(error, 'Failed to generate CV file'))
+      onError(getErrorMessage(error, t('errors.generateFailed')))
     }
   }
 
@@ -108,7 +110,7 @@ export default function CVList({ onError }: CVListProps) {
     try {
       await downloadPdf(cvId)
     } catch (error: unknown) {
-      onError(error instanceof Error ? error.message : 'Failed to download PDF')
+      onError(error instanceof Error ? error.message : t('errors.downloadPdf'))
     } finally {
       setIsGeneratingPdf(prev => ({ ...prev, [cvId]: false }))
     }
@@ -132,33 +134,35 @@ export default function CVList({ onError }: CVListProps) {
     <div className="bg-white shadow rounded-lg dark:bg-gray-900 dark:border dark:border-gray-800">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">My CVs ({total})</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {t('title', { count: total })}
+          </h2>
           <div className="flex space-x-2">
             <input
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
               onKeyPress={e => e.key === 'Enter' && handleSearch()}
-              placeholder="Search CVs..."
+              placeholder={t('search.placeholder')}
               className="px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
             />
             <button
               onClick={handleSearch}
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500"
             >
-              Search
+              {t('search.action')}
             </button>
             <button
               onClick={handleExport}
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 dark:hover:bg-green-500"
             >
-              Export CSV
+              {t('actions.exportCsv')}
             </button>
             <button
               onClick={handleExport}
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 dark:hover:bg-green-500"
             >
-              Export CSV
+              {t('actions.exportCsv')}
             </button>
           </div>
         </div>
@@ -167,11 +171,11 @@ export default function CVList({ onError }: CVListProps) {
       <div className="p-6">
         {loading ? (
           <div className="text-center py-8">
-            <p className="text-gray-500 dark:text-gray-400">Loading CVs...</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('loading')}</p>
           </div>
         ) : cvs.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-500 dark:text-gray-400">No CVs found.</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('empty')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -184,7 +188,7 @@ export default function CVList({ onError }: CVListProps) {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                       {(() => {
-                        const name = cv.person_name || 'Unnamed CV'
+                        const name = cv.person_name || t('unnamed')
                         const parts: string[] = []
                         if (cv.target_role) {
                           parts.push(cv.target_role)
@@ -199,30 +203,34 @@ export default function CVList({ onError }: CVListProps) {
                       })()}
                     </h3>
                     <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-                      Created: {new Date(cv.created_at).toLocaleDateString()}
+                      {t('created', {
+                        date: new Date(cv.created_at).toLocaleDateString(i18n.language),
+                      })}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1 dark:text-gray-500">ID: {cv.cv_id}</p>
+                    <p className="text-xs text-gray-400 mt-1 dark:text-gray-500">
+                      {t('id', { id: cv.cv_id })}
+                    </p>
                   </div>
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleEdit(cv.cv_id)}
                       className="px-3 py-1 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
                     >
-                      Edit
+                      {t('actions.edit')}
                     </button>
                     {cv.filename ? (
                       <button
                         onClick={() => handleDownload(cv.filename)}
                         className="px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                       >
-                        Download
+                        {t('actions.download')}
                       </button>
                     ) : (
                       <button
                         onClick={() => handleGenerateFile(cv.cv_id)}
                         className="px-3 py-1 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
                       >
-                        Generate File
+                        {t('actions.generateFile')}
                       </button>
                     )}
                     <button
@@ -230,13 +238,15 @@ export default function CVList({ onError }: CVListProps) {
                       disabled={isGeneratingPdf[cv.cv_id]}
                       className="px-3 py-1 text-sm font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isGeneratingPdf[cv.cv_id] ? 'Generating...' : 'Download PDF'}
+                      {isGeneratingPdf[cv.cv_id]
+                        ? t('actions.generating')
+                        : t('actions.downloadPdf')}
                     </button>
                     <button
                       onClick={() => handleDelete(cv.cv_id)}
                       className="px-3 py-1 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                     >
-                      Delete
+                      {t('actions.delete')}
                     </button>
                   </div>
                 </div>

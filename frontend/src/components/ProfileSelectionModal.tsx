@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { listProfiles, getProfileByUpdatedAt } from '../services/profileService'
 import { ProfileListItem, ProfileData } from '../types/cv'
 import { getErrorMessage } from '../app_helpers/axiosError'
+import { useTranslation } from 'react-i18next'
 
 interface ProfileSelectionModalProps {
   isOpen: boolean
@@ -16,6 +17,7 @@ export default function ProfileSelectionModal({
   onSelect,
   onError,
 }: ProfileSelectionModalProps) {
+  const { t, i18n } = useTranslation('profile')
   const [profiles, setProfiles] = useState<ProfileListItem[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingProfile, setIsLoadingProfile] = useState(false)
@@ -26,12 +28,12 @@ export default function ProfileSelectionModal({
       const response = await listProfiles()
       setProfiles(response.profiles)
     } catch (error: unknown) {
-      onError(getErrorMessage(error, 'Failed to load profiles'))
+      onError(getErrorMessage(error, t('profileSelection.errors.loadProfiles')))
       onClose()
     } finally {
       setIsLoading(false)
     }
-  }, [onClose, onError])
+  }, [onClose, onError, t])
 
   useEffect(() => {
     if (isOpen) {
@@ -47,10 +49,10 @@ export default function ProfileSelectionModal({
         onSelect(profile)
         onClose()
       } else {
-        onError('Profile not found')
+        onError(t('profileSelection.errors.notFound'))
       }
     } catch (error: unknown) {
-      onError(getErrorMessage(error, 'Failed to load profile'))
+      onError(getErrorMessage(error, t('profileSelection.errors.loadProfile')))
     } finally {
       setIsLoadingProfile(false)
     }
@@ -59,7 +61,7 @@ export default function ProfileSelectionModal({
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleDateString(i18n.language, {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -78,13 +80,13 @@ export default function ProfileSelectionModal({
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-            Select Profile to Load
+            {t('profileSelection.title')}
           </h3>
           <button
             type="button"
             onClick={onClose}
             className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-            aria-label="Close"
+            aria-label={t('actions.close')}
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -99,11 +101,11 @@ export default function ProfileSelectionModal({
 
         {isLoading ? (
           <div className="py-8 text-center">
-            <p className="text-gray-600 dark:text-gray-400">Loading profiles...</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('profileSelection.loading')}</p>
           </div>
         ) : profiles.length === 0 ? (
           <div className="py-8 text-center">
-            <p className="text-gray-600 dark:text-gray-400">No profiles found.</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('profileSelection.empty')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -134,7 +136,7 @@ export default function ProfileSelectionModal({
             onClick={onClose}
             className="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
           >
-            Cancel
+            {t('actions.cancel')}
           </button>
         </div>
       </div>

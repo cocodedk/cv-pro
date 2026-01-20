@@ -11,6 +11,7 @@ import CVFormContent from '../app_helpers/cvForm/CVFormContent'
 import CVFormLoading from '../app_helpers/cvForm/CVFormLoading'
 import { downloadPdf } from '../app_helpers/pdfDownload'
 import CoverLetterModal from './cover-letter/CoverLetterModal'
+import { useTranslation } from 'react-i18next'
 
 interface CVFormProps {
   onSuccess: (message: string) => void
@@ -24,6 +25,7 @@ interface CVFormProps {
  * Handles CV creation and editing with support for AI generation and profile loading.
  */
 export default function CVForm({ onSuccess, onError, setLoading, cvId }: CVFormProps) {
+  const { t } = useTranslation('cv')
   const isEditMode = !!cvId
   const [showAiModal, setShowAiModal] = useState(false)
   const [showCoverLetterModal, setShowCoverLetterModal] = useState(false)
@@ -90,7 +92,7 @@ export default function CVForm({ onSuccess, onError, setLoading, cvId }: CVFormP
         layout: layout || undefined,
       })
     } catch (error: unknown) {
-      onError(error instanceof Error ? error.message : 'Failed to download PDF')
+      onError(error instanceof Error ? error.message : t('errors.downloadPdf'))
     } finally {
       setIsGeneratingPdf(false)
     }

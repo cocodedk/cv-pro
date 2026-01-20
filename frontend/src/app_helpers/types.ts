@@ -8,5 +8,6 @@ export type ViewMode =
   | 'edit'
   | 'profile-edit'
   | 'admin'
+  | 'settings'
   | 'privacy'
   | 'search'

@@ -1,4 +1,5 @@
 import { AIGenerateCVRequest, AIGenerateStyle } from '../../types/ai'
+import { useTranslation } from 'react-i18next'
 
 interface AiGenerateFieldsProps {
   payload: AIGenerateCVRequest
@@ -13,6 +14,8 @@ export default function AiGenerateFields({
   canGenerate,
   onChange,
 }: AiGenerateFieldsProps) {
+  const { t } = useTranslation('ai')
+
   return (
     <div className="space-y-4">
       <div className="grid gap-2">
@@ -20,14 +23,14 @@ export default function AiGenerateFields({
           className="text-sm font-medium text-gray-700 dark:text-gray-300"
           htmlFor="ai_target_role"
         >
-          Target role (optional)
+          {t('fields.targetRole.label')}
         </label>
         <input
           id="ai_target_role"
           value={payload.target_role || ''}
           onChange={e => onChange('target_role', e.target.value || undefined)}
           className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          placeholder="e.g. Senior Frontend Engineer"
+          placeholder={t('fields.targetRole.placeholder')}
           disabled={isGenerating}
         />
       </div>
@@ -38,14 +41,14 @@ export default function AiGenerateFields({
             className="text-sm font-medium text-gray-700 dark:text-gray-300"
             htmlFor="ai_seniority"
           >
-            Seniority (optional)
+            {t('fields.seniority.label')}
           </label>
           <input
             id="ai_seniority"
             value={payload.seniority || ''}
             onChange={e => onChange('seniority', e.target.value || undefined)}
             className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-            placeholder="e.g. Mid / Senior"
+            placeholder={t('fields.seniority.placeholder')}
             disabled={isGenerating}
           />
         </div>
@@ -54,7 +57,7 @@ export default function AiGenerateFields({
             className="text-sm font-medium text-gray-700 dark:text-gray-300"
             htmlFor="ai_style"
           >
-            Style
+            {t('fields.style.label')}
           </label>
           <select
             id="ai_style"
@@ -63,9 +66,9 @@ export default function AiGenerateFields({
             className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
             disabled={isGenerating}
           >
-            <option value="select_and_reorder">Select & reorder</option>
-            <option value="rewrite_bullets">Rewrite bullets (heuristic)</option>
-            <option value="llm_tailor">AI Tailor (rewrites to match JD)</option>
+            <option value="select_and_reorder">{t('fields.style.options.selectReorder')}</option>
+            <option value="rewrite_bullets">{t('fields.style.options.rewriteBullets')}</option>
+            <option value="llm_tailor">{t('fields.style.options.llmTailor')}</option>
           </select>
         </div>
         <div className="grid gap-2">
@@ -73,7 +76,7 @@ export default function AiGenerateFields({
             className="text-sm font-medium text-gray-700 dark:text-gray-300"
             htmlFor="ai_max_exp"
           >
-            Max experiences
+            {t('fields.maxExperiences.label')}
           </label>
           <input
             id="ai_max_exp"
@@ -90,18 +93,19 @@ export default function AiGenerateFields({
 
       <div className="grid gap-2">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="ai_jd">
-          Job description
+          {t('fields.jobDescription.label')}
         </label>
         <textarea
           id="ai_jd"
           value={payload.job_description}
           onChange={e => onChange('job_description', e.target.value)}
           className="min-h-[180px] w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-          placeholder="Paste the job description here..."
+          placeholder={t('fields.jobDescription.placeholder')}
           disabled={isGenerating}
         />
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          Minimum 20 characters. {canGenerate ? 'Ready to generate.' : 'Keep pasting.'}
+          {t('fields.jobDescription.minLength')}{' '}
+          {canGenerate ? t('fields.jobDescription.ready') : t('fields.jobDescription.keepPasting')}
         </p>
       </div>
 
@@ -111,19 +115,18 @@ export default function AiGenerateFields({
             className="text-sm font-medium text-gray-700 dark:text-gray-300"
             htmlFor="ai_additional_context"
           >
-            Additional context (optional)
+            {t('fields.additionalContext.label')}
           </label>
           <textarea
             id="ai_additional_context"
             value={payload.additional_context || ''}
             onChange={e => onChange('additional_context', e.target.value || undefined)}
             className="min-h-[60px] w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-            placeholder="e.g. Make this more enterprise-focused, Emphasize Python skills, Focus on leadership experience..."
+            placeholder={t('fields.additionalContext.placeholder')}
             disabled={isGenerating}
           />
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Directive to guide CV tailoring (e.g., style focus, skill emphasis, industry
-            orientation).
+            {t('fields.additionalContext.helper')}
           </p>
         </div>
       )}

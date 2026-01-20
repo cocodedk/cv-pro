@@ -1,4 +1,5 @@
 /** Search API service for GDPR-compliant CV searching */
+import i18n from '../i18n'
 
 export interface SearchFilters {
   person_name?: string
@@ -45,14 +46,14 @@ export async function searchCVs(filters: SearchFilters): Promise<SearchResponse>
     const response = await fetch(`/api/search/cvs?${params.toString()}`)
 
     if (!response.ok) {
-      throw new Error(`Search failed: ${response.statusText}`)
+      throw new Error(i18n.t('search:errors.searchFailed', { statusText: response.statusText }))
     }
 
     const data = await response.json()
     return data
   } catch (error) {
     console.error('Search error:', error)
-    throw new Error('Failed to search CVs')
+    throw new Error(i18n.t('search:errors.requestFailed'))
   }
 }
 

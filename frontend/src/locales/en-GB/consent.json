@@ -1,0 +1,45 @@
+{
+  "title": "Data Processing Consent",
+  "intro": "To provide you with the best CV creation experience, we need your consent for various data processing activities. Please review and choose your preferences below.",
+  "legalBasis": {
+    "label": "Legal Basis:",
+    "text": "Your explicit consent (Article 6(1)(a) GDPR) or legitimate interest (Article 6(1)(f) GDPR) for essential services."
+  },
+  "sections": {
+    "essential": {
+      "title": "Essential Data Processing *",
+      "description": "Required to create, store, and generate your CV documents. Includes processing your personal information, work experience, education, and skills data.",
+      "requiredNote": "* This consent is required to use our service"
+    },
+    "ai": {
+      "title": "AI-Powered Features",
+      "description": "Allow us to use artificial intelligence to enhance your CV with personalized suggestions, automated cover letter generation, and job matching recommendations.",
+      "note": "Your data will be processed by our AI service providers for this purpose only."
+    },
+    "analytics": {
+      "title": "Analytics & Performance",
+      "description": "Help us improve our service by analyzing how you use our application. This includes page views, feature usage, and performance metrics.",
+      "note": "Data is anonymized and aggregated - we cannot identify individual users."
+    },
+    "marketing": {
+      "title": "Marketing Communications",
+      "description": "Receive updates about new features, tips for better CVs, and occasional promotional offers related to career development.",
+      "note": "You can unsubscribe at any time."
+    },
+    "research": {
+      "title": "Data Sharing for Research",
+      "description": "Allow anonymized CV data to be used for research purposes to improve CV writing practices and job market insights.",
+      "note": "All personal identifiers are removed - data cannot be traced back to you."
+    }
+  },
+  "actions": {
+    "acceptEssential": "Accept Essential Only",
+    "savePreferences": "Save Preferences",
+    "acceptAll": "Accept All"
+  },
+  "footer": {
+    "prefix": "You can change your preferences at any time by visiting our",
+    "privacyPolicyLink": "Privacy Policy",
+    "suffix": "or contacting us at {{email}}"
+  }
+}

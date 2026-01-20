@@ -1,4 +1,5 @@
 import type { Editor } from '@tiptap/react'
+import { useTranslation } from 'react-i18next'
 
 interface RichTextToolbarProps {
   editor: Editor
@@ -35,9 +36,9 @@ function Button({
   )
 }
 
-function setLink(editor: Editor) {
+function setLink(editor: Editor, promptLabel: string) {
   const current = editor.getAttributes('link').href as string | undefined
-  const url = window.prompt('Link URL', current || '')
+  const url = window.prompt(promptLabel, current || '')
   if (url === null) return
   if (!url.trim()) {
     editor.chain().focus().extendMarkRange('link').unsetLink().run()
@@ -47,6 +48,8 @@ function setLink(editor: Editor) {
 }
 
 export default function RichTextToolbar({ editor, disabled }: RichTextToolbarProps) {
+  const { t } = useTranslation('ai')
+
   return (
     <div className="flex flex-wrap items-center gap-1 rounded-t-md border border-b-0 border-gray-300 bg-gray-50 p-1.5 dark:border-gray-700 dark:bg-gray-800">
       <Button
@@ -107,13 +110,13 @@ export default function RichTextToolbar({ editor, disabled }: RichTextToolbarPro
       />
       <div className="mx-1 h-4 w-px bg-gray-300 dark:bg-gray-700" />
       <Button
-        label="Link"
+        label={t('toolbar.link')}
         disabled={disabled}
         isActive={editor.isActive('link')}
-        onClick={() => setLink(editor)}
+        onClick={() => setLink(editor, t('toolbar.linkPrompt'))}
       />
       <Button
-        label="Clear"
+        label={t('toolbar.clear')}
         disabled={disabled}
         onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
       />

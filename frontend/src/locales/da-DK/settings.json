@@ -1,0 +1,12 @@
+{
+  "title": "Indstillinger",
+  "sections": {
+    "consent": {
+      "title": "Privatliv og samtykke",
+      "description": "Gennemgå og opdater dine præferencer for databehandling."
+    }
+  },
+  "actions": {
+    "editConsent": "Rediger samtykkepræferencer"
+  }
+}

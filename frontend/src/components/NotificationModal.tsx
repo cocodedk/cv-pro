@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Message } from '../app_helpers/useMessage'
+import { useTranslation } from 'react-i18next'
 
 interface NotificationModalProps {
   message: Message | null
@@ -7,6 +8,7 @@ interface NotificationModalProps {
 }
 
 export default function NotificationModal({ message, onClose }: NotificationModalProps) {
+  const { t } = useTranslation('common')
   const modalRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -108,7 +110,7 @@ export default function NotificationModal({ message, onClose }: NotificationModa
               isError ? 'text-red-800 dark:text-red-200' : 'text-green-800 dark:text-green-200'
             }`}
           >
-            {isError ? 'Error' : 'Success'}
+            {isError ? t('error') : t('success')}
           </h3>
           <button
             ref={closeButtonRef}
@@ -118,7 +120,7 @@ export default function NotificationModal({ message, onClose }: NotificationModa
                 ? 'text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-800/50'
                 : 'text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-800/50'
             }`}
-            aria-label="Close"
+            aria-label={t('close')}
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -169,7 +171,7 @@ export default function NotificationModal({ message, onClose }: NotificationModa
                 : 'bg-green-600 text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600'
             }`}
           >
-            Close
+            {t('close')}
           </button>
         </div>
       </div>

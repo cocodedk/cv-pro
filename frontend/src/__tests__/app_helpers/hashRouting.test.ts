@@ -47,6 +47,11 @@ describe('hashRouting', () => {
       expect(hashToViewMode('admin')).toBe('admin')
     })
 
+    it('identifies settings mode', () => {
+      expect(hashToViewMode('#settings')).toBe('settings')
+      expect(hashToViewMode('settings')).toBe('settings')
+    })
+
     it('identifies profile-edit mode', () => {
       expect(hashToViewMode('#profile-edit/2024-01-01T00:00:00')).toBe('profile-edit')
       expect(hashToViewMode('profile-edit/2024-01-01T00:00:00')).toBe('profile-edit')
@@ -107,6 +112,10 @@ describe('hashRouting', () => {
 
     it('generates hash for admin mode', () => {
       expect(viewModeToHash('admin')).toBe('admin')
+    })
+
+    it('generates hash for settings mode', () => {
+      expect(viewModeToHash('settings')).toBe('settings')
     })
 
     it('generates hash for edit mode with CV ID', () => {

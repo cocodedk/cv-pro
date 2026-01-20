@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "title": "Welcome to {{appName}}",
+    "subtitle": "Create professional CVs and resumes with ease. Your latest profile is automatically transformed into beautifully designed CV templates."
+  },
+  "templates": {
+    "title": "CV Templates",
+    "subtitle": "{{name}}'s professional CV in {{count}} different styles",
+    "previewTitle": "{{name}} preview",
+    "fullPreviewTitle": "{{name}} full preview"
+  },
+  "filters": {
+    "all": "All ({{count}})",
+    "web": "Web ({{count}})",
+    "print": "Print ({{count}})"
+  },
+  "badges": {
+    "webOptimized": "Web Optimized",
+    "printFriendly": "Print Friendly"
+  },
+  "actions": {
+    "preview": "Preview",
+    "viewFull": "View Full",
+    "createProfile": "Create Profile",
+    "openNewTab": "Open in New Tab",
+    "close": "Close",
+    "browseTemplates": "Browse Templates",
+    "viewApiDocs": "View API Docs"
+  },
+  "empty": {
+    "filtered": "No templates match the selected filter.",
+    "title": "No Templates Available",
+    "subtitle": "Create your profile to generate professional CV templates automatically."
+  },
+  "featureCards": {
+    "profile": {
+      "title": "Create Your Profile",
+      "description": "Build your professional profile with personal information, experience, education, and skills."
+    },
+    "templates": {
+      "title": "Template Gallery",
+      "description": "Choose from professional templates optimized for web viewing or print production."
+    },
+    "export": {
+      "title": "Export Options",
+      "description": "Download individual templates or use our API to generate custom versions."
+    }
+  }
+}

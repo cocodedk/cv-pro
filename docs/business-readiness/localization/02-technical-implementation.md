@@ -2,6 +2,11 @@
 
 *i18n Architecture for Danish Localization*
 
+## Status
+
+- ✅ i18n scaffolding, translation resources, and language switcher implemented in the frontend.
+- 🟡 Tests and advanced optimizations (lazy loading, SEO) are pending.
+
 ## Technology Stack
 
 ### Core Libraries
@@ -10,18 +15,16 @@
 ```json
 {
   "dependencies": {
-    "i18next": "^23.0.0",
-    "react-i18next": "^13.0.0",
-    "i18next-browser-languagedetector": "^7.0.0",
-    "i18next-http-backend": "^2.0.0"
+    "i18next": "^23.10.1",
+    "react-i18next": "^14.1.0"
   }
 }
 ```
 
 #### Why This Stack?
 - **React Integration**: Seamless React component integration
-- **Browser Detection**: Automatic language detection
-- **HTTP Backend**: Dynamic translation loading
+- **Local Resources**: Translation files bundled via Vite
+- **Simple Detection**: LocalStorage + navigator language
 - **Mature**: Battle-tested in production applications
 
 ### Alternative Considerations
@@ -38,25 +41,18 @@ frontend/
 ├── src/
 │   ├── locales/
 │   │   ├── da-DK/
-│   │   │   ├── common.json      # Navigation, buttons, general UI
+│   │   │   ├── common.json      # General UI strings
+│   │   │   ├── navigation.json  # Navigation labels
 │   │   │   ├── cv.json          # CV-specific terms and labels
-│   │   │   ├── auth.json        # Authentication messages
-│   │   │   ├── errors.json      # Error messages and validation
-│   │   │   ├── help.json        # Help text and tooltips
-│   │   │   └── marketing.json   # Landing page content
+│   │   │   └── ...              # Other namespaces
 │   │   └── en-GB/               # Same structure for English
 │   │
 │   ├── i18n/
 │   │   ├── index.ts             # i18n configuration
-│   │   ├── config.ts            # Language detection and settings
-│   │   └── types.ts             # TypeScript types for translations
+│   │   └── resources.ts         # Resource loading + namespace list
 │   │
 │   ├── components/
-│   │   ├── LanguageSwitcher.tsx # Language selection component
-│   │   └── LocalizedText.tsx    # Wrapper for translated content
-│   │
-│   └── utils/
-│       └── formatters.ts        # Localized number/date formatting
+│   │   └── LanguageSwitcher.tsx # Language selection component
 ```
 
 ### 🔧 Configuration Files
@@ -65,59 +61,36 @@ frontend/
 ```typescript
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
-import HttpBackend from 'i18next-http-backend'
+import { namespaces, resources, supportedLngs } from './resources'
 
-import daCommon from '../locales/da-DK/common.json'
-import enCommon from '../locales/en-GB/common.json'
-// ... other imports
+const normalizeLanguage = (language: string) => {
+  const normalized = language.toLowerCase()
+  if (normalized.startsWith('da')) return 'da-DK'
+  if (normalized.startsWith('en')) return 'en-GB'
+  return 'en-GB'
+}
 
-i18n
-  .use(HttpBackend)
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    // Language detection
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'i18nextLng'
-    },
+const getInitialLanguage = () => {
+  const stored = window.localStorage.getItem('cv-pro-language')
+  if (stored) return normalizeLanguage(stored)
+  return normalizeLanguage(window.navigator?.language || '')
+}
 
-    // Language configuration
-    lng: 'da-DK',           // Default to Danish
-    fallbackLng: 'en-GB',   // Fallback to English
-    supportedLngs: ['da-DK', 'en-GB'],
-
-    // Namespaces
-    defaultNS: 'common',
-    ns: ['common', 'cv', 'auth', 'errors', 'help'],
-
-    // Resources (fallback for critical strings)
-    resources: {
-      'da-DK': {
-        common: daCommon,
-        // ... other namespaces
-      },
-      'en-GB': {
-        common: enCommon,
-        // ... other namespaces
-      }
-    },
-
-    // Technical settings
-    interpolation: {
-      escapeValue: false, // React handles XSS prevention
-    },
-
-    // Debug (disable in production)
-    debug: process.env.NODE_ENV === 'development',
-
-    // React integration
-    react: {
-      useSuspense: false,
-    }
-  })
+i18n.use(initReactI18next).init({
+  resources,
+  lng: getInitialLanguage(),
+  fallbackLng: 'en-GB',
+  supportedLngs,
+  defaultNS: 'common',
+  ns: namespaces,
+  interpolation: {
+    escapeValue: false, // React handles XSS prevention
+  },
+  initImmediate: false,
+  react: {
+    useSuspense: false,
+  },
+})
 
 export default i18n
 ```
@@ -125,33 +98,26 @@ export default i18n
 #### Language Switcher Component
 ```tsx
 import { useTranslation } from 'react-i18next'
+import { normalizeLanguage } from '../i18n'
 
 export default function LanguageSwitcher() {
-  const { i18n, t } = useTranslation()
-
-  const languages = [
-    { code: 'da-DK', name: 'Dansk', flag: '🇩🇰' },
-    { code: 'en-GB', name: 'English', flag: '🇬🇧' }
-  ]
-
-  const handleLanguageChange = (languageCode: string) => {
-    i18n.changeLanguage(languageCode)
-  }
+  const { i18n, t } = useTranslation('navigation')
+  const currentLanguage = normalizeLanguage(i18n.language)
 
   return (
-    <div className="language-switcher">
-      {languages.map((lang) => (
-        <button
-          key={lang.code}
-          onClick={() => handleLanguageChange(lang.code)}
-          className={`language-option ${
-            i18n.language === lang.code ? 'active' : ''
-          }`}
-        >
-          <span className="flag">{lang.flag}</span>
-          <span className="name">{lang.name}</span>
-        </button>
-      ))}
+    <div>
+      <label className="sr-only" htmlFor="language-switcher">
+        {t('language')}
+      </label>
+      <select
+        id="language-switcher"
+        value={currentLanguage}
+        onChange={event => i18n.changeLanguage(normalizeLanguage(event.target.value))}
+        aria-label={t('language')}
+      >
+        <option value="da-DK">Dansk</option>
+        <option value="en-GB">English</option>
+      </select>
     </div>
   )
 }
@@ -168,36 +134,35 @@ npm install --save-dev @types/i18next
 ```
 
 #### 1.2 Create Translation Files Structure
-- [ ] Create `src/locales/` directory structure
-- [ ] Extract existing English strings to translation files
-- [ ] Set up TypeScript types for translations
+- [x] Create `src/locales/` directory structure
+- [x] Extract existing English strings to translation files
+- [ ] Set up TypeScript types for translations (optional)
 
 #### 1.3 Initialize i18n
-- [ ] Create i18n configuration file
-- [ ] Integrate with React app (in `main.tsx`)
-- [ ] Add language detection logic
+- [x] Create i18n configuration file
+- [x] Integrate with React app (in `main.tsx`)
+- [x] Add language detection and persistence logic
 
 #### 1.4 Basic Component Integration
-- [ ] Create `LanguageSwitcher` component
-- [ ] Add language switcher to navigation
+- [x] Create `LanguageSwitcher` component
+- [x] Add language switcher to navigation
 - [ ] Test basic translation functionality
 
 ### Phase 2: Content Translation (Week 2-3)
 
 #### 2.1 String Extraction
-- [ ] Audit all hardcoded strings in components
-- [ ] Extract strings to appropriate translation files
-- [ ] Replace hardcoded strings with `t()` calls
+- [x] Audit all hardcoded strings in components
+- [x] Extract strings to appropriate translation files
+- [x] Replace hardcoded strings with `t()` calls
 
 #### 2.2 Professional Translation
-- [ ] Send translation files to Danish translators
-- [ ] Include context and screenshots
-- [ ] Review and approve translations
+- [x] In-house Danish translation pass
+- [ ] Optional external translation review
 
 #### 2.3 Translation Integration
-- [ ] Import translated files into application
+- [x] Import translated files into application
 - [ ] Test all translations display correctly
-- [ ] Implement fallback handling
+- [x] Implement fallback handling
 
 ### Phase 3: Advanced Features (Week 4)
 

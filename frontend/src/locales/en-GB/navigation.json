@@ -1,0 +1,16 @@
+{
+  "introduction": "Introduction",
+  "signIn": "Sign in",
+  "signOut": "Sign out",
+  "lightMode": "Light mode",
+  "darkMode": "Dark mode",
+  "editCv": "Edit CV",
+  "createCv": "Create CV",
+  "myCvs": "My CVs",
+  "searchCvs": "🔍 Search CVs",
+  "myProfiles": "My Profiles",
+  "profile": "Profile",
+  "settings": "Settings",
+  "admin": "Admin",
+  "language": "Language"
+}

@@ -4,6 +4,7 @@ import axios from 'axios'
 import { CVData } from '../../types/cv'
 import { defaultCvData } from './cvFormDefaults'
 import { getErrorDetail, getErrorResponse } from '../axiosError'
+import i18n from '../../i18n'
 
 interface UseCvLoaderProps {
   cvId: string | null | undefined
@@ -48,11 +49,11 @@ export function useCvLoader({ cvId, reset, onError, setLoading }: UseCvLoaderPro
       } catch (error: unknown) {
         const { status, data } = getErrorResponse(error)
         if (status === 404) {
-          callbacksRef.current.onError('CV not found')
+          callbacksRef.current.onError(i18n.t('cv:errors.notFound'))
           return
         }
         const detail = getErrorDetail(data)
-        callbacksRef.current.onError(detail || 'Failed to load CV')
+        callbacksRef.current.onError(detail || i18n.t('cv:errors.loadFailed'))
       } finally {
         loadingRef.current.delete(cvId)
         setIsLoadingCv(false)

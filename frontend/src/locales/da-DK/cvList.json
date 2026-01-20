@@ -1,0 +1,25 @@
+{
+  "errors": {
+    "loadFailed": "Kunne ikke indlæse CV'er",
+    "deleteFailed": "Kunne ikke slette CV",
+    "generateFailed": "Kunne ikke generere CV-fil",
+    "downloadPdf": "Kunne ikke downloade PDF"
+  },
+  "confirmDelete": "Er du sikker på, at du vil slette dette CV?",
+  "title": "Mine CV'er ({{count}})",
+  "search": {"placeholder": "Søg CV'er...", "action": "Søg"},
+  "actions": {
+    "exportCsv": "Eksporter CSV",
+    "edit": "Rediger",
+    "download": "Download",
+    "generateFile": "Generer fil",
+    "generating": "Genererer...",
+    "downloadPdf": "Download PDF",
+    "delete": "Slet"
+  },
+  "loading": "Indlæser CV'er...",
+  "empty": "Ingen CV'er fundet.",
+  "unnamed": "Uden navn",
+  "created": "Oprettet: {{date}}",
+  "id": "ID: {{id}}"
+}

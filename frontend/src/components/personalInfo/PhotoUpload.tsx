@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
 import { Control, useController } from 'react-hook-form'
 import { CVData } from '../../types/cv'
+import { useTranslation } from 'react-i18next'
 
 interface PhotoUploadProps {
   control: Control<CVData>
 }
 
 export default function PhotoUpload({ control }: PhotoUploadProps) {
+  const { t } = useTranslation('cv')
   const photoController = useController({ control, name: 'personal_info.photo' })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(
@@ -31,14 +33,14 @@ export default function PhotoUpload({ control }: PhotoUploadProps) {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file')
+      alert(t('personalInfo.photo.errors.invalidType'))
       return
     }
 
     // Validate file size (max 2MB)
     const maxSize = 2 * 1024 * 1024 // 2MB
     if (file.size > maxSize) {
-      alert('Image size must be less than 2MB')
+      alert(t('personalInfo.photo.errors.tooLarge'))
       return
     }
 
@@ -50,7 +52,7 @@ export default function PhotoUpload({ control }: PhotoUploadProps) {
       setPhotoPreview(base64String)
     }
     reader.onerror = () => {
-      alert('Error reading file')
+      alert(t('personalInfo.photo.errors.readFailed'))
     }
     reader.readAsDataURL(file)
   }
@@ -66,19 +68,21 @@ export default function PhotoUpload({ control }: PhotoUploadProps) {
   return (
     <div>
       <label htmlFor="photo" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-        Photo
+        {t('personalInfo.photo.label')}
       </label>
       <div className="mt-1 flex items-center gap-4">
         <div className="flex-shrink-0">
           {photoPreview ? (
             <img
               src={photoPreview}
-              alt="Preview"
+              alt={t('personalInfo.photo.previewAlt')}
               className="h-24 w-24 rounded-md object-cover border border-gray-300 dark:border-gray-700"
             />
           ) : (
             <div className="h-24 w-24 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-              <span className="text-xs text-gray-500 dark:text-gray-400">No photo</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {t('personalInfo.photo.noPhoto')}
+              </span>
             </div>
           )}
         </div>
@@ -92,7 +96,7 @@ export default function PhotoUpload({ control }: PhotoUploadProps) {
             className="block w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300 dark:hover:file:bg-blue-800 cursor-pointer"
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            JPEG, PNG or WebP. Max size 2MB.
+            {t('personalInfo.photo.helper')}
           </p>
           {photoPreview && (
             <button
@@ -100,7 +104,7 @@ export default function PhotoUpload({ control }: PhotoUploadProps) {
               onClick={handleRemovePhoto}
               className="mt-2 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
             >
-              Remove photo
+              {t('personalInfo.photo.remove')}
             </button>
           )}
         </div>

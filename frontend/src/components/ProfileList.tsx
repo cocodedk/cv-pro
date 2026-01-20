@@ -2,12 +2,14 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { listProfiles, deleteProfileByUpdatedAt } from '../services/profileService'
 import { ProfileListItem } from '../types/cv'
 import { getErrorMessage } from '../app_helpers/axiosError'
+import { useTranslation } from 'react-i18next'
 
 interface ProfileListProps {
   onError: (message: string) => void
 }
 
 export default function ProfileList({ onError }: ProfileListProps) {
+  const { t, i18n } = useTranslation('profile')
   const [profiles, setProfiles] = useState<ProfileListItem[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -30,11 +32,11 @@ export default function ProfileList({ onError }: ProfileListProps) {
       }
       setProfiles(filteredProfiles)
     } catch (error: unknown) {
-      onError(getErrorMessage(error, 'Failed to load profiles'))
+      onError(getErrorMessage(error, t('profileList.errors.loadFailed')))
     } finally {
       setLoading(false)
     }
-  }, [onError])
+  }, [onError, t])
 
   useEffect(() => {
     fetchProfiles()
@@ -61,14 +63,14 @@ export default function ProfileList({ onError }: ProfileListProps) {
   }
 
   const handleDelete = async (updatedAt: string) => {
-    if (!confirm('Are you sure you want to delete this profile?')) {
+    if (!confirm(t('profileList.confirmDelete'))) {
       return
     }
     try {
       await deleteProfileByUpdatedAt(updatedAt)
       fetchProfiles()
     } catch (error: unknown) {
-      onError(getErrorMessage(error, 'Failed to delete profile'))
+      onError(getErrorMessage(error, t('profileList.errors.deleteFailed')))
     }
   }
 
@@ -79,7 +81,7 @@ export default function ProfileList({ onError }: ProfileListProps) {
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleDateString(i18n.language, {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -94,7 +96,7 @@ export default function ProfileList({ onError }: ProfileListProps) {
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            My Profiles ({profiles.length})
+            {t('profileList.title', { count: profiles.length })}
           </h2>
           <div className="flex space-x-2">
             <input
@@ -102,14 +104,14 @@ export default function ProfileList({ onError }: ProfileListProps) {
               value={search}
               onChange={e => setSearch(e.target.value)}
               onKeyPress={e => e.key === 'Enter' && handleSearch()}
-              placeholder="Search profiles..."
+              placeholder={t('profileList.search.placeholder')}
               className="px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
             />
             <button
               onClick={handleSearch}
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500"
             >
-              Search
+              {t('profileList.search.action')}
             </button>
           </div>
         </div>
@@ -118,12 +120,12 @@ export default function ProfileList({ onError }: ProfileListProps) {
       <div className="p-6">
         {loading ? (
           <div className="text-center py-8">
-            <p className="text-gray-500 dark:text-gray-400">Loading profiles...</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('profileList.loading')}</p>
           </div>
         ) : profiles.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-500 dark:text-gray-400">
-              {search ? 'No profiles found matching your search.' : 'No profiles found.'}
+              {search ? t('profileList.empty.search') : t('profileList.empty.default')}
             </p>
           </div>
         ) : (
@@ -139,7 +141,7 @@ export default function ProfileList({ onError }: ProfileListProps) {
                       {profile.name}
                     </h3>
                     <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-                      Updated: {formatDate(profile.updated_at)}
+                      {t('profileList.updated', { date: formatDate(profile.updated_at) })}
                     </p>
                   </div>
                   <div className="flex space-x-2">
@@ -147,13 +149,13 @@ export default function ProfileList({ onError }: ProfileListProps) {
                       onClick={() => handleEdit(profile.updated_at)}
                       className="px-3 py-1 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
                     >
-                      Edit
+                      {t('actions.edit')}
                     </button>
                     <button
                       onClick={() => handleDelete(profile.updated_at)}
                       className="px-3 py-1 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                     >
-                      Delete
+                      {t('actions.delete')}
                     </button>
                   </div>
                 </div>

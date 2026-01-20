@@ -8,6 +8,7 @@ import {
   CoverLetterData,
 } from '../types/coverLetter'
 import { getErrorMessage } from '../app_helpers/axiosError'
+import i18n from '../i18n'
 
 export async function generateCoverLetter(
   payload: CoverLetterRequest
@@ -42,12 +43,12 @@ export async function downloadCoverLetterPDF(html: string): Promise<void> {
       try {
         const text = await error.response.data.text()
         const json = JSON.parse(text)
-        throw new Error(json.detail || 'Failed to download PDF')
+        throw new Error(json.detail || i18n.t('coverLetter:errors.downloadPdf'))
       } catch {
-        throw new Error('Failed to download PDF')
+        throw new Error(i18n.t('coverLetter:errors.downloadPdf'))
       }
     }
-    throw new Error(getErrorMessage(error, 'Failed to download PDF'))
+    throw new Error(getErrorMessage(error, i18n.t('coverLetter:errors.downloadPdf')))
   }
 }
 

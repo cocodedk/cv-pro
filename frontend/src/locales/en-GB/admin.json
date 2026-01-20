@@ -1,0 +1,31 @@
+{
+  "errors": {
+    "loadFailed": "Failed to load admin data",
+    "updateRoleFailed": "Failed to update role",
+    "deactivateFailed": "Failed to deactivate user"
+  },
+  "accessRequired": "Admin access required.",
+  "loading": "Loading admin data...",
+  "stats": {
+    "daily": {
+      "title": "Daily stats",
+      "activeUsers": "Active users: {{count}}",
+      "cvsCreated": "CVs created: {{count}}",
+      "themedCvs": "Themed CVs: {{count}}"
+    },
+    "themes": {
+      "title": "Theme usage",
+      "usage": "{{uses}} uses · {{users}} users"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "refresh": "Refresh",
+    "columns": {"email": "Email", "role": "Role", "active": "Active", "cvs": "CVs", "actions": "Actions"},
+    "noName": "No name",
+    "active": {"yes": "Yes", "no": "No"},
+    "makeUser": "Make user",
+    "makeAdmin": "Make admin",
+    "deactivate": "Deactivate"
+  }
+}

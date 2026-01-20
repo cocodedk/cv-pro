@@ -1,28 +1,33 @@
 import { UseFormRegister } from 'react-hook-form'
 import { CVData } from '../../types/cv'
+import { useTranslation } from 'react-i18next'
 
 interface AddressFieldsProps {
   register: UseFormRegister<CVData>
 }
 
 export default function AddressFields({ register }: AddressFieldsProps) {
+  const { t } = useTranslation('cv')
+
   return (
     <div className="space-y-4">
-      <h4 className="text-md font-medium text-gray-800 dark:text-gray-200">Address</h4>
+      <h4 className="text-md font-medium text-gray-800 dark:text-gray-200">
+        {t('personalInfo.address.title')}
+      </h4>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label
             htmlFor="address.street"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Street Address
+            {t('personalInfo.address.street.label')}
           </label>
           <input
             type="text"
             id="address.street"
             {...register('personal_info.address.street')}
             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
-            placeholder="House number and street name"
+            placeholder={t('personalInfo.address.street.placeholder')}
           />
         </div>
 
@@ -31,7 +36,7 @@ export default function AddressFields({ register }: AddressFieldsProps) {
             htmlFor="address.city"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            City
+            {t('personalInfo.address.city')}
           </label>
           <input
             type="text"
@@ -46,7 +51,7 @@ export default function AddressFields({ register }: AddressFieldsProps) {
             htmlFor="address.state"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            State / Province
+            {t('personalInfo.address.state')}
           </label>
           <input
             type="text"
@@ -61,7 +66,7 @@ export default function AddressFields({ register }: AddressFieldsProps) {
             htmlFor="address.zip"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            ZIP / Postal Code
+            {t('personalInfo.address.zip')}
           </label>
           <input
             type="text"
@@ -76,7 +81,7 @@ export default function AddressFields({ register }: AddressFieldsProps) {
             htmlFor="address.country"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Country
+            {t('personalInfo.address.country')}
           </label>
           <input
             type="text"

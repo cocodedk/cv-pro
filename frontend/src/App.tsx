@@ -12,14 +12,17 @@ import AdminPanel from './components/admin/AdminPanel'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import ConsentManager from './components/ConsentManager'
 import CVSearch from './components/CVSearch'
+import Settings from './components/Settings'
 import { useHashRouting } from './app_helpers/useHashRouting'
 import { useTheme } from './app_helpers/useTheme'
 import { useMessage } from './app_helpers/useMessage'
 import { BRANDING } from './app_helpers/branding'
 import { useAuth } from './contexts/AuthContext'
+import { useTranslation } from 'react-i18next'
 import './index.css'
 
 function App() {
+  const { t } = useTranslation('common')
   const { viewMode, cvId } = useHashRouting()
   const { isDark, setIsDark } = useTheme()
   const { message, showMessage, clearMessage } = useMessage()
@@ -32,21 +35,44 @@ function App() {
 
   // GDPR Consent Management
   const [showConsentModal, setShowConsentModal] = useState(false)
+  const [hasConsent, setHasConsent] = useState(false)
 
-  useEffect(() => {
-    // Check if user has given GDPR consent
-    const savedConsent = localStorage.getItem('gdpr-consent')
-    if (!savedConsent) {
-      // Show consent modal for new users
-      setShowConsentModal(true)
-    }
+  const closeConsentModal = useCallback(() => {
+    setShowConsentModal(false)
   }, [])
 
-  const handleConsentGiven = (preferences: any) => {
-    console.log('GDPR Consent given:', preferences)
-    // Here you could send consent preferences to backend if needed
-    setShowConsentModal(false)
-  }
+  const checkConsentStatus = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return false
+    }
+    const savedConsent = window.localStorage.getItem('gdpr-consent')
+    const hasSavedConsent = Boolean(savedConsent)
+    setHasConsent(hasSavedConsent)
+    return hasSavedConsent
+  }, [])
+
+  const openConsentModal = useCallback(() => {
+    checkConsentStatus()
+    setShowConsentModal(true)
+  }, [checkConsentStatus])
+
+  const maybeOpenConsentModal = useCallback(() => {
+    const hasSavedConsent = checkConsentStatus()
+    if (!hasSavedConsent) {
+      setShowConsentModal(true)
+    }
+  }, [checkConsentStatus])
+
+  const handleConsentSaved = useCallback(() => {
+    setHasConsent(true)
+  }, [])
+
+  useEffect(() => {
+    if (!authEnabled || loading || !user) {
+      return
+    }
+    maybeOpenConsentModal()
+  }, [authEnabled, loading, maybeOpenConsentModal, user])
 
   useEffect(() => {
     document.title = `${BRANDING.appName} — ${BRANDING.ownerName} (${BRANDING.companyName})`
@@ -77,19 +103,22 @@ function App() {
 
       <ConsentManager
         showModal={showConsentModal}
-        onConsentGiven={handleConsentGiven}
-        onClose={() => setShowConsentModal(false)}
+        onClose={closeConsentModal}
+        onConsentSaved={handleConsentSaved}
+        canClose={hasConsent}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {authEnabled && loading ? (
-          <div className="text-sm text-gray-500">Checking session...</div>
+          <div className="text-sm text-gray-500">{t('checkingSession')}</div>
         ) : authEnabled && !user && resolvedViewMode !== 'introduction' ? (
-          <AuthView />
+          <AuthView onSignUpSuccess={maybeOpenConsentModal} />
         ) : resolvedViewMode === 'introduction' ? (
           <Introduction />
         ) : resolvedViewMode === 'admin' ? (
           <AdminPanel isAdmin={isAdmin} />
+        ) : resolvedViewMode === 'settings' ? (
+          <Settings onEditConsent={openConsentModal} />
         ) : resolvedViewMode === 'privacy' ? (
           <PrivacyPolicy />
         ) : resolvedViewMode === 'search' ? (

@@ -3,6 +3,7 @@ import { CoverLetterRequest, CoverLetterResponse } from '../../types/coverLetter
 import { generateCoverLetter, saveCoverLetter } from '../../services/coverLetterService'
 import RecipientFields from './RecipientFields'
 import CoverLetterPreview from './CoverLetterPreview'
+import { useTranslation } from 'react-i18next'
 
 interface CoverLetterModalProps {
   onClose: () => void
@@ -32,6 +33,7 @@ export default function CoverLetterModal({
   setLoading,
   initialJobDescription = '',
 }: CoverLetterModalProps) {
+  const { t } = useTranslation('coverLetter')
   const [payload, setPayload] = useState<CoverLetterRequest>({
     ...defaultPayload,
     job_description: initialJobDescription,
@@ -61,7 +63,7 @@ export default function CoverLetterModal({
       const response = await generateCoverLetter(payload)
       setResult(response)
     } catch (error: unknown) {
-      onError(getErrorDetail(error) || 'Failed to generate cover letter')
+      onError(getErrorDetail(error) || t('errors.generateFailed'))
     } finally {
       setIsGenerating(false)
       setLoading(false)
@@ -76,7 +78,7 @@ export default function CoverLetterModal({
       const response = await generateCoverLetter(payload)
       setResult(response)
     } catch (error: unknown) {
-      onError(getErrorDetail(error) || 'Failed to regenerate cover letter')
+      onError(getErrorDetail(error) || t('errors.regenerateFailed'))
     } finally {
       setIsGenerating(false)
       setLoading(false)
@@ -88,9 +90,9 @@ export default function CoverLetterModal({
     setIsSaving(true)
     try {
       await saveCoverLetter(result, payload)
-      onSuccess('Cover letter saved successfully!')
+      onSuccess(t('messages.saved'))
     } catch (error: unknown) {
-      onError(getErrorDetail(error) || 'Failed to save cover letter')
+      onError(getErrorDetail(error) || t('errors.saveFailed'))
     } finally {
       setIsSaving(false)
     }
@@ -100,15 +102,13 @@ export default function CoverLetterModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
       <div className="w-full max-w-3xl max-h-[90vh] flex flex-col rounded-lg bg-white shadow-lg dark:border dark:border-gray-800 dark:bg-gray-900">
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-800 flex-shrink-0">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Generate Cover Letter
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('title')}</h3>
           <button
             type="button"
             onClick={onClose}
             className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
           >
-            Close
+            {t('actions.close')}
           </button>
         </div>
 
@@ -130,7 +130,7 @@ export default function CoverLetterModal({
             onClick={onClose}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
           >
-            Cancel
+            {t('actions.cancel')}
           </button>
           {result ? (
             <>
@@ -140,7 +140,7 @@ export default function CoverLetterModal({
                 onClick={onSave}
                 className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-green-500"
               >
-                {isSaving ? 'Saving...' : 'Save'}
+                {isSaving ? t('actions.saving') : t('actions.save')}
               </button>
               <button
                 type="button"
@@ -148,7 +148,7 @@ export default function CoverLetterModal({
                 onClick={onRegenerate}
                 className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-blue-500"
               >
-                {isGenerating ? 'Regenerating...' : 'Regenerate'}
+                {isGenerating ? t('actions.regenerating') : t('actions.regenerate')}
               </button>
             </>
           ) : (
@@ -158,7 +158,7 @@ export default function CoverLetterModal({
               onClick={onGenerate}
               className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-blue-500"
             >
-              {isGenerating ? 'Generating...' : 'Generate'}
+              {isGenerating ? t('actions.generating') : t('actions.generate')}
             </button>
           )}
         </div>

@@ -5,6 +5,8 @@
  * Handles blob response and triggers browser download.
  */
 
+import i18n from '../i18n'
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 export interface PdfDownloadOptions {
@@ -43,7 +45,9 @@ export const downloadPdf = async (cvId: string, options?: PdfDownloadOptions): P
 
     if (!response.ok) {
       // Try to get error message from response
-      let errorMessage = `PDF generation failed: ${response.statusText}`
+      let errorMessage = i18n.t('cv:errors.pdfGenerationFailed', {
+        statusText: response.statusText,
+      })
       try {
         const errorData = await response.json()
         if (errorData.detail) {
@@ -55,11 +59,11 @@ export const downloadPdf = async (cvId: string, options?: PdfDownloadOptions): P
 
       // Handle specific status codes
       if (response.status === 404) {
-        throw new Error('CV not found')
+        throw new Error(i18n.t('cv:errors.notFound'))
       } else if (response.status === 429) {
-        throw new Error('Too many requests. Please wait a moment.')
+        throw new Error(i18n.t('cv:errors.tooManyRequests'))
       } else if (response.status === 500) {
-        throw new Error(errorMessage || 'PDF generation service unavailable')
+        throw new Error(errorMessage || i18n.t('cv:errors.pdfServiceUnavailable'))
       }
 
       throw new Error(errorMessage)
@@ -84,6 +88,6 @@ export const downloadPdf = async (cvId: string, options?: PdfDownloadOptions): P
     if (error instanceof Error) {
       throw error
     }
-    throw new Error('Failed to download PDF. Please try again.')
+    throw new Error(i18n.t('cv:errors.downloadPdfRetry'))
   }
 }

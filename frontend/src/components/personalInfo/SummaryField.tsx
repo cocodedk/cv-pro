@@ -1,6 +1,7 @@
 import { Control, useController } from 'react-hook-form'
 import { CVData } from '../../types/cv'
 import RichTextarea from '../RichTextarea'
+import { useTranslation } from 'react-i18next'
 
 interface SummaryFieldProps {
   control: Control<CVData>
@@ -8,6 +9,7 @@ interface SummaryFieldProps {
 }
 
 export default function SummaryField({ control, showAiAssist }: SummaryFieldProps) {
+  const { t } = useTranslation('cv')
   const summaryController = useController({ control, name: 'personal_info.summary' })
 
   return (
@@ -17,14 +19,14 @@ export default function SummaryField({ control, showAiAssist }: SummaryFieldProp
         htmlFor="summary"
         className="block text-sm font-medium text-gray-700 dark:text-gray-300"
       >
-        Professional Summary
+        {t('personalInfo.summary.label')}
       </label>
       <RichTextarea
         id="summary"
         value={summaryController.field.value || ''}
         onChange={summaryController.field.onChange}
         rows={4}
-        placeholder="Brief summary of your professional background..."
+        placeholder={t('personalInfo.summary.placeholder')}
         className="mt-1"
         showAiAssist={showAiAssist}
       />

@@ -1,0 +1,45 @@
+{
+  "title": "Samtykke til databehandling",
+  "intro": "For at give dig den bedste CV-oplevelse har vi brug for dit samtykke til forskellige databehandlingsaktiviteter. Gennemgå og vælg dine præferencer nedenfor.",
+  "legalBasis": {
+    "label": "Retsgrundlag:",
+    "text": "Dit udtrykkelige samtykke (artikel 6(1)(a) GDPR) eller legitim interesse (artikel 6(1)(f) GDPR) for essentielle tjenester."
+  },
+  "sections": {
+    "essential": {
+      "title": "Nødvendig databehandling *",
+      "description": "Nødvendigt for at oprette, gemme og generere dine CV-dokumenter. Omfatter behandling af dine personlige oplysninger, erhvervserfaring, uddannelse og kompetencer.",
+      "requiredNote": "* Dette samtykke er påkrævet for at bruge vores tjeneste"
+    },
+    "ai": {
+      "title": "AI-drevne funktioner",
+      "description": "Tillad os at bruge kunstig intelligens til at forbedre dit CV med personlige forslag, automatisk generering af ansøgningsbrev og anbefalinger til jobmatch.",
+      "note": "Dine data behandles kun af vores AI-tjenesteudbydere til dette formål."
+    },
+    "analytics": {
+      "title": "Analyse og performance",
+      "description": "Hjælp os med at forbedre vores tjeneste ved at analysere, hvordan du bruger vores applikation. Dette inkluderer sidevisninger, funktionsbrug og performance-målinger.",
+      "note": "Data anonymiseres og aggregeres – vi kan ikke identificere individuelle brugere."
+    },
+    "marketing": {
+      "title": "Marketingkommunikation",
+      "description": "Modtag opdateringer om nye funktioner, tips til bedre CV'er og lejlighedsvise kampagnetilbud relateret til karriereudvikling.",
+      "note": "Du kan afmelde dig når som helst."
+    },
+    "research": {
+      "title": "Datadeling til forskning",
+      "description": "Tillad anonymiserede CV-data at blive brugt til forskningsformål for at forbedre CV-praksis og jobmarkedsindsigt.",
+      "note": "Alle personlige identifikatorer fjernes – data kan ikke spores tilbage til dig."
+    }
+  },
+  "actions": {
+    "acceptEssential": "Accepter kun nødvendige",
+    "savePreferences": "Gem præferencer",
+    "acceptAll": "Accepter alle"
+  },
+  "footer": {
+    "prefix": "Du kan til enhver tid ændre dine præferencer ved at besøge vores",
+    "privacyPolicyLink": "Privatlivspolitik",
+    "suffix": "eller kontakte os på {{email}}"
+  }
+}

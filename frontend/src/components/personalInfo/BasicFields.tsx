@@ -1,5 +1,6 @@
 import { UseFormRegister, FieldErrors } from 'react-hook-form'
 import { CVData } from '../../types/cv'
+import { useTranslation } from 'react-i18next'
 
 interface BasicFieldsProps {
   register: UseFormRegister<CVData>
@@ -7,6 +8,8 @@ interface BasicFieldsProps {
 }
 
 export default function BasicFields({ register, errors }: BasicFieldsProps) {
+  const { t } = useTranslation('cv')
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
@@ -14,12 +17,12 @@ export default function BasicFields({ register, errors }: BasicFieldsProps) {
           htmlFor="name"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Full Name *
+          {t('personalInfo.fields.name.label')}
         </label>
         <input
           type="text"
           id="name"
-          {...register('personal_info.name', { required: 'Name is required' })}
+          {...register('personal_info.name', { required: t('personalInfo.fields.name.required') })}
           className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400"
         />
         {errors.personal_info?.name && (
@@ -34,7 +37,7 @@ export default function BasicFields({ register, errors }: BasicFieldsProps) {
           htmlFor="title"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Professional Title
+          {t('personalInfo.fields.title.label')}
         </label>
         <input
           type="text"
@@ -49,7 +52,7 @@ export default function BasicFields({ register, errors }: BasicFieldsProps) {
           htmlFor="email"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Email
+          {t('personalInfo.fields.email.label')}
         </label>
         <input
           type="email"
@@ -64,7 +67,7 @@ export default function BasicFields({ register, errors }: BasicFieldsProps) {
           htmlFor="phone"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Phone
+          {t('personalInfo.fields.phone.label')}
         </label>
         <input
           type="tel"
@@ -79,7 +82,7 @@ export default function BasicFields({ register, errors }: BasicFieldsProps) {
           htmlFor="linkedin"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          LinkedIn
+          {t('personalInfo.fields.linkedin.label')}
         </label>
         <input
           type="url"
@@ -94,7 +97,7 @@ export default function BasicFields({ register, errors }: BasicFieldsProps) {
           htmlFor="github"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          GitHub
+          {t('personalInfo.fields.github.label')}
         </label>
         <input
           type="url"
@@ -109,7 +112,7 @@ export default function BasicFields({ register, errors }: BasicFieldsProps) {
           htmlFor="website"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Website
+          {t('personalInfo.fields.website.label')}
         </label>
         <input
           type="url"

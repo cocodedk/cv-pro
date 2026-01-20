@@ -1,0 +1,12 @@
+{
+  "title": "Settings",
+  "sections": {
+    "consent": {
+      "title": "Privacy & Consent",
+      "description": "Review and update your data processing preferences."
+    }
+  },
+  "actions": {
+    "editConsent": "Edit consent preferences"
+  }
+}

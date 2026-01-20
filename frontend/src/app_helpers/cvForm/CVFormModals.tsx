@@ -2,6 +2,7 @@ import { CVData, ProfileData } from '../../types/cv'
 import { UseFormGetValues, UseFormReset } from 'react-hook-form'
 import AiGenerateModal from '../../components/ai/AiGenerateModal'
 import ProfileLoaderModal from './ProfileLoaderModal'
+import { useTranslation } from 'react-i18next'
 
 interface CVFormModalsProps {
   showAiModal: boolean
@@ -42,6 +43,8 @@ export default function CVFormModals({
   onCancelProfileLoader,
   onSuccess,
 }: CVFormModalsProps) {
+  const { t } = useTranslation('ai')
+
   return (
     <>
       {showAiModal && (
@@ -50,7 +53,7 @@ export default function CVFormModals({
           onApply={(draft: CVData) => {
             const currentTheme = getValues('theme')
             reset({ ...draft, theme: currentTheme || draft.theme })
-            onSuccess('Draft applied. Review and save when ready.')
+            onSuccess(t('messages.draftApplied'))
           }}
           onError={onError}
           setLoading={setLoading}

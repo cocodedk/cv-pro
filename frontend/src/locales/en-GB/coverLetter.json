@@ -1,0 +1,48 @@
+{
+  "title": "Generate Cover Letter",
+  "actions": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "save": "Save",
+    "regenerating": "Regenerating...",
+    "regenerate": "Regenerate",
+    "generating": "Generating...",
+    "generate": "Generate",
+    "downloadPdf": "Download PDF"
+  },
+  "errors": {
+    "generateFailed": "Failed to generate cover letter",
+    "regenerateFailed": "Failed to regenerate cover letter",
+    "saveFailed": "Failed to save cover letter",
+    "downloadPdf": "Failed to download PDF"
+  },
+  "messages": {
+    "saved": "Cover letter saved successfully!"
+  },
+  "preview": {
+    "title": "Preview",
+    "highlights": "Profile Highlights Used"
+  },
+  "recipient": {
+    "companyName": {"label": "Company Name *", "placeholder": "e.g. Acme Corporation"},
+    "hiringManager": {"label": "Hiring Manager Name (optional)", "placeholder": "e.g. Jane Smith"},
+    "companyAddress": {
+      "label": "Company Address (optional)",
+      "placeholder": "Street Address\nCity, State ZIP"
+    },
+    "tone": {
+      "label": "Tone",
+      "options": {"professional": "Professional", "enthusiastic": "Enthusiastic", "conversational": "Conversational"}
+    },
+    "instructions": {
+      "label": "LLM Instructions (optional)",
+      "placeholder": "e.g., Write in Spanish, Keep it under 200 words, Use a formal tone"
+    },
+    "jobDescription": {
+      "label": "Job Description *",
+      "placeholder": "Paste the job description here...",
+      "minLength": "Minimum 20 characters."
+    }
+  }
+}

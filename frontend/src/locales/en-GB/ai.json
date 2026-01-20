@@ -1,0 +1,64 @@
+{
+  "actions": {
+    "rewriteAi": "AI rewrite",
+    "bulletsAi": "AI bullets",
+    "cancel": "Cancel",
+    "rewrite": "Rewrite",
+    "rewriting": "Rewriting...",
+    "close": "Close",
+    "applyDraft": "Apply draft to form",
+    "generating": "Generating...",
+    "generate": "Generate",
+    "regenerating": "Regenerating...",
+    "regenerate": "Regenerate",
+    "regenerateWithContext": "Regenerate with this context"
+  },
+  "characterCount": "{{count}} / {{max}} characters",
+  "rewriteModal": {
+    "title": "AI Rewrite",
+    "description": "Enter your prompt/instruction for rewriting the text:",
+    "placeholder": "e.g., Make it more professional, Make it shorter, Improve clarity...",
+    "ariaLabel": "Prompt for AI rewrite"
+  },
+  "toolbar": {"link": "Link", "linkPrompt": "Link URL", "clear": "Clear"},
+  "generateModal": {"title": "Generate CV from Job Description"},
+  "messages": {
+    "draftApplied": "Draft applied. Review and save when ready."
+  },
+  "errors": {
+    "generateDraftFailed": "Failed to generate CV draft",
+    "regenerateDraftFailed": "Failed to regenerate CV draft",
+    "missingText": "Please enter some text to rewrite",
+    "rewriteFailed": "Failed to rewrite text"
+  },
+  "fields": {
+    "targetRole": {"label": "Target role (optional)", "placeholder": "e.g. Senior Frontend Engineer"},
+    "seniority": {"label": "Seniority (optional)", "placeholder": "e.g. Mid / Senior"},
+    "style": {
+      "label": "Style",
+      "options": {
+        "selectReorder": "Select & reorder",
+        "rewriteBullets": "Rewrite bullets (heuristic)",
+        "llmTailor": "AI Tailor (rewrites to match JD)"
+      }
+    },
+    "maxExperiences": {"label": "Max experiences"},
+    "jobDescription": {
+      "label": "Job description",
+      "placeholder": "Paste the job description here...",
+      "minLength": "Minimum 20 characters.",
+      "ready": "Ready to generate.",
+      "keepPasting": "Keep pasting."
+    },
+    "additionalContext": {
+      "label": "Additional context (optional)",
+      "placeholder": "e.g. Make this more enterprise-focused, Emphasize Python skills, Focus on leadership experience...",
+      "helper": "Directive to guide CV tailoring (e.g., style focus, skill emphasis, industry orientation)."
+    }
+  },
+  "panels": {
+    "summary": "Summary",
+    "questions": "Questions",
+    "answersPlaceholder": "Provide your answers here (e.g., 'Reduced API latency by 40%, increased test coverage from 50% to 85%')..."
+  }
+}

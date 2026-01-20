@@ -1,5 +1,6 @@
 import { useFieldArray, Control, UseFormRegister } from 'react-hook-form'
 import { CVData } from '../types/cv'
+import { useTranslation } from 'react-i18next'
 
 interface SkillsProps {
   control: Control<CVData>
@@ -7,6 +8,7 @@ interface SkillsProps {
 }
 
 export default function Skills({ control, register }: SkillsProps) {
+  const { t } = useTranslation('cv')
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'skills',
@@ -23,20 +25,20 @@ export default function Skills({ control, register }: SkillsProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Skills</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {t('sections.skills')}
+        </h3>
         <button
           type="button"
           onClick={addSkill}
           className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
         >
-          + Add Skill
+          {t('skills.add')}
         </button>
       </div>
 
       {fields.length === 0 && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          No skills added. Click &quot;Add Skill&quot; to add one.
-        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t('skills.empty')}</p>
       )}
 
       {fields.map((field, index) => (
@@ -46,14 +48,14 @@ export default function Skills({ control, register }: SkillsProps) {
         >
           <div className="flex justify-between items-center mb-4">
             <h4 className="text-md font-medium text-gray-900 dark:text-gray-100">
-              Skill {index + 1}
+              {t('skills.item.title', { index: index + 1 })}
             </h4>
             <button
               type="button"
               onClick={() => remove(index)}
               className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
             >
-              Remove
+              {t('actions.remove')}
             </button>
           </div>
 
@@ -63,13 +65,13 @@ export default function Skills({ control, register }: SkillsProps) {
                 htmlFor={`skill-name-${index}`}
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Skill Name *
+                {t('skills.fields.name.label')}
               </label>
               <input
                 id={`skill-name-${index}`}
                 type="text"
                 {...register(`skills.${index}.name` as const, {
-                  required: 'Skill name is required',
+                  required: t('skills.fields.name.required'),
                 })}
                 className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400"
               />
@@ -80,13 +82,13 @@ export default function Skills({ control, register }: SkillsProps) {
                 htmlFor={`skill-category-${index}`}
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Category
+                {t('skills.fields.category.label')}
               </label>
               <input
                 id={`skill-category-${index}`}
                 type="text"
                 {...register(`skills.${index}.category` as const)}
-                placeholder="e.g., Programming Languages"
+                placeholder={t('skills.fields.category.placeholder')}
                 className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
               />
             </div>
@@ -96,13 +98,13 @@ export default function Skills({ control, register }: SkillsProps) {
                 htmlFor={`skill-level-${index}`}
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Level
+                {t('skills.fields.level.label')}
               </label>
               <input
                 id={`skill-level-${index}`}
                 type="text"
                 {...register(`skills.${index}.level` as const)}
-                placeholder="e.g., Expert, Advanced"
+                placeholder={t('skills.fields.level.placeholder')}
                 className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
               />
             </div>
@@ -116,7 +118,7 @@ export default function Skills({ control, register }: SkillsProps) {
           onClick={addSkill}
           className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
         >
-          + Add Skill
+          {t('skills.add')}
         </button>
       </div>
     </div>

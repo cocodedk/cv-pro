@@ -1,0 +1,31 @@
+{
+  "errors": {
+    "loadFailed": "Kunne ikke indlæse admin-data",
+    "updateRoleFailed": "Kunne ikke opdatere rolle",
+    "deactivateFailed": "Kunne ikke deaktivere bruger"
+  },
+  "accessRequired": "Adminadgang kræves.",
+  "loading": "Indlæser admin-data...",
+  "stats": {
+    "daily": {
+      "title": "Daglige statistikker",
+      "activeUsers": "Aktive brugere: {{count}}",
+      "cvsCreated": "CV'er oprettet: {{count}}",
+      "themedCvs": "Tematiserede CV'er: {{count}}"
+    },
+    "themes": {
+      "title": "Temaforbrug",
+      "usage": "{{uses}} brug · {{users}} brugere"
+    }
+  },
+  "users": {
+    "title": "Brugere",
+    "refresh": "Opdater",
+    "columns": {"email": "E-mail", "role": "Rolle", "active": "Aktiv", "cvs": "CV'er", "actions": "Handlinger"},
+    "noName": "Intet navn",
+    "active": {"yes": "Ja", "no": "Nej"},
+    "makeUser": "Gør til bruger",
+    "makeAdmin": "Gør til admin",
+    "deactivate": "Deaktiver"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "reset": "Reset",
+    "saving": "Saving...",
+    "update": "Update Profile",
+    "save": "Save Profile",
+    "cancel": "Cancel",
+    "close": "Close"
+  },
+  "header": {
+    "title": "Master Profile",
+    "subtitleSaved": "Your profile is saved. Update it below.",
+    "subtitleEmpty": "Save your information once and reuse it for all CVs.",
+    "loading": "Loading...",
+    "reload": "Reload Profile",
+    "load": "Load Profile",
+    "delete": "Delete Profile"
+  },
+  "loading": "Loading profile...",
+  "confirmDelete": "Are you sure you want to delete your profile? This action cannot be undone.",
+  "messages": {
+    "saved": "Profile saved successfully!",
+    "loaded": "Profile loaded successfully!",
+    "deleted": "Profile deleted successfully!",
+    "savedToProfile": "Current form data saved to profile!"
+  },
+  "errors": {
+    "saveFailed": "Failed to save profile",
+    "deleteFailed": "Failed to delete profile",
+    "loadFailed": "Failed to load profile: {{message}}",
+    "loadFailedPlain": "Failed to load profile",
+    "unknown": "Unknown error",
+    "noProfile": "No profile found. Please save a profile first.",
+    "saveToProfileFailed": "Failed to save to profile",
+    "listFailed": "Failed to list profiles"
+  },
+  "profileList": {
+    "title": "My Profiles ({{count}})",
+    "search": {"placeholder": "Search profiles...", "action": "Search"},
+    "loading": "Loading profiles...",
+    "empty": {"default": "No profiles found.", "search": "No profiles found matching your search."},
+    "updated": "Updated: {{date}}",
+    "confirmDelete": "Are you sure you want to delete this profile?",
+    "errors": {"loadFailed": "Failed to load profiles", "deleteFailed": "Failed to delete profile"}
+  },
+  "profileSelection": {
+    "title": "Select Profile to Load",
+    "loading": "Loading profiles...",
+    "empty": "No profiles found.",
+    "errors": {
+      "loadProfiles": "Failed to load profiles",
+      "notFound": "Profile not found",
+      "loadProfile": "Failed to load profile"
+    }
+  },
+  "profileLoader": {
+    "title": "Select Items to Include",
+    "experience": "Experiences",
+    "education": "Education",
+    "at": "at",
+    "from": "from",
+    "loadSelected": "Load Selected"
+  }
+}

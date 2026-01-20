@@ -1,6 +1,9 @@
 import { BRANDING } from '../app_helpers/branding'
+import { useTranslation } from 'react-i18next'
 
 export default function Footer() {
+  const { t } = useTranslation('footer')
+
   return (
     <footer className="border-t border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -13,7 +16,7 @@ export default function Footer() {
               href="#privacy"
               className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
             >
-              Privacy Policy
+              {t('privacyPolicy')}
             </a>
             <a
               href={BRANDING.companyUrl}

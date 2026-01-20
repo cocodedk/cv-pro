@@ -1,0 +1,165 @@
+{
+  "titles": {"edit": "Rediger CV", "create": "Opret dit CV"},
+  "sections": {"personalInfo": "Personlige oplysninger", "experience": "Erfaring", "education": "Uddannelse", "skills": "Kompetencer"},
+  "header": {
+    "loadProfile": "Indlæs fra profil",
+    "saveProfile": "Gem til profil",
+    "generateFromJobDescription": "Generer fra jobbeskrivelse",
+    "coverLetter": "Ansøgningsbrev",
+    "generatingPdf": "Genererer...",
+    "downloadPdf": "Download PDF"
+  },
+  "fields": {
+    "theme": {
+      "label": "Tema",
+      "options": {
+        "accented": "Accentueret",
+        "classic": "Klassisk",
+        "colorful": "Farverig",
+        "creative": "Kreativ",
+        "elegant": "Elegant",
+        "executive": "Executive",
+        "minimal": "Minimal",
+        "modern": "Moderne",
+        "professional": "Professionel",
+        "tech": "Tech"
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "groups": {"printFirst": "Print-først", "webFirst": "Web-først", "special": "Særligt"},
+      "options": {
+        "classicTwoColumn": "Klassisk to-kolonne",
+        "atsSingleColumn": "ATS enkeltkolonne",
+        "modernSidebar": "Moderne sidepanel",
+        "sectionCardsGrid": "Sektionkort gitter",
+        "projectCaseStudies": "Projekt-casestudier",
+        "portfolioSpa": "Portfolio SPA",
+        "darkModeTech": "Mørk tilstand tech",
+        "careerTimeline": "Karrieretidslinje",
+        "interactiveSkillsMatrix": "Interaktiv kompetencematrix",
+        "academicCv": "Akademisk CV"
+      }
+    },
+    "targetRole": {"label": "Jobtitel", "placeholder": "f.eks. Senior softwareudvikler"},
+    "targetCompany": {"label": "Virksomhed", "placeholder": "f.eks. Google"}
+  },
+  "actions": {
+    "cancel": "Annuller",
+    "updating": "Opdaterer...",
+    "generating": "Genererer...",
+    "updateCv": "Opdater CV",
+    "generateCv": "Generer CV",
+    "remove": "Fjern"
+  },
+  "loadingCvData": "Indlæser CV-data...",
+  "personalInfo": {
+    "fields": {
+      "name": {"label": "Fulde navn *", "required": "Navn er påkrævet"},
+      "title": {"label": "Professionel titel"},
+      "email": {"label": "E-mail"},
+      "phone": {"label": "Telefon"},
+      "linkedin": {"label": "LinkedIn"},
+      "github": {"label": "GitHub"},
+      "website": {"label": "Hjemmeside"}
+    },
+    "address": {
+      "title": "Adresse",
+      "street": {"label": "Gadeadresse", "placeholder": "Husnummer og gadenavn"},
+      "city": "By",
+      "state": "Region / stat",
+      "zip": "Postnummer",
+      "country": "Land"
+    },
+    "photo": {
+      "label": "Foto",
+      "previewAlt": "Forhåndsvisning",
+      "noPhoto": "Intet foto",
+      "helper": "JPEG, PNG eller WebP. Maks 2 MB.",
+      "remove": "Fjern foto",
+      "errors": {
+        "invalidType": "Vælg venligst en billedfil",
+        "tooLarge": "Billedet må højst være 2 MB",
+        "readFailed": "Fejl ved læsning af fil"
+      }
+    },
+    "summary": {
+      "label": "Professionelt resumé",
+      "placeholder": "Kort resumé af din professionelle baggrund..."
+    }
+  },
+  "experience": {
+    "add": "+ Tilføj erfaring",
+    "empty": "Ingen erfaring tilføjet. Klik \"Tilføj erfaring\" for at tilføje en.",
+    "item": {"title": "Erfaring {{index}}"},
+    "fields": {
+      "title": {"label": "Jobtitel *", "required": "Jobtitel er påkrævet"},
+      "company": {"label": "Virksomhed *", "required": "Virksomhed er påkrævet"},
+      "startDate": {
+        "label": "Startdato (YYYY-MM) *",
+        "required": "Startdato er påkrævet",
+        "placeholder": "2020-01"
+      },
+      "endDate": {"label": "Slutdato (YYYY-MM eller \"Nu\")", "placeholder": "2023-12 eller Nu"},
+      "location": {"label": "Lokation"},
+      "summary": {"label": "Rollebeskrivelse (kort)", "placeholder": "Kort beskrivelse af din rolle..."}
+    },
+    "validation": {
+      "descriptionMax": "Maksimalt 300 tegn tilladt. Forkort eller flyt detaljer til projekter."
+    },
+    "projects": {
+      "title": "Projekter",
+      "add": "+ Tilføj projekt",
+      "empty": "Ingen projekter tilføjet. Tilføj projekter for at flytte detaljer ud af rollebeskrivelsen.",
+      "itemTitle": "Projekt {{index}}",
+      "fields": {
+        "name": {"label": "Projektnavn *", "required": "Projektnavn er påkrævet"},
+        "url": {"label": "URL"},
+        "description": {"label": "Beskrivelse", "placeholder": "Indtast projektbeskrivelse..."},
+        "technologies": {"label": "Teknologier (kommasepareret)"},
+        "highlights": {"label": "Højdepunkter", "placeholder": "Indtast højdepunkter (én pr. linje)..."}
+      }
+    }
+  },
+  "education": {
+    "add": "+ Tilføj uddannelse",
+    "empty": "Ingen uddannelse tilføjet. Klik \"Tilføj uddannelse\" for at tilføje en.",
+    "item": {"title": "Uddannelse {{index}}"},
+    "fields": {
+      "degree": {"label": "Uddannelse *", "required": "Uddannelse er påkrævet"},
+      "institution": {"label": "Institution *", "required": "Institution er påkrævet"},
+      "year": {"label": "År"},
+      "field": {"label": "Studieretning"},
+      "gpa": {"label": "Karaktergennemsnit", "placeholder": "7,0"}
+    }
+  },
+  "skills": {
+    "add": "+ Tilføj kompetence",
+    "empty": "Ingen kompetencer tilføjet. Klik \"Tilføj kompetence\" for at tilføje en.",
+    "item": {"title": "Kompetence {{index}}"},
+    "fields": {
+      "name": {"label": "Kompetence *", "required": "Kompetence er påkrævet"},
+      "category": {"label": "Kategori", "placeholder": "f.eks. Programmeringssprog"},
+      "level": {"label": "Niveau", "placeholder": "f.eks. Ekspert, Øvet"}
+    }
+  },
+  "messages": {
+    "updatedPrintable": "CV opdateret. Printvisning åbnet.",
+    "savedPrintable": "CV gemt. Printvisning åbnet.",
+    "saved": "CV gemt!"
+  },
+  "errors": {
+    "notFound": "CV ikke fundet",
+    "loadFailed": "Kunne ikke indlæse CV",
+    "updateFailed": "Kunne ikke opdatere CV",
+    "generateFailed": "Kunne ikke generere CV",
+    "downloadPdf": "Kunne ikke downloade PDF",
+    "pdfGenerationFailed": "PDF-generering mislykkedes: {{statusText}}",
+    "tooManyRequests": "For mange forespørgsler. Vent et øjeblik.",
+    "pdfServiceUnavailable": "PDF-genereringstjenesten er utilgængelig",
+    "downloadPdfRetry": "Kunne ikke downloade PDF. Prøv igen."
+  },
+  "validation": {
+    "maxLength": "Maksimalt {{max}} tegn tilladt. Forkort eller flyt detaljer til projekter."
+  }
+}

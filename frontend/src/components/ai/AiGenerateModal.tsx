@@ -4,6 +4,7 @@ import { AIGenerateCVRequest, AIGenerateCVResponse } from '../../types/ai'
 import { generateCvDraft } from '../../services/aiService'
 import AiGenerateFields from './AiGenerateFields'
 import AiGeneratePanels from './AiGeneratePanels'
+import { useTranslation } from 'react-i18next'
 
 interface AiGenerateModalProps {
   onClose: () => void
@@ -31,6 +32,7 @@ export default function AiGenerateModal({
   onError,
   setLoading,
 }: AiGenerateModalProps) {
+  const { t } = useTranslation('ai')
   const [payload, setPayload] = useState<AIGenerateCVRequest>(defaultPayload)
   const [result, setResult] = useState<AIGenerateCVResponse | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -56,7 +58,7 @@ export default function AiGenerateModal({
       const response = await generateCvDraft(payload)
       setResult(response)
     } catch (error: unknown) {
-      onError(getErrorDetail(error) || 'Failed to generate CV draft')
+      onError(getErrorDetail(error) || t('errors.generateDraftFailed'))
     } finally {
       setIsGenerating(false)
       setLoading(false)
@@ -82,7 +84,7 @@ export default function AiGenerateModal({
       const response = await generateCvDraft(updatedPayload)
       setResult(response)
     } catch (error: unknown) {
-      onError(getErrorDetail(error) || 'Failed to regenerate CV draft')
+      onError(getErrorDetail(error) || t('errors.regenerateDraftFailed'))
     } finally {
       setIsGenerating(false)
       setLoading(false)
@@ -94,14 +96,14 @@ export default function AiGenerateModal({
       <div className="w-full max-w-3xl rounded-lg bg-white shadow-lg dark:border dark:border-gray-800 dark:bg-gray-900">
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-800">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Generate CV from Job Description
+            {t('generateModal.title')}
           </h3>
           <button
             type="button"
             onClick={onClose}
             className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
           >
-            Close
+            {t('actions.close')}
           </button>
         </div>
 
@@ -127,7 +129,7 @@ export default function AiGenerateModal({
             onClick={onClose}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
           >
-            Cancel
+            {t('actions.cancel')}
           </button>
           {result ? (
             <button
@@ -135,7 +137,7 @@ export default function AiGenerateModal({
               onClick={onApplyDraft}
               className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 dark:hover:bg-green-500"
             >
-              Apply draft to form
+              {t('actions.applyDraft')}
             </button>
           ) : (
             <button
@@ -144,7 +146,7 @@ export default function AiGenerateModal({
               onClick={onGenerate}
               className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-blue-500"
             >
-              {isGenerating ? 'Generating...' : 'Generate'}
+              {isGenerating ? t('actions.generating') : t('actions.generate')}
             </button>
           )}
         </div>

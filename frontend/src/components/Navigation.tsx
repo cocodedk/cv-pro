@@ -1,5 +1,7 @@
 import { ViewMode } from '../app_helpers/types'
 import { BRANDING } from '../app_helpers/branding'
+import { useTranslation } from 'react-i18next'
+import LanguageSwitcher from './LanguageSwitcher'
 
 interface NavigationProps {
   viewMode: ViewMode
@@ -18,6 +20,8 @@ export default function Navigation({
   isAdmin,
   onSignOut,
 }: NavigationProps) {
+  const { t } = useTranslation('navigation')
+
   return (
     <nav className="bg-white shadow-sm dark:bg-gray-900 dark:border-b dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,7 +49,7 @@ export default function Navigation({
                   : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
               }`}
             >
-              Introduction
+              {t('introduction')}
             </button>
             {!isAuthenticated ? (
               <button
@@ -58,7 +62,7 @@ export default function Navigation({
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                 }`}
               >
-                Sign in
+                {t('signIn')}
               </button>
             ) : null}
             <button
@@ -67,8 +71,9 @@ export default function Navigation({
               aria-pressed={isDark}
               className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
             >
-              {isDark ? 'Light mode' : 'Dark mode'}
+              {isDark ? t('lightMode') : t('darkMode')}
             </button>
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <>
                 <button
@@ -81,7 +86,7 @@ export default function Navigation({
                       : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                   }`}
                 >
-                  {viewMode === 'edit' ? 'Edit CV' : 'Create CV'}
+                  {viewMode === 'edit' ? t('editCv') : t('createCv')}
                 </button>
                 <button
                   onClick={() => {
@@ -93,7 +98,7 @@ export default function Navigation({
                       : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                   }`}
                 >
-                  My CVs
+                  {t('myCvs')}
                 </button>
                 <button
                   onClick={() => {
@@ -105,7 +110,7 @@ export default function Navigation({
                       : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                   }`}
                 >
-                  🔍 Search CVs
+                  {t('searchCvs')}
                 </button>
                 <button
                   onClick={() => {
@@ -117,7 +122,7 @@ export default function Navigation({
                       : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                   }`}
                 >
-                  My Profiles
+                  {t('myProfiles')}
                 </button>
                 <button
                   onClick={() => {
@@ -129,7 +134,19 @@ export default function Navigation({
                       : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                   }`}
                 >
-                  Profile
+                  {t('profile')}
+                </button>
+                <button
+                  onClick={() => {
+                    window.location.hash = 'settings'
+                  }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    viewMode === 'settings'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {t('settings')}
                 </button>
                 {isAdmin ? (
                   <button
@@ -142,14 +159,14 @@ export default function Navigation({
                         : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                     }`}
                   >
-                    Admin
+                    {t('admin')}
                   </button>
                 ) : null}
                 <button
                   onClick={onSignOut}
                   className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
                 >
-                  Sign out
+                  {t('signOut')}
                 </button>
               </>
             ) : null}

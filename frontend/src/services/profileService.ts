@@ -3,6 +3,7 @@ import axios from 'axios'
 import { ProfileData, ProfileResponse, ProfileListResponse } from '../types/cv'
 import { normalizeProfileDataForApi } from '../app_helpers/cvForm/normalizeCvData'
 import { getErrorDetail, getErrorMessage, getErrorResponse } from '../app_helpers/axiosError'
+import i18n from '../i18n'
 
 /**
  * Get the master profile from the server.
@@ -18,7 +19,7 @@ export async function getProfile(): Promise<ProfileData | null> {
     if (status === 404) {
       return null
     }
-    throw new Error(getErrorDetail(data) || 'Failed to load profile')
+    throw new Error(getErrorDetail(data) || i18n.t('profile:errors.loadFailedPlain'))
   }
 }
 
@@ -34,7 +35,7 @@ export async function saveProfile(profileData: ProfileData): Promise<ProfileResp
     const response = await axios.post<ProfileResponse>('/api/profile', payload)
     return response.data
   } catch (error: unknown) {
-    throw new Error(getErrorMessage(error, 'Failed to save profile'))
+    throw new Error(getErrorMessage(error, i18n.t('profile:errors.saveFailed')))
   }
 }
 
@@ -50,7 +51,7 @@ export async function deleteProfile(): Promise<ProfileResponse> {
     })
     return response.data
   } catch (error: unknown) {
-    throw new Error(getErrorMessage(error, 'Failed to delete profile'))
+    throw new Error(getErrorMessage(error, i18n.t('profile:errors.deleteFailed')))
   }
 }
 
@@ -64,7 +65,7 @@ export async function listProfiles(): Promise<ProfileListResponse> {
     const response = await axios.get<ProfileListResponse>('/api/profiles')
     return response.data
   } catch (error: unknown) {
-    throw new Error(getErrorMessage(error, 'Failed to list profiles'))
+    throw new Error(getErrorMessage(error, i18n.t('profile:errors.listFailed')))
   }
 }
 
@@ -83,7 +84,7 @@ export async function getProfileByUpdatedAt(updatedAt: string): Promise<ProfileD
     if (status === 404) {
       return null
     }
-    throw new Error(getErrorDetail(data) || 'Failed to load profile')
+    throw new Error(getErrorDetail(data) || i18n.t('profile:errors.loadFailedPlain'))
   }
 }
 
@@ -101,6 +102,6 @@ export async function deleteProfileByUpdatedAt(updatedAt: string): Promise<Profi
     )
     return response.data
   } catch (error: unknown) {
-    throw new Error(getErrorMessage(error, 'Failed to delete profile'))
+    throw new Error(getErrorMessage(error, i18n.t('profile:errors.deleteFailed')))
   }
 }
