@@ -9,6 +9,7 @@ from fastapi.responses import StreamingResponse
 from slowapi import Limiter
 from backend.models import CVData, CVResponse, CVListResponse
 from backend.database import queries
+from backend.database.supabase.cv import search_cvs_by_metadata
 from backend.services.cv_file_service import CVFileService
 from backend.app_helpers.auth import get_current_user
 
@@ -69,6 +70,35 @@ def create_cv_router(  # noqa: C901
                 exc_info=e,
             )
             raise HTTPException(status_code=500, detail="Failed to list CVs")
+
+    @router.get("/api/search/cvs")
+    async def search_cvs(
+        person_name: Optional[str] = Query(None, description="Search by person name"),
+        target_role: Optional[str] = Query(None, description="Search by target role"),
+        location: Optional[str] = Query(None, description="Search by location"),
+        skills: Optional[str] = Query(None, description="Search by skills (comma-separated)"),
+        limit: int = Query(50, ge=1, le=100, description="Maximum results to return"),
+    ):
+        """Search CVs using metadata fields (GDPR-compliant, no personal data exposure)."""
+        try:
+            # Parse skills from comma-separated string
+            skills_list = None
+            if skills:
+                skills_list = [skill.strip() for skill in skills.split(",") if skill.strip()]
+
+            results = search_cvs_by_metadata(
+                person_name=person_name,
+                target_role=target_role,
+                location=location,
+                skills=skills_list,
+                limit=limit
+            )
+
+            return {"results": results, "total": len(results)}
+
+        except Exception as e:
+            logger.error("Failed to search CVs: %s", str(e), exc_info=e)
+            raise HTTPException(status_code=500, detail="Failed to search CVs")
 
     @router.get("/api/cvs/export")
     async def export_cvs(

@@ -2,10 +2,14 @@
 from typing import Any, Dict, Optional
 from backend.database.supabase.client import get_admin_client
 from backend.database.supabase.utils import apply_user_scope, require_user_id
+from backend.app_helpers.encryption import encrypt_cv_data, decrypt_cv_data
 
 
 def _build_profile_response(row: Dict[str, Any]) -> Dict[str, Any]:
-    profile_data = dict(row.get("profile_data") or {})
+    encrypted_profile_data = dict(row.get("profile_data") or {})
+
+    # Decrypt sensitive data
+    profile_data = decrypt_cv_data(encrypted_profile_data)
     profile_data["updated_at"] = row.get("updated_at")
     return profile_data
 
@@ -13,9 +17,13 @@ def _build_profile_response(row: Dict[str, Any]) -> Dict[str, Any]:
 def save_profile(profile_data: Dict[str, Any]) -> bool:
     client = get_admin_client()
     user_id = require_user_id(profile_data.get("user_id"))
+
+    # Encrypt sensitive data before storage
+    encrypted_profile_data = encrypt_cv_data(profile_data)
+
     response = (
         client.table("cv_profiles")
-        .upsert({"user_id": user_id, "profile_data": profile_data}, on_conflict="user_id")
+        .upsert({"user_id": user_id, "profile_data": encrypted_profile_data}, on_conflict="user_id")
         .execute()
     )
     return bool(response.data)

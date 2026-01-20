@@ -9,6 +9,9 @@ import NotificationModal from './components/NotificationModal'
 import Footer from './components/Footer'
 import AuthView from './components/AuthView'
 import AdminPanel from './components/admin/AdminPanel'
+import PrivacyPolicy from './components/PrivacyPolicy'
+import ConsentManager from './components/ConsentManager'
+import CVSearch from './components/CVSearch'
 import { useHashRouting } from './app_helpers/useHashRouting'
 import { useTheme } from './app_helpers/useTheme'
 import { useMessage } from './app_helpers/useMessage'
@@ -26,6 +29,24 @@ function App() {
   const isAuthenticated = !authEnabled || Boolean(user)
   const isAdmin = role === 'admin' && isActive
   const resolvedViewMode = viewMode === 'auth' && isAuthenticated ? 'form' : viewMode
+
+  // GDPR Consent Management
+  const [showConsentModal, setShowConsentModal] = useState(false)
+
+  useEffect(() => {
+    // Check if user has given GDPR consent
+    const savedConsent = localStorage.getItem('gdpr-consent')
+    if (!savedConsent) {
+      // Show consent modal for new users
+      setShowConsentModal(true)
+    }
+  }, [])
+
+  const handleConsentGiven = (preferences: any) => {
+    console.log('GDPR Consent given:', preferences)
+    // Here you could send consent preferences to backend if needed
+    setShowConsentModal(false)
+  }
 
   useEffect(() => {
     document.title = `${BRANDING.appName} — ${BRANDING.ownerName} (${BRANDING.companyName})`
@@ -54,6 +75,12 @@ function App() {
 
       <NotificationModal message={message} onClose={clearMessage} />
 
+      <ConsentManager
+        showModal={showConsentModal}
+        onConsentGiven={handleConsentGiven}
+        onClose={() => setShowConsentModal(false)}
+      />
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {authEnabled && loading ? (
           <div className="text-sm text-gray-500">Checking session...</div>
@@ -63,6 +90,10 @@ function App() {
           <Introduction />
         ) : resolvedViewMode === 'admin' ? (
           <AdminPanel isAdmin={isAdmin} />
+        ) : resolvedViewMode === 'privacy' ? (
+          <PrivacyPolicy />
+        ) : resolvedViewMode === 'search' ? (
+          <CVSearch onCVSelected={cvId => (window.location.hash = `#edit/${cvId}`)} />
         ) : resolvedViewMode === 'form' || resolvedViewMode === 'edit' ? (
           <CVForm
             onSuccess={handleSuccess}

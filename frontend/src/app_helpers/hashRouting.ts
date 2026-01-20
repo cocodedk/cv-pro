@@ -16,7 +16,9 @@ export const hashToViewMode = (hash: string): ViewMode => {
     normalizedHash === 'profile' ||
     normalizedHash === 'profile-list' ||
     normalizedHash === 'profiles' ||
-    normalizedHash === 'admin'
+    normalizedHash === 'admin' ||
+    normalizedHash === 'privacy' ||
+    normalizedHash === 'search'
   ) {
     if (normalizedHash === 'profiles') {
       return 'profile-list'

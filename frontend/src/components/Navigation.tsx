@@ -97,6 +97,18 @@ export default function Navigation({
                 </button>
                 <button
                   onClick={() => {
+                    window.location.hash = 'search'
+                  }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    viewMode === 'search'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  🔍 Search CVs
+                </button>
+                <button
+                  onClick={() => {
                     window.location.hash = 'profile-list'
                   }}
                   className={`px-4 py-2 rounded-md text-sm font-medium ${

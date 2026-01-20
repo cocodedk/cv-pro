@@ -8,14 +8,22 @@ export default function Footer() {
           <span>
             © {new Date().getFullYear()} {BRANDING.ownerName}
           </span>
-          <a
-            href={BRANDING.companyUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-          >
-            {BRANDING.companyName}
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="#privacy"
+              className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href={BRANDING.companyUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+            >
+              {BRANDING.companyName}
+            </a>
+          </div>
         </div>
       </div>
     </footer>
