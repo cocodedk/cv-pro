@@ -13,7 +13,7 @@ vi.mock('axios', () => {
   }
 })
 
-const mockedAxios = axios as any
+const mockedAxios = vi.mocked(axios, true)
 
 // Import service AFTER mocking axios
 import { getProfile, saveProfile, deleteProfile } from '../../services/profileService'
@@ -92,7 +92,14 @@ describe('profileService', () => {
       }
       mockedAxios.post.mockRejectedValue(error)
 
-      await expect(saveProfile({} as any)).rejects.toThrow('Failed to save profile')
+      const profileData = {
+        personal_info: { name: 'John Doe' },
+        experience: [],
+        education: [],
+        skills: [],
+      }
+
+      await expect(saveProfile(profileData)).rejects.toThrow('Failed to save profile')
     })
   })
 

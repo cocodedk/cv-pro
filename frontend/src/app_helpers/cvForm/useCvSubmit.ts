@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import axios from 'axios'
-import { UseFormSetError } from 'react-hook-form'
+import { Path, UseFormSetError } from 'react-hook-form'
 import { CVData } from '../../types/cv'
 import { normalizeCvDataForApi } from './normalizeCvData'
+import { getErrorDetail, getErrorResponse } from '../axiosError'
 
 interface UseCvSubmitProps {
   cvId: string | null | undefined
@@ -21,7 +22,20 @@ function openPrintable(cvId: string) {
   }, 100)
 }
 
-function _extractFieldPath(loc: any[]): string | null {
+type ValidationErrorItem = {
+  field_path?: string
+  loc?: Array<string | number>
+  msg?: string
+  type?: string
+  ctx?: { max_length?: number }
+}
+
+type ApiErrorResponse = {
+  detail?: string | string[]
+  errors?: ValidationErrorItem[]
+}
+
+function _extractFieldPath(loc?: Array<string | number>): string | null {
   if (!loc || !Array.isArray(loc)) return null
 
   // Skip 'body' if present
@@ -40,7 +54,7 @@ function _extractFieldPath(loc: any[]): string | null {
     .join('')
 }
 
-function _extractErrorMessage(error: any): string {
+function _extractErrorMessage(error: ValidationErrorItem): string {
   const msg = error.msg || ''
   if (error.type === 'string_too_long' && error.ctx?.max_length) {
     return `Maximum ${error.ctx.max_length} characters allowed. Please shorten or move details to projects.`
@@ -104,11 +118,8 @@ export function useCvSubmit({
     setLoading(true)
     try {
       const payload = normalizeCvDataForApi(data)
-      console.debug('[useCvSubmit] Form data - theme:', data.theme, 'layout:', data.layout)
-      console.debug('[useCvSubmit] Payload - theme:', payload.theme, 'layout:', payload.layout)
       if (isEditMode && cvId) {
         await axios.put(`/api/cv/${cvId}`, payload)
-        console.debug('[useCvSubmit] PUT completed for CV:', cvId)
         openPrintable(cvId)
         onSuccess('CV updated. Printable view opened.')
       } else {
@@ -122,20 +133,22 @@ export function useCvSubmit({
           onSuccess('CV saved successfully!')
         }
       }
-    } catch (error: any) {
-      const errorResponse = error.response?.data
-      const errorDetail = errorResponse?.detail
-      const errorErrors = errorResponse?.errors || []
+    } catch (error: unknown) {
+      const { data } = getErrorResponse(error)
+      const errorResponse =
+        data && typeof data === 'object' ? (data as ApiErrorResponse) : undefined
+      const errorDetail = errorResponse?.detail ?? getErrorDetail(data)
+      const errorErrors = errorResponse?.errors ?? []
 
       // Set form field errors and scroll to first error
       let firstErrorField: string | null = null
 
       if (Array.isArray(errorErrors)) {
-        errorErrors.forEach((err: any) => {
+        errorErrors.forEach(err => {
           const fieldPath = err.field_path || _extractFieldPath(err.loc)
           if (fieldPath) {
             const message = _extractErrorMessage(err)
-            setError(fieldPath as any, {
+            setError(fieldPath as Path<CVData>, {
               type: 'server',
               message,
             })

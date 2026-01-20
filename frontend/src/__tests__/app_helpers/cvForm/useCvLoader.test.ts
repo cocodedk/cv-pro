@@ -4,7 +4,7 @@ import axios from 'axios'
 import { useCvLoader } from '../../../app_helpers/cvForm/useCvLoader'
 
 vi.mock('axios')
-const mockedAxios = axios as any
+const mockedAxios = vi.mocked(axios, true)
 
 describe('useCvLoader', () => {
   const mockReset = vi.fn()

@@ -3,7 +3,7 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from backend.database.connection import Neo4jConnection
+from backend.database.supabase.client import get_admin_client
 
 logger = logging.getLogger(__name__)
 
@@ -17,21 +17,25 @@ async def lifespan(app: FastAPI):
     retry_count = 0
 
     while retry_count < max_retries:
-        if Neo4jConnection.verify_connectivity():
-            logger.info("Successfully connected to Neo4j database")
+        try:
+            client = get_admin_client()
+            client.table("user_profiles").select("id").limit(1).execute()
+            logger.info("Successfully connected to Supabase database")
             break
+        except Exception as e:
+            logger.debug("Supabase connection attempt failed: %s", str(e), exc_info=True)
+
         retry_count += 1
         logger.warning(
-            f"Failed to connect to Neo4j database (attempt {retry_count}/{max_retries})"
+            "Failed to connect to Supabase database (attempt %d/%d)",
+            retry_count,
+            max_retries,
         )
         if retry_count < max_retries:
             await asyncio.sleep(2)
 
     if retry_count >= max_retries:
-        logger.error("Failed to connect to Neo4j database after multiple attempts")
-        raise RuntimeError("Failed to connect to Neo4j database")
+        logger.error("Failed to connect to Supabase database after multiple attempts")
+        raise RuntimeError("Failed to connect to Supabase database")
 
     yield
-
-    # Shutdown
-    Neo4jConnection.close()

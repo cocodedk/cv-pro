@@ -8,7 +8,7 @@ The CV Generator follows a three-tier architecture with clear separation between
 graph TB
     User[User Browser] --> Frontend[React Frontend<br/>Port 5173]
     Frontend --> API[FastAPI Backend<br/>Port 8000]
-    API --> Neo4j[Neo4j Database<br/>Ports 7474/7687]
+    API --> Supabase[Supabase (Postgres + Auth)<br/>Ports 54321/54322]
     API --> Generator[CV Generator<br/>DOCX & HTML Creation]
     Generator --> Files[DOCX Files<br/>backend/output/]
     Generator --> HTML[Print HTML<br/>Browser Output]
@@ -46,12 +46,12 @@ graph TB
 
 ### Data Layer
 
-- **Technology**: Neo4j 5.15 graph database
-- **Location**: Runs in Docker container
+- **Technology**: Supabase (PostgreSQL + Auth)
+- **Location**: Supabase CLI (local) or hosted
 
 **Responsibilities**:
-- CV data storage as graph nodes
-- Relationship management between CV entities
+- CV data storage with row-level security
+- User isolation and auth enforcement
 - Query execution for CRUD operations
 
 ## Data Flow
@@ -59,7 +59,7 @@ graph TB
 1. User enters CV data in React form
 2. Frontend validates and sends POST request to `/api/generate-cv-docx`
 3. Backend validates data with Pydantic models
-4. Backend saves data to Neo4j database
+4. Backend saves data to Supabase/PostgreSQL
 5. Backend generates DOCX file using the DOCX generator
 6. Backend returns CV ID and filename
 7. Frontend downloads generated file

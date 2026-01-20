@@ -19,7 +19,7 @@ Welcome to the CV Generator documentation. This documentation is organized by to
 ### Backend
 
 - [API Endpoints](backend/api-endpoints.md) - REST API documentation
-- [Database Schema](backend/database-schema.md) - Neo4j graph schema
+- [Database Schema](backend/database-schema.md) - Supabase table overview
 - [CV Generation](backend/cv-generation.md) - DOCX document generation
 - [DOCX Generation](backend/docx-generation.md) - Markdown -> DOCX pipeline option
 - [Print HTML Generation](backend/print-html-generation.md) - Browser-printable HTML output
@@ -64,7 +64,7 @@ Welcome to the CV Generator documentation. This documentation is organized by to
 ## Quick Links
 
 - **API Documentation**: http://localhost:8000/docs (when running)
-- **Neo4j Browser**: http://localhost:7474 (when running)
+- **Supabase Studio**: http://localhost:54323 (when running)
 - **Main README**: [../README.md](../README.md)
 
 ## Contributing

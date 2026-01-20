@@ -6,7 +6,7 @@ import { useCvSubmit } from '../../../app_helpers/cvForm/useCvSubmit'
 import { CVData } from '../../../types/cv'
 
 vi.mock('axios')
-const mockedAxios = axios as any
+const mockedAxios = vi.mocked(axios, true)
 
 describe('useCvSubmit', () => {
   const mockOnSuccess = vi.fn()

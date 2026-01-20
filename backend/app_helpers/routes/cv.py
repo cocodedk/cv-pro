@@ -4,12 +4,13 @@ import csv
 import io
 from pathlib import Path
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 from slowapi import Limiter
 from backend.models import CVData, CVResponse, CVListResponse
 from backend.database import queries
 from backend.services.cv_file_service import CVFileService
+from backend.app_helpers.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +21,12 @@ def create_cv_router(  # noqa: C901
     output_dir: Optional[Path] = None,
 ) -> APIRouter:
     """Create and return CV router with dependencies."""
-    router = APIRouter()
+    router = APIRouter(dependencies=[Depends(get_current_user)])
 
     @router.post("/api/save-cv", response_model=CVResponse)
     @limiter.limit("20/minute")
     async def save_cv(request: Request, cv_data: CVData):
-        """Save CV data to Neo4j without generating file."""
+        """Save CV data without generating file."""
         try:
             cv_dict = cv_data.model_dump()
             cv_id = queries.create_cv(cv_dict)
@@ -40,7 +41,7 @@ def create_cv_router(  # noqa: C901
 
     @router.get("/api/cv/{cv_id}")
     async def get_cv(cv_id: str):
-        """Retrieve CV data from Neo4j."""
+        """Retrieve CV data."""
         cv = queries.get_cv_by_id(cv_id)
         if not cv:
             raise HTTPException(status_code=404, detail="CV not found")
@@ -100,7 +101,7 @@ def create_cv_router(  # noqa: C901
 
     @router.delete("/api/cv/{cv_id}")
     async def delete_cv(cv_id: str):
-        """Delete CV from Neo4j."""
+        """Delete CV."""
         success = queries.delete_cv(cv_id)
         if not success:
             raise HTTPException(status_code=404, detail="CV not found")

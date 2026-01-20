@@ -2,21 +2,19 @@
 
 ## Issue Description
 
-When shutting down services with `docker-compose down`, the output shows containers with names like `cv_app_run_9352a22a27c6` being stopped and removed:
+When shutting down services with `docker-compose down`, the output shows containers with names like `cv-pro_app_run_9352a22a27c6` being stopped and removed:
 
 ```
 Shutting down services...
-Stopping cv_app_run_9352a22a27c6 ... done
-Stopping cv-app                  ... done
-Stopping cv-neo4j                ... done
-Removing cv-app                  ... done
-Removing cv-neo4j                ... done
-Removing network cv_cv-network
+Stopping cv-pro_app_run_9352a22a27c6 ... done
+Stopping cv-pro-app                  ... done
+Removing cv-pro-app                  ... done
+Removing network cv-pro_cv-network
 ```
 
 ## Root Cause
 
-The container name pattern `cv_app_run_<hash>` indicates that a container was created using `docker-compose run` command. This happens when:
+The container name pattern `cv-pro_app_run_<hash>` indicates that a container was created using `docker-compose run` command. This happens when:
 
 1. **Manual execution without `--rm` flag**: Someone ran `docker-compose run app <command>` without the `--rm` flag, leaving the container running after the command completes.
 
@@ -59,10 +57,10 @@ If you want to clean up any orphaned `docker-compose run` containers before shut
 
 ```bash
 # List containers created by docker-compose run
-docker ps -a --filter "name=cv_app_run" --format "{{.Names}}"
+docker ps -a --filter "name=cv-pro_app_run" --format "{{.Names}}"
 
 # Remove them manually
-docker ps -a --filter "name=cv_app_run" --format "{{.Names}}" | xargs -r docker rm -f
+docker ps -a --filter "name=cv-pro_app_run" --format "{{.Names}}" | xargs -r docker rm -f
 ```
 
 ### Option 2: Ensure `--rm` flag is always used
@@ -83,7 +81,7 @@ The `stop-dev.sh` script could be enhanced to clean up orphaned containers befor
 
 ```bash
 # Clean up any orphaned docker-compose run containers
-docker ps -a --filter "name=cv_app_run" --format "{{.Names}}" | xargs -r docker rm -f 2>/dev/null || true
+docker ps -a --filter "name=cv-pro_app_run" --format "{{.Names}}" | xargs -r docker rm -f 2>/dev/null || true
 
 # Then proceed with normal shutdown
 docker-compose down
@@ -103,7 +101,7 @@ To check if there are any orphaned containers:
 
 ```bash
 # Check for containers created by docker-compose run
-docker ps -a --filter "name=cv_app_run"
+docker ps -a --filter "name=cv-pro_app_run"
 
 # Check all containers in the project
 docker-compose ps -a
@@ -111,6 +109,6 @@ docker-compose ps -a
 
 ## Conclusion
 
-The appearance of `cv_app_run_<hash>` containers during shutdown is **normal and expected behavior**. Docker Compose is correctly cleaning up all containers associated with the project, including temporary ones created by `docker-compose run`. This is not an error and doesn't indicate any problems with the application or Docker setup.
+The appearance of `cv-pro_app_run_<hash>` containers during shutdown is **normal and expected behavior**. Docker Compose is correctly cleaning up all containers associated with the project, including temporary ones created by `docker-compose run`. This is not an error and doesn't indicate any problems with the application or Docker setup.
 
 If you want to avoid seeing these containers during shutdown, ensure all `docker-compose run` commands use the `--rm` flag and complete successfully.

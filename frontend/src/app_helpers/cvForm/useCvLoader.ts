@@ -3,6 +3,7 @@ import { UseFormReset } from 'react-hook-form'
 import axios from 'axios'
 import { CVData } from '../../types/cv'
 import { defaultCvData } from './cvFormDefaults'
+import { getErrorDetail, getErrorResponse } from '../axiosError'
 
 interface UseCvLoaderProps {
   cvId: string | null | undefined
@@ -32,7 +33,7 @@ export function useCvLoader({ cvId, reset, onError, setLoading }: UseCvLoaderPro
       setIsLoadingCv(true)
       callbacksRef.current.setLoading(true)
       try {
-        const response = await axios.get(`/api/cv/${cvId}`)
+        const response = await axios.get<Partial<CVData>>(`/api/cv/${cvId}`)
         const cvData = response.data
         callbacksRef.current.reset({
           personal_info: cvData.personal_info || defaultCvData.personal_info,
@@ -44,12 +45,14 @@ export function useCvLoader({ cvId, reset, onError, setLoading }: UseCvLoaderPro
           target_company: cvData.target_company || '',
           target_role: cvData.target_role || '',
         })
-      } catch (error: any) {
-        if (error.response?.status === 404) {
+      } catch (error: unknown) {
+        const { status, data } = getErrorResponse(error)
+        if (status === 404) {
           callbacksRef.current.onError('CV not found')
-        } else {
-          callbacksRef.current.onError(error.response?.data?.detail || 'Failed to load CV')
+          return
         }
+        const detail = getErrorDetail(data)
+        callbacksRef.current.onError(detail || 'Failed to load CV')
       } finally {
         loadingRef.current.delete(cvId)
         setIsLoadingCv(false)

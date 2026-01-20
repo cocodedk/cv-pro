@@ -13,15 +13,24 @@ Complete REST API endpoint documentation for the CV Generator backend.
 
 **GET** `/api/health` - Check API and database connectivity. Returns status and database connection state.
 
+### Admin Endpoints
+
+**GET** `/api/admin/users` - List users (admin only).
+**PUT** `/api/admin/users/{user_id}/role` - Update user role (admin only).
+**PUT** `/api/admin/users/{user_id}/deactivate` - Deactivate user (admin only).
+**GET** `/api/admin/stats/daily` - Daily activity stats (admin only).
+**GET** `/api/admin/stats/themes` - Theme usage stats (admin only).
+**POST** `/api/admin/cleanup-download-files` - Clean up old downloads (admin only).
+
 ### Generate CV (DOCX)
 
-**POST** `/api/generate-cv-docx` - Generate DOCX file from CV data and save to Neo4j.
+**POST** `/api/generate-cv-docx` - Generate DOCX file from CV data and save to Supabase.
 **Request**: `CVData`
 **Response**: `CVResponse` with cv_id and filename
 
 ### Save CV
 
-**POST** `/api/save-cv` - Save CV data to Neo4j without generating file.
+**POST** `/api/save-cv` - Save CV data without generating file.
 **Request**: `CVData`
 **Response**: `CVResponse` with cv_id
 
@@ -44,7 +53,7 @@ Complete REST API endpoint documentation for the CV Generator backend.
 
 ### Delete CV
 
-**DELETE** `/api/cv/{cv_id}` - Delete CV from Neo4j. Returns success message or 404.
+**DELETE** `/api/cv/{cv_id}` - Delete CV. Returns success message or 404.
 
 ### Download CV File (DOCX)
 

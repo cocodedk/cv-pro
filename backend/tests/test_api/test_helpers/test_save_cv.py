@@ -8,7 +8,7 @@ from unittest.mock import patch
 class TestSaveCV:
     """Test POST /api/save-cv endpoint."""
 
-    async def test_save_cv_success(self, client, sample_cv_data, mock_neo4j_connection):
+    async def test_save_cv_success(self, client, sample_cv_data, mock_supabase_client):
         """Test successful CV save."""
         with patch(
             "backend.database.queries.create_cv", return_value="test-cv-id"
@@ -32,7 +32,7 @@ class TestSaveCV:
         assert response.status_code == 422
 
     async def test_save_cv_saves_theme(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test that theme is saved when saving CV."""
         sample_cv_data["theme"] = "minimal"

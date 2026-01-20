@@ -9,7 +9,7 @@ class TestSaveProfile:
     """Test POST /api/profile endpoint."""
 
     async def test_save_profile_success(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test successful profile save."""
         profile_data = {
@@ -40,7 +40,7 @@ class TestSaveProfile:
         assert response.status_code == 422
 
     async def test_save_profile_server_error(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test profile save with server error."""
         profile_data = {
@@ -62,7 +62,7 @@ class TestSaveProfile:
 class TestGetProfile:
     """Test GET /api/profile endpoint."""
 
-    async def test_get_profile_success(self, client, mock_neo4j_connection):
+    async def test_get_profile_success(self, client, mock_supabase_client):
         """Test successful profile retrieval."""
         profile_data = {
             "personal_info": {"name": "John Doe", "email": "john@example.com"},
@@ -78,13 +78,13 @@ class TestGetProfile:
             assert "personal_info" in data
             assert data["personal_info"]["name"] == "John Doe"
 
-    async def test_get_profile_not_found(self, client, mock_neo4j_connection):
+    async def test_get_profile_not_found(self, client, mock_supabase_client):
         """Test profile not found."""
         with patch("backend.database.queries.get_profile", return_value=None):
             response = await client.get("/api/profile")
             assert response.status_code == 404
 
-    async def test_get_profile_server_error(self, client, mock_neo4j_connection):
+    async def test_get_profile_server_error(self, client, mock_supabase_client):
         """Test get profile with server error."""
         with patch(
             "backend.database.queries.get_profile",
@@ -100,7 +100,7 @@ class TestDeleteProfile:
     """Test DELETE /api/profile endpoint."""
 
     async def test_delete_profile_requires_confirmation_header(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test delete requires explicit confirmation header."""
         with patch(
@@ -110,7 +110,7 @@ class TestDeleteProfile:
             assert response.status_code == 400
             assert mock_delete.called is False
 
-    async def test_delete_profile_success(self, client, mock_neo4j_connection):
+    async def test_delete_profile_success(self, client, mock_supabase_client):
         """Test successful profile deletion."""
         with patch("backend.database.queries.delete_profile", return_value=True):
             response = await client.delete(
@@ -121,7 +121,7 @@ class TestDeleteProfile:
             assert data["status"] == "success"
             assert "message" in data
 
-    async def test_delete_profile_not_found(self, client, mock_neo4j_connection):
+    async def test_delete_profile_not_found(self, client, mock_supabase_client):
         """Test delete non-existent profile."""
         with patch("backend.database.queries.delete_profile", return_value=False):
             response = await client.delete(
@@ -129,7 +129,7 @@ class TestDeleteProfile:
             )
             assert response.status_code == 404
 
-    async def test_delete_profile_server_error(self, client, mock_neo4j_connection):
+    async def test_delete_profile_server_error(self, client, mock_supabase_client):
         """Test delete profile with server error."""
         with patch(
             "backend.database.queries.delete_profile",
@@ -146,7 +146,7 @@ class TestDeleteProfile:
 class TestListProfiles:
     """Test GET /api/profiles endpoint."""
 
-    async def test_list_profiles_success(self, client, mock_neo4j_connection):
+    async def test_list_profiles_success(self, client, mock_supabase_client):
         """Test successful profile list retrieval."""
         profiles_data = [
             {"name": "John Doe", "updated_at": "2024-01-01T00:00:00"},
@@ -163,7 +163,7 @@ class TestListProfiles:
             assert data["profiles"][0]["name"] == "John Doe"
             assert data["profiles"][0]["updated_at"] == "2024-01-01T00:00:00"
 
-    async def test_list_profiles_empty(self, client, mock_neo4j_connection):
+    async def test_list_profiles_empty(self, client, mock_supabase_client):
         """Test profile list when no profiles exist."""
         with patch("backend.database.queries.list_profiles", return_value=[]):
             response = await client.get("/api/profiles")
@@ -172,7 +172,7 @@ class TestListProfiles:
             assert "profiles" in data
             assert len(data["profiles"]) == 0
 
-    async def test_list_profiles_server_error(self, client, mock_neo4j_connection):
+    async def test_list_profiles_server_error(self, client, mock_supabase_client):
         """Test list profiles with server error."""
         with patch(
             "backend.database.queries.list_profiles",
@@ -188,7 +188,7 @@ class TestGetProfileByUpdatedAt:
     """Test GET /api/profile/{updated_at} endpoint."""
 
     async def test_get_profile_by_updated_at_success(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test successful profile retrieval by updated_at."""
         profile_data = {
@@ -209,7 +209,7 @@ class TestGetProfileByUpdatedAt:
             assert data["personal_info"]["name"] == "John Doe"
 
     async def test_get_profile_by_updated_at_not_found(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test profile retrieval by updated_at when not found."""
         with patch(
@@ -219,7 +219,7 @@ class TestGetProfileByUpdatedAt:
             assert response.status_code == 404
 
     async def test_get_profile_by_updated_at_server_error(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test get profile by updated_at with server error."""
         with patch(
@@ -236,7 +236,7 @@ class TestDeleteProfileByUpdatedAt:
     """Test DELETE /api/profile/{updated_at} endpoint."""
 
     async def test_delete_profile_by_updated_at_requires_confirmation_header(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test delete requires explicit confirmation header."""
         with patch(
@@ -248,7 +248,7 @@ class TestDeleteProfileByUpdatedAt:
             assert mock_delete.called is False
 
     async def test_delete_profile_by_updated_at_success(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test successful profile deletion by updated_at."""
         with patch(
@@ -264,7 +264,7 @@ class TestDeleteProfileByUpdatedAt:
             assert "message" in data
 
     async def test_delete_profile_by_updated_at_not_found(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test delete non-existent profile by updated_at."""
         with patch(
@@ -277,7 +277,7 @@ class TestDeleteProfileByUpdatedAt:
             assert response.status_code == 404
 
     async def test_delete_profile_by_updated_at_server_error(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test delete profile by updated_at with server error."""
         with patch(

@@ -14,16 +14,22 @@ This handles all setup steps automatically.
 
 ## Manual Setup
 
-### Step 1: Start Docker Services
+### Step 1: Start Supabase + Backend
 
-Start backend and database services:
+Start Supabase locally:
+
+```bash
+supabase start
+```
+
+Start the backend service:
 
 ```bash
 docker-compose up -d
 ```
 
 This starts:
-- Neo4j database (ports 7474, 7687)
+- Supabase services (ports 54321-54323)
 - FastAPI backend (port 8000)
 
 ### Step 2: Install Frontend Dependencies
@@ -49,11 +55,12 @@ Frontend will be available at http://localhost:5173 with hot module replacement.
 Create a `.env` file in the project root (optional, defaults provided):
 
 ```env
-# Database Configuration
-NEO4J_URI=bolt://neo4j:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=cvpassword
-NEO4J_DATABASE=neo4j
+# Supabase Configuration
+SUPABASE_URL=http://localhost:54321
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_JWT_SECRET=your-jwt-secret
+SUPABASE_DEFAULT_USER_ID=your-test-user-id
 
 # CORS Configuration
 CORS_ORIGINS=http://localhost:5173,http://localhost:8000
@@ -73,7 +80,7 @@ AI_REQUEST_TIMEOUT_S=30
 
 1. **Backend**: http://localhost:8000/docs (API documentation)
 2. **Frontend**: http://localhost:5173 (Web interface)
-3. **Database**: http://localhost:7474 (Neo4j Browser)
+3. **Supabase Studio**: http://localhost:54323
 
 ## Development Workflow
 

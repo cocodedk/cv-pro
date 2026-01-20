@@ -14,6 +14,11 @@ describe('hashRouting', () => {
       expect(hashToViewMode('#INTRODUCTION')).toBe('introduction')
     })
 
+    it('identifies auth mode', () => {
+      expect(hashToViewMode('#auth')).toBe('auth')
+      expect(hashToViewMode('auth')).toBe('auth')
+    })
+
     it('identifies form mode', () => {
       expect(hashToViewMode('#form')).toBe('form')
       expect(hashToViewMode('form')).toBe('form')
@@ -35,6 +40,11 @@ describe('hashRouting', () => {
       expect(hashToViewMode('profile-list')).toBe('profile-list')
       expect(hashToViewMode('#profiles')).toBe('profile-list')
       expect(hashToViewMode('profiles')).toBe('profile-list')
+    })
+
+    it('identifies admin mode', () => {
+      expect(hashToViewMode('#admin')).toBe('admin')
+      expect(hashToViewMode('admin')).toBe('admin')
     })
 
     it('identifies profile-edit mode', () => {
@@ -79,6 +89,10 @@ describe('hashRouting', () => {
       expect(viewModeToHash('introduction')).toBe('introduction')
     })
 
+    it('generates hash for auth mode', () => {
+      expect(viewModeToHash('auth')).toBe('auth')
+    })
+
     it('generates hash for form mode', () => {
       expect(viewModeToHash('form')).toBe('form')
     })
@@ -89,6 +103,10 @@ describe('hashRouting', () => {
 
     it('generates hash for profile mode', () => {
       expect(viewModeToHash('profile')).toBe('profile')
+    })
+
+    it('generates hash for admin mode', () => {
+      expect(viewModeToHash('admin')).toBe('admin')
     })
 
     it('generates hash for edit mode with CV ID', () => {

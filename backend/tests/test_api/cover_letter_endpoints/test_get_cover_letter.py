@@ -9,7 +9,7 @@ from unittest.mock import patch
 class TestGetCoverLetter:
     """Test GET /api/cover-letters/{cover_letter_id} endpoint."""
 
-    async def test_get_cover_letter_success(self, client, mock_neo4j_connection):
+    async def test_get_cover_letter_success(self, client, mock_supabase_client):
         """Test successful cover letter retrieval."""
         mock_cover_letter = {
             "cover_letter_id": "test-id",
@@ -27,7 +27,7 @@ class TestGetCoverLetter:
             "selected_skills": ["Python"]
         }
 
-        with patch("backend.app_helpers.routes.cover_letter.endpoints.get_cover_letter_by_id") as mock_get:
+        with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.get_cover_letter_by_id") as mock_get:
             mock_get.return_value = mock_cover_letter
 
             response = await client.get("/api/cover-letters/test-id")
@@ -35,16 +35,20 @@ class TestGetCoverLetter:
             data = response.json()
             assert data["cover_letter_id"] == "test-id"
 
-    async def test_get_cover_letter_not_found(self, client, mock_neo4j_connection):
+    async def test_get_cover_letter_not_found(self, client, mock_supabase_client):
         """Test getting non-existent cover letter."""
-        response = await client.get("/api/cover-letters/non-existent-id")
-        assert response.status_code == 404
-        data = response.json()
-        assert "Cover letter not found" in data["detail"]
+        with patch(
+            "backend.app_helpers.routes.cover_letter.endpoints.queries.get_cover_letter_by_id",
+            return_value=None,
+        ):
+            response = await client.get("/api/cover-letters/non-existent-id")
+            assert response.status_code == 404
+            data = response.json()
+            assert "Cover letter not found" in data["detail"]
 
-    async def test_get_cover_letter_database_error(self, client, mock_neo4j_connection):
+    async def test_get_cover_letter_database_error(self, client, mock_supabase_client):
         """Test get cover letter with database error."""
-        with patch("backend.app_helpers.routes.cover_letter.endpoints.get_cover_letter_by_id") as mock_get:
+        with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.get_cover_letter_by_id") as mock_get:
             mock_get.side_effect = Exception("Database error")
 
             response = await client.get("/api/cover-letters/test-id")

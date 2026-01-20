@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { getErrorMessage } from '../axiosError'
 import { Editor } from '@tiptap/react'
 import { buildAiRewriteHtml } from '../ai/aiTextAssist'
 import { rewriteText } from '../../services/aiService'
@@ -87,8 +88,8 @@ export function useAiAssist({
       onChange(rewrittenHtml)
 
       setShowPromptModal(false)
-    } catch (error: any) {
-      setRewriteError(error.response?.data?.detail || error.message || 'Failed to rewrite text')
+    } catch (error: unknown) {
+      setRewriteError(getErrorMessage(error, 'Failed to rewrite text'))
     } finally {
       setIsRewriting(false)
     }

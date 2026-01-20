@@ -1,6 +1,6 @@
 # CV Generator
 
-A full-stack application for generating professional CV documents with AI-powered assistance. Built with React + TypeScript frontend, Python FastAPI backend, and Neo4j graph database for CV storage and management.
+A full-stack application for generating professional CV documents with AI-powered assistance. Built with React + TypeScript frontend, Python FastAPI backend, and Supabase (PostgreSQL + Auth) for CV storage and management.
 
 ## Overview
 
@@ -11,7 +11,7 @@ The CV Generator simplifies the CV creation process by providing:
 - Reusable master profile for personal info, experience, and education
 - Professional DOCX document generation
 - Browser-printable HTML output for preview and printing
-- Graph database storage for easy CV management
+- Supabase-backed storage for secure CV management
 
 ## Architecture
 
@@ -19,7 +19,7 @@ The CV Generator simplifies the CV creation process by providing:
 graph TB
     User[User Browser] --> Frontend[React Frontend<br/>Port 5173 Dev]
     Frontend --> API[FastAPI Backend<br/>Port 8000]
-    API --> Neo4j[Neo4j Database<br/>Ports 7474/7687]
+    API --> Supabase[Supabase (Postgres + Auth)<br/>Ports 54321/54322]
     API --> Generator[CV Generator<br/>DOCX & HTML Creation]
     Generator --> Files[DOCX Files<br/>backend/output/]
     Generator --> HTML[Print HTML<br/>Browser Output]
@@ -40,7 +40,7 @@ See [Architecture Documentation](docs/architecture/system-overview.md) for detai
 - **Modern Web Interface**: React 18 UI with Tailwind CSS for creating and managing CVs
 - **DOCX Generation**: Generate professional Word-compatible documents using Pandoc
 - **Print HTML**: Browser-printable HTML output for preview and printing (A4 format)
-- **CV Storage**: Neo4j graph database for storing and managing CV data
+- **CV Storage**: Supabase (PostgreSQL) for storing and managing CV data
 - **CRUD Operations**: Create, read, update, and delete CVs via REST API
 - **Search & Filter**: Search CVs by name, email, or other criteria with pagination
 
@@ -86,7 +86,7 @@ Choose from 10 professional CV themes:
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS, Vite
 - **Backend**: Python 3.11, FastAPI, Uvicorn
-- **Database**: Neo4j 5.15 (graph database)
+- **Database**: Supabase (PostgreSQL + Auth)
 - **Document Generation**: Pandoc + python-docx (DOCX), Jinja2 templates (Print HTML)
 - **AI Integration**: OpenAI-compatible API support (optional)
 - **Containerization**: Docker, Docker Compose
@@ -95,7 +95,7 @@ Choose from 10 professional CV themes:
 
 - **Docker Engine**: Version 20.10 or higher
 - **Docker Compose**: Version 2.0 or higher
-- **Node.js**: Version 18 or higher (for frontend development)
+- **Node.js**: Version 20 or higher (for frontend development)
 - **npm**: Version 9 or higher
 
 Optional:
@@ -123,7 +123,7 @@ npm run dev:full
 ```
 
 This single command will:
-- Start Docker services (backend + Neo4j)
+- Start Docker services (backend + Supabase)
 - Install frontend dependencies if needed
 - Start the frontend dev server with HMR on port 5173
 
@@ -131,6 +131,12 @@ This single command will:
 ```bash
 ./scripts/stop-dev.sh
 # or press Ctrl+C in the terminal
+```
+
+**Health check:**
+```bash
+./scripts/health-check.sh
+./scripts/health-check.sh --backend-url http://localhost:8000 --retries 5 --delay 2
 ```
 
 ### Option 2: Docker-Only Setup
@@ -150,25 +156,31 @@ docker-compose up -d
 
 For the best development experience with hot module replacement:
 
-1. **Start backend and database:**
+1. **Start Supabase locally:**
+   ```bash
+   supabase start
+   ```
+
+2. **Start backend:**
    ```bash
    docker-compose up -d
    ```
 
-2. **Install frontend dependencies** (one-time):
+3. **Install frontend dependencies** (one-time):
    ```bash
    npm install
    ```
 
-3. **Start frontend dev server:**
+4. **Start frontend dev server:**
    ```bash
    npm run dev
    ```
 
-4. **Access the application:**
+5. **Access the application:**
    - Frontend (with HMR): http://localhost:5173
    - API Documentation: http://localhost:8000/docs
-   - Neo4j Browser: http://localhost:7474 (username: `neo4j`, password: `cvpassword`)
+   - Supabase Studio: http://localhost:54323
+   - Supabase API: http://localhost:54321
 
 **Benefits of hybrid setup:**
 - Frontend changes reload instantly with Vite HMR
@@ -182,7 +194,8 @@ Once running, access:
 - **Frontend**: http://localhost:5173 (dev) or http://localhost:8000 (Docker-only)
 - **API Documentation**: http://localhost:8000/docs (Swagger UI)
 - **ReDoc**: http://localhost:8000/redoc
-- **Neo4j Browser**: http://localhost:7474 (username: `neo4j`, password: `cvpassword`)
+- **Supabase Studio**: http://localhost:54323
+- **Supabase API**: http://localhost:54321
 
 ### View Logs
 
@@ -192,7 +205,6 @@ docker-compose logs -f
 
 # Specific service
 docker-compose logs -f app
-docker-compose logs -f neo4j
 ```
 
 ### Stop Services
@@ -213,15 +225,15 @@ docker-compose down -v
 
 ### CV Management
 
-- **POST** `/api/save-cv` - Save CV data to Neo4j without generating file
+- **POST** `/api/save-cv` - Save CV data without generating a file
 - **GET** `/api/cv/{cv_id}` - Retrieve CV data by ID
 - **GET** `/api/cvs` - List all CVs (query params: `limit`, `offset`, `search`)
 - **PUT** `/api/cv/{cv_id}` - Update existing CV data
-- **DELETE** `/api/cv/{cv_id}` - Delete CV from Neo4j
+- **DELETE** `/api/cv/{cv_id}` - Delete CV
 
 ### Document Generation
 
-- **POST** `/api/generate-cv-docx` - Generate DOCX file from CV data and save to Neo4j
+- **POST** `/api/generate-cv-docx` - Generate DOCX file from CV data and save it
 - **POST** `/api/cv/{cv_id}/generate-docx` - Generate DOCX for existing CV
 - **GET** `/api/download-docx/{filename}` - Download generated DOCX file
 - **POST** `/api/generate-cv-html` - Generate HTML file from CV data
@@ -256,11 +268,12 @@ See [API Documentation](docs/backend/api-endpoints.md) for detailed request/resp
 Create a `.env` file in the project root (or use environment variables):
 
 ```env
-# Neo4j Configuration
-NEO4J_URI=bolt://neo4j:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=cvpassword
-NEO4J_DATABASE=neo4j
+# Supabase Configuration
+SUPABASE_URL=http://localhost:54321
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_JWT_SECRET=your-jwt-secret
+SUPABASE_DEFAULT_USER_ID=your-test-user-id
 
 # CORS Configuration
 CORS_ORIGINS=http://localhost:5173,http://localhost:8000
@@ -448,10 +461,9 @@ cv/
 │   │   ├── html_renderer/    # HTML rendering
 │   │   ├── print_html_renderer.py # Print HTML generation
 │   │   └── templates/        # DOCX and HTML templates
-│   ├── database/             # Neo4j database operations
-│   │   ├── connection.py     # Database connection
-│   │   ├── models.py         # Database models
-│   │   └── queries/         # Database query functions
+│   ├── database/             # Supabase data access
+│   │   ├── supabase/         # Supabase client + queries
+│   │   └── queries/          # Query exports
 │   ├── models/               # Pydantic models
 │   ├── services/             # Business logic services
 │   │   ├── ai/               # AI service integration
@@ -554,9 +566,9 @@ npm install
 ```
 
 **Database connection errors:**
-- Verify Neo4j is running: `docker-compose ps`
-- Check Neo4j logs: `docker-compose logs neo4j`
-- Verify credentials in `.env` match `docker-compose.yml`
+- Verify Supabase is running: `supabase status`
+- Check backend logs: `docker-compose logs app`
+- Verify `SUPABASE_URL` and keys in `.env`
 
 See [Troubleshooting Documentation](docs/troubleshooting/) for more solutions.
 

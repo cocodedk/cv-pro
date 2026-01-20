@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Commands
-- **Dev**: `npm run dev:full` (starts Docker backend + local frontend)
+- **Dev**: `npm run dev:full` (starts Docker backend + local frontend + local Supabase)
 - **Build**: `npm run build` (Vite build)
 - **Type check**: `npm run type-check`
 - **Test all**: `npm test`
@@ -14,8 +14,8 @@
 
 ## Architecture
 - **Frontend**: React 18 + TypeScript + Vite + Tailwind (`frontend/src/`)
-- **Backend**: Python FastAPI in Docker (`backend/`), Neo4j database
-- **Hybrid setup**: Backend runs in Docker (`cv-app`), frontend runs locally
+- **Backend**: Python FastAPI in Docker (`backend/`), Supabase database
+- **Hybrid setup**: Backend runs in Docker (`cv-pro-app`), frontend runs locally
 
 ## Code Style
 - Max 150 lines per file; one class per file; DRY principle

@@ -8,7 +8,7 @@ from unittest.mock import patch
 class TestListCVs:
     """Test GET /api/cvs endpoint."""
 
-    async def test_list_cvs_success(self, client, mock_neo4j_connection):
+    async def test_list_cvs_success(self, client, mock_supabase_client):
         """Test successful CV listing."""
         list_data = {
             "cvs": [
@@ -28,21 +28,21 @@ class TestListCVs:
             assert data["total"] == 1
             assert len(data["cvs"]) == 1
 
-    async def test_list_cvs_with_pagination(self, client, mock_neo4j_connection):
+    async def test_list_cvs_with_pagination(self, client, mock_supabase_client):
         """Test CV listing with pagination."""
         list_data = {"cvs": [], "total": 0}
         with patch("backend.database.queries.list_cvs", return_value=list_data):
             response = await client.get("/api/cvs?limit=10&offset=0")
             assert response.status_code == 200
 
-    async def test_list_cvs_with_search(self, client, mock_neo4j_connection):
+    async def test_list_cvs_with_search(self, client, mock_supabase_client):
         """Test CV listing with search."""
         list_data = {"cvs": [], "total": 0}
         with patch("backend.database.queries.list_cvs", return_value=list_data):
             response = await client.get("/api/cvs?search=John")
             assert response.status_code == 200
 
-    async def test_list_cvs_returns_target_company_and_role(self, client, mock_neo4j_connection):
+    async def test_list_cvs_returns_target_company_and_role(self, client, mock_supabase_client):
         """Test CV listing returns target_company and target_role when present."""
         list_data = {
             "cvs": [

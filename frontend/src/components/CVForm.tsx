@@ -89,8 +89,8 @@ export default function CVForm({ onSuccess, onError, setLoading, cvId }: CVFormP
         theme: theme || undefined,
         layout: layout || undefined,
       })
-    } catch (error: any) {
-      onError(error.message || 'Failed to download PDF')
+    } catch (error: unknown) {
+      onError(error instanceof Error ? error.message : 'Failed to download PDF')
     } finally {
       setIsGeneratingPdf(false)
     }

@@ -16,10 +16,10 @@ Guide for deploying the CV Generator to production.
 Create `.env` file with production values:
 
 ```env
-NEO4J_URI=bolt://neo4j:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=<strong-password>
-NEO4J_DATABASE=neo4j
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_JWT_SECRET=your-jwt-secret
 CORS_ORIGINS=https://yourdomain.com
 ```
 
@@ -53,8 +53,8 @@ Use Let's Encrypt: `certbot --nginx -d yourdomain.com`
 
 ## Database Backup
 
-**Manual**: `docker-compose exec neo4j neo4j-admin backup --backup-dir=/backups`
-**Automated** (cron): `0 2 * * * docker-compose exec neo4j neo4j-admin backup --backup-dir=/backups`
+- Supabase-hosted projects include automated backups (see Supabase dashboard).
+- For self-hosted Postgres, use `pg_dump` and scheduled snapshots.
 
 ## Monitoring
 
@@ -76,7 +76,7 @@ Configure log aggregation:
 For high traffic:
 1. Use load balancer
 2. Scale backend containers
-3. Use Neo4j cluster
+3. Scale Supabase/Postgres resources
 4. Implement caching layer
 
 ## Security Checklist

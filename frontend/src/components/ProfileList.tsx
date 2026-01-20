@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { listProfiles, deleteProfileByUpdatedAt } from '../services/profileService'
 import { ProfileListItem } from '../types/cv'
+import { getErrorMessage } from '../app_helpers/axiosError'
 
 interface ProfileListProps {
   onError: (message: string) => void
@@ -17,26 +18,27 @@ export default function ProfileList({ onError }: ProfileListProps) {
     searchRef.current = search
   }, [search])
 
-  const fetchProfiles = async () => {
+  const fetchProfiles = useCallback(async () => {
     setLoading(true)
     try {
       const response = await listProfiles()
       let filteredProfiles = response.profiles
-      if (search) {
-        const searchLower = search.toLowerCase()
+      const currentSearch = searchRef.current.trim()
+      if (currentSearch) {
+        const searchLower = currentSearch.toLowerCase()
         filteredProfiles = response.profiles.filter(p => p.name.toLowerCase().includes(searchLower))
       }
       setProfiles(filteredProfiles)
-    } catch (error: any) {
-      onError(error.response?.data?.detail || 'Failed to load profiles')
+    } catch (error: unknown) {
+      onError(getErrorMessage(error, 'Failed to load profiles'))
     } finally {
       setLoading(false)
     }
-  }
+  }, [onError])
 
   useEffect(() => {
     fetchProfiles()
-  }, [])
+  }, [fetchProfiles])
 
   // Refresh list when navigating back from edit mode
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function ProfileList({ onError }: ProfileListProps) {
     // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
-  }, []) // Only run once on mount
+  }, [fetchProfiles])
 
   const handleSearch = () => {
     fetchProfiles()
@@ -65,8 +67,8 @@ export default function ProfileList({ onError }: ProfileListProps) {
     try {
       await deleteProfileByUpdatedAt(updatedAt)
       fetchProfiles()
-    } catch (error: any) {
-      onError(error.response?.data?.detail || 'Failed to delete profile')
+    } catch (error: unknown) {
+      onError(getErrorMessage(error, 'Failed to delete profile'))
     }
   }
 

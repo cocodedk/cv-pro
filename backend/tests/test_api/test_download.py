@@ -10,7 +10,7 @@ class TestDownloadHtml:
     """Test GET /api/download-html/{filename} endpoint."""
 
     async def test_download_html_success(
-        self, client, temp_output_dir, mock_neo4j_connection
+        self, client, temp_output_dir, mock_supabase_client
     ):
         """Test successful HTML file download with regeneration."""
         test_file = temp_output_dir / "test_cv.html"
@@ -43,7 +43,7 @@ class TestDownloadHtml:
             app.state.output_dir = original_output_dir
 
     async def test_download_html_not_found(
-        self, client, temp_output_dir, mock_neo4j_connection
+        self, client, temp_output_dir, mock_supabase_client
     ):
         """Test download non-existent HTML file."""
         original_output_dir = getattr(app.state, "output_dir", None)
@@ -74,7 +74,7 @@ class TestDownloadDocx:
     """Test GET /api/download-docx/{filename} endpoint."""
 
     async def test_download_docx_success(
-        self, client, temp_output_dir, mock_neo4j_connection
+        self, client, temp_output_dir, mock_supabase_client
     ):
         """Test successful DOCX file download with regeneration."""
         test_file = temp_output_dir / "test_cv.docx"
@@ -110,7 +110,7 @@ class TestDownloadDocx:
             app.state.output_dir = original_output_dir
 
     async def test_download_docx_not_found(
-        self, client, temp_output_dir, mock_neo4j_connection
+        self, client, temp_output_dir, mock_supabase_client
     ):
         """Test download non-existent DOCX file."""
         original_output_dir = getattr(app.state, "output_dir", None)

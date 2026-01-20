@@ -17,7 +17,7 @@ npm start
 ```
 
 This single command will:
-- Start Docker services (backend + Neo4j)
+- Start Docker services (backend + Supabase)
 - Install frontend dependencies if needed
 - Start the frontend dev server with hot module replacement
 
@@ -26,7 +26,8 @@ This single command will:
 Once started, access:
 - **Frontend**: http://localhost:5173
 - **API Documentation**: http://localhost:8000/docs
-- **Neo4j Browser**: http://localhost:7474 (username: neo4j, password: cvpassword)
+- **Supabase Studio**: http://localhost:54323
+- **Supabase API**: http://localhost:54321
 
 ## Stop the Application
 

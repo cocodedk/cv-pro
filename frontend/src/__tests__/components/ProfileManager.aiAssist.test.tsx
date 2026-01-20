@@ -10,7 +10,7 @@ import {
 } from '../helpers/profileManager/mocks'
 
 vi.mock('../../services/profileService')
-const mockedProfileService = profileService as any
+const mockedProfileService = vi.mocked(profileService, true)
 
 describe('ProfileManager - AI Assist', () => {
   const { mockOnSuccess, mockOnError, mockSetLoading } = createMockCallbacks()

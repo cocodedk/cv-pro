@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { UseFormReset } from 'react-hook-form'
 import axios from 'axios'
 import { CVData, ProfileData } from '../../types/cv'
+import { getErrorDetail, getErrorMessage, getErrorResponse } from '../axiosError'
 
 interface UseProfileManagerProps {
   reset: UseFormReset<CVData>
@@ -24,22 +25,24 @@ export function useProfileManager({
   const loadProfile = async () => {
     setLoading(true)
     try {
-      const response = await axios.get('/api/profile')
-      if (response.data) {
-        setProfileData(response.data)
+      const response = await axios.get<ProfileData | null>('/api/profile')
+      const profile = response.data
+      if (profile) {
+        setProfileData(profile)
         setShowProfileLoader(true)
-        const expIndices = new Set<number>(response.data.experience.map((_: any, i: number) => i))
-        const eduIndices = new Set<number>(response.data.education.map((_: any, i: number) => i))
+        const expIndices = new Set<number>(profile.experience.map((_item, i) => i))
+        const eduIndices = new Set<number>(profile.education.map((_item, i) => i))
         setSelectedExperiences(expIndices)
         setSelectedEducations(eduIndices)
       } else {
         onError('No profile found. Please save a profile first.')
       }
-    } catch (error: any) {
-      if (error.response?.status === 404) {
+    } catch (error: unknown) {
+      const { status, data } = getErrorResponse(error)
+      if (status === 404) {
         onError('No profile found. Please save a profile first.')
       } else {
-        onError('Failed to load profile')
+        onError(getErrorDetail(data) || 'Failed to load profile')
       }
     } finally {
       setLoading(false)
@@ -78,8 +81,8 @@ export function useProfileManager({
       }
       await axios.post('/api/profile', profileData)
       onSuccess('Current form data saved to profile!')
-    } catch (error: any) {
-      onError(error.response?.data?.detail || 'Failed to save to profile')
+    } catch (error: unknown) {
+      onError(getErrorMessage(error, 'Failed to save to profile'))
     } finally {
       setLoading(false)
     }

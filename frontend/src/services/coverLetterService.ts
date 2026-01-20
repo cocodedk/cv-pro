@@ -7,6 +7,7 @@ import {
   CoverLetterListResponse,
   CoverLetterData,
 } from '../types/coverLetter'
+import { getErrorMessage } from '../app_helpers/axiosError'
 
 export async function generateCoverLetter(
   payload: CoverLetterRequest
@@ -35,9 +36,9 @@ export async function downloadCoverLetterPDF(html: string): Promise<void> {
     // Clean up
     document.body.removeChild(link)
     window.URL.revokeObjectURL(downloadUrl)
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle blob error responses
-    if (error.response?.data instanceof Blob) {
+    if (axios.isAxiosError?.(error) && error.response?.data instanceof Blob) {
       try {
         const text = await error.response.data.text()
         const json = JSON.parse(text)
@@ -46,7 +47,7 @@ export async function downloadCoverLetterPDF(html: string): Promise<void> {
         throw new Error('Failed to download PDF')
       }
     }
-    throw new Error(error.response?.data?.detail || error.message || 'Failed to download PDF')
+    throw new Error(getErrorMessage(error, 'Failed to download PDF'))
   }
 }
 

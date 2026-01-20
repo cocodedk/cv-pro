@@ -6,7 +6,7 @@ import ProfileSelectionModal from '../../components/ProfileSelectionModal'
 import * as profileService from '../../services/profileService'
 
 vi.mock('../../services/profileService')
-const mockedProfileService = profileService as any
+const mockedProfileService = vi.mocked(profileService, true)
 
 describe('ProfileSelectionModal', () => {
   const mockOnClose = vi.fn()

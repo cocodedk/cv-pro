@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { listProfiles, getProfileByUpdatedAt } from '../services/profileService'
 import { ProfileListItem, ProfileData } from '../types/cv'
+import { getErrorMessage } from '../app_helpers/axiosError'
 
 interface ProfileSelectionModalProps {
   isOpen: boolean
@@ -19,24 +20,24 @@ export default function ProfileSelectionModal({
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingProfile, setIsLoadingProfile] = useState(false)
 
-  useEffect(() => {
-    if (isOpen) {
-      loadProfiles()
-    }
-  }, [isOpen])
-
-  const loadProfiles = async () => {
+  const loadProfiles = useCallback(async () => {
     setIsLoading(true)
     try {
       const response = await listProfiles()
       setProfiles(response.profiles)
-    } catch (error: any) {
-      onError(error.message || 'Failed to load profiles')
+    } catch (error: unknown) {
+      onError(getErrorMessage(error, 'Failed to load profiles'))
       onClose()
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [onClose, onError])
+
+  useEffect(() => {
+    if (isOpen) {
+      loadProfiles()
+    }
+  }, [isOpen, loadProfiles])
 
   const handleSelectProfile = async (updatedAt: string) => {
     setIsLoadingProfile(true)
@@ -48,8 +49,8 @@ export default function ProfileSelectionModal({
       } else {
         onError('Profile not found')
       }
-    } catch (error: any) {
-      onError(error.message || 'Failed to load profile')
+    } catch (error: unknown) {
+      onError(getErrorMessage(error, 'Failed to load profile'))
     } finally {
       setIsLoadingProfile(false)
     }

@@ -5,7 +5,7 @@ import * as profileService from '../../services/profileService'
 import ProfileList from '../../components/ProfileList'
 
 vi.mock('../../services/profileService')
-const mockedProfileService = profileService as any
+const mockedProfileService = vi.mocked(profileService, true)
 
 // Mock window.location.hash
 Object.defineProperty(window, 'location', {

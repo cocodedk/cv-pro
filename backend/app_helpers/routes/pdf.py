@@ -2,7 +2,7 @@
 
 import logging
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Request, Query
+from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from fastapi.responses import Response
 from slowapi import Limiter
 
@@ -10,6 +10,7 @@ from backend.cv_generator.print_html_renderer import render_print_html
 from backend.database import queries
 from backend.services.cv_file_service import CVFileService
 from backend.services.pdf_service import PDFService
+from backend.app_helpers.auth import get_current_user
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ def create_pdf_router(  # noqa: C901
     limiter: Limiter, cv_file_service: CVFileService, pdf_service: PDFService
 ) -> APIRouter:
     """Create and return PDF router with dependencies."""
-    router = APIRouter()
+    router = APIRouter(dependencies=[Depends(get_current_user)])
 
     @router.post("/export/pdf/long")
     @limiter.limit("30/minute")

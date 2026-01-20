@@ -8,7 +8,7 @@ from unittest.mock import patch
 class TestGetCV:
     """Test GET /api/cv/{cv_id} endpoint."""
 
-    async def test_get_cv_success(self, client, mock_neo4j_connection):
+    async def test_get_cv_success(self, client, mock_supabase_client):
         """Test successful CV retrieval."""
         cv_data = {
             "cv_id": "test-id",
@@ -31,13 +31,13 @@ class TestGetCV:
             assert data["cv_id"] == "test-id"
             assert data["experience"][0]["projects"][0]["name"] == "Portal"
 
-    async def test_get_cv_not_found(self, client, mock_neo4j_connection):
+    async def test_get_cv_not_found(self, client, mock_supabase_client):
         """Test CV not found."""
         with patch("backend.database.queries.get_cv_by_id", return_value=None):
             response = await client.get("/api/cv/non-existent")
             assert response.status_code == 404
 
-    async def test_get_cv_returns_theme(self, client, mock_neo4j_connection):
+    async def test_get_cv_returns_theme(self, client, mock_supabase_client):
         """Test that theme is returned when retrieving CV."""
         cv_data = {
             "cv_id": "test-id",
@@ -54,7 +54,7 @@ class TestGetCV:
             assert data["theme"] == "modern"
 
     async def test_get_cv_defaults_theme_when_missing(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test that theme defaults to classic when not in database."""
         cv_data = {
@@ -71,7 +71,7 @@ class TestGetCV:
             data = response.json()
             assert data["theme"] == "classic"
 
-    async def test_get_cv_returns_target_company_and_role(self, client, mock_neo4j_connection):
+    async def test_get_cv_returns_target_company_and_role(self, client, mock_supabase_client):
         """Test that target_company and target_role are returned when present."""
         cv_data = {
             "cv_id": "test-id",

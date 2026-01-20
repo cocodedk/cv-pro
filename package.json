@@ -2,6 +2,10 @@
   "name": "cv-generator",
   "version": "1.0.0",
   "description": "CV Generator with React frontend and Python backend",
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
   "scripts": {
     "dev": "vite",
     "dev:full": "./scripts/run-dev.sh",
@@ -28,6 +32,7 @@
     "@tiptap/extension-underline": "^2.27.1",
     "@tiptap/react": "^2.27.1",
     "@tiptap/starter-kit": "^2.27.1",
+    "@supabase/supabase-js": "^2.45.4",
     "axios": "^1.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

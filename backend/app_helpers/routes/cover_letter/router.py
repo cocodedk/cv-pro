@@ -1,6 +1,6 @@
 """Cover letter router creation."""
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from slowapi import Limiter
 
 from backend.app_helpers.routes.cover_letter.endpoints import (
@@ -19,6 +19,7 @@ from backend.models_cover_letter import (
 )
 from backend.services.pdf_service import PDFService
 from pydantic import BaseModel, Field
+from backend.app_helpers.auth import get_current_user
 
 
 class CoverLetterPDFRequest(BaseModel):
@@ -30,7 +31,7 @@ def create_cover_letter_router(
     limiter: Limiter, pdf_service: PDFService
 ) -> APIRouter:
     """Create cover letter router with generation and PDF export endpoints."""
-    router = APIRouter()
+    router = APIRouter(dependencies=[Depends(get_current_user)])
 
     @router.post("/api/ai/generate-cover-letter", response_model=CoverLetterResponse)
     @limiter.limit("10/minute")

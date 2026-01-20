@@ -19,6 +19,18 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Helper function to check if cv-pro-app container is running (docker-compose v1/v2 compatible)
+wait_for_service_up() {
+    # Try docker-compose v2 first, fall back to v1
+    if command -v docker-compose &> /dev/null && docker-compose ps app --status running | grep -q "running\|Up"; then
+        return 0
+    elif docker compose ps app 2>/dev/null | grep -q "running\|Up"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -72,7 +84,7 @@ if [ $SHOW_HELP -eq 1 ]; then
     echo ""
     echo "Options:"
     echo "  --integration, -i    Run ONLY integration tests (WARNING: These tests run against"
-    echo "                       the live Neo4j database and may delete data!)"
+    echo "                       the live Supabase database and may delete data!)"
     echo "  --lint-only, -l      Run only linting checks (flake8, eslint, prettier)"
     echo "  --test-only, -t      Run only tests (skip linting)"
     exit 0
@@ -94,7 +106,7 @@ run_flake8() {
     fi
 
     # Check if containers are running
-    if ! docker-compose ps | grep -q "cv-app.*Up"; then
+    if ! wait_for_service_up; then
         echo -e "${YELLOW}⚠️  Backend container is not running. Starting it...${NC}"
         docker-compose up -d app
         sleep 5
@@ -157,7 +169,7 @@ run_prettier() {
 run_backend_tests() {
     if [ $RUN_INTEGRATION -eq 1 ]; then
         echo -e "${BLUE}📦 Running backend integration tests (in Docker)...${NC}"
-        echo -e "${YELLOW}⚠️  WARNING: Integration tests run against the live Neo4j database and may delete data!${NC}"
+        echo -e "${YELLOW}⚠️  WARNING: Integration tests run against the live Supabase database and may delete data!${NC}"
     else
         echo -e "${BLUE}📦 Running backend tests (in Docker)...${NC}"
     fi
@@ -170,7 +182,7 @@ run_backend_tests() {
     fi
 
     # Check if containers are running
-    if ! docker-compose ps | grep -q "cv-app.*Up"; then
+    if ! wait_for_service_up; then
         echo -e "${YELLOW}⚠️  Backend container is not running. Starting it...${NC}"
         docker-compose up -d app
         sleep 5

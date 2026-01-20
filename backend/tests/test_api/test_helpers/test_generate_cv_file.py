@@ -9,7 +9,7 @@ class TestGenerateCVFile:
     """Test POST /api/cv/{cv_id}/generate-docx endpoint."""
 
     async def test_generate_cv_file_uses_theme_from_db(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test that generate DOCX CV file uses theme from database."""
         cv_data = {
@@ -34,7 +34,7 @@ class TestGenerateCVFile:
                     assert cv_dict["theme"] == "minimal"
 
     async def test_generate_cv_file_defaults_theme_when_missing(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test that generate DOCX CV file defaults to classic when theme missing."""
         cv_data = {

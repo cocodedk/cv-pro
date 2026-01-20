@@ -12,11 +12,7 @@ from backend.app_helpers.routes.cover_letter.error_handlers import (
 from backend.app_helpers.routes.cover_letter.request_handlers import (
     _handle_generate_cover_letter_request,
 )
-from backend.database.connection import Neo4jConnection
-from backend.database.queries.create.cover_letter import create_cover_letter_node
-from backend.database.queries.list.cover_letter_list import list_cover_letters
-from backend.database.queries.read.cover_letter_get import get_cover_letter_by_id
-from backend.database.queries.delete import delete_cover_letter
+from backend.database import queries
 from backend.models_cover_letter import CoverLetterRequest, CoverLetterSaveRequest, CoverLetterData
 from backend.services.pdf_service import PDFService
 from pydantic import BaseModel, Field
@@ -87,22 +83,20 @@ async def save_cover_letter_endpoint(
         cover_letter_id = str(uuid4())
         created_at = datetime.utcnow().isoformat()
 
-        with Neo4jConnection.get_driver().session() as session:
-            session.execute_write(
-                create_cover_letter_node,
-                cover_letter_id=cover_letter_id,
-                created_at=created_at,
-                job_description=payload.request_data.job_description,
-                company_name=payload.request_data.company_name,
-                hiring_manager_name=payload.request_data.hiring_manager_name,
-                company_address=payload.request_data.company_address,
-                tone=payload.request_data.tone,
-                cover_letter_html=payload.cover_letter_response.cover_letter_html,
-                cover_letter_text=payload.cover_letter_response.cover_letter_text,
-                highlights_used=payload.cover_letter_response.highlights_used,
-                selected_experiences=payload.cover_letter_response.selected_experiences,
-                selected_skills=payload.cover_letter_response.selected_skills,
-            )
+        cover_letter_id = queries.create_cover_letter(
+            cover_letter_id=cover_letter_id,
+            created_at=created_at,
+            job_description=payload.request_data.job_description,
+            company_name=payload.request_data.company_name,
+            hiring_manager_name=payload.request_data.hiring_manager_name,
+            company_address=payload.request_data.company_address,
+            tone=payload.request_data.tone,
+            cover_letter_html=payload.cover_letter_response.cover_letter_html,
+            cover_letter_text=payload.cover_letter_response.cover_letter_text,
+            highlights_used=payload.cover_letter_response.highlights_used,
+            selected_experiences=payload.cover_letter_response.selected_experiences,
+            selected_skills=payload.cover_letter_response.selected_skills,
+        )
 
         return {"cover_letter_id": cover_letter_id, "status": "success"}
     except Exception as exc:
@@ -120,7 +114,7 @@ async def list_cover_letters_endpoint(
 ):
     """List saved cover letters."""
     try:
-        return list_cover_letters(limit=limit, offset=offset, search=search)
+        return queries.list_cover_letters(limit=limit, offset=offset, search=search)
     except Exception as exc:
         logger.error("Failed to list cover letters", exc_info=exc)
         raise HTTPException(
@@ -133,7 +127,7 @@ async def get_cover_letter_endpoint(
 ):
     """Get a specific cover letter by ID."""
     try:
-        cover_letter = get_cover_letter_by_id(cover_letter_id)
+        cover_letter = queries.get_cover_letter_by_id(cover_letter_id)
         if not cover_letter:
             raise HTTPException(status_code=404, detail="Cover letter not found")
 
@@ -152,7 +146,7 @@ async def delete_cover_letter_endpoint(
 ):
     """Delete a cover letter."""
     try:
-        deleted = delete_cover_letter(cover_letter_id)
+        deleted = queries.delete_cover_letter(cover_letter_id)
         if not deleted:
             raise HTTPException(status_code=404, detail="Cover letter not found")
 

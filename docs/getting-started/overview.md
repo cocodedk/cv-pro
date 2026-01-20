@@ -7,7 +7,7 @@ The CV Generator is a full-stack web application for creating professional DOCX 
 This application simplifies the CV creation process by:
 - Providing an intuitive web form for entering CV information
 - Offering a reusable master profile for personal info, experience, and education
-- Storing CV data in a Neo4j graph database for easy management
+- Storing CV data in Supabase (PostgreSQL) for easy management
 - Generating professional DOCX documents with multiple styling themes
 - Supporting CRUD operations for managing multiple CVs
 
@@ -16,7 +16,7 @@ This application simplifies the CV creation process by:
 - **Web Interface**: Modern React UI with Tailwind CSS for creating and managing CVs
 - **DOCX Generation**: Generate professional Word-compatible documents
 - **Print HTML**: Browser-printable HTML output for preview and printing
-- **CV Storage**: Neo4j graph database for storing and managing CV data
+- **CV Storage**: Supabase (PostgreSQL) for storing and managing CV data
 - **CRUD Operations**: Create, read, update, and delete CVs via REST API
 - **Search**: Search CVs by name, email, or other criteria
 - **Multiple Themes**: Support for different CV styling themes
@@ -28,7 +28,7 @@ This application simplifies the CV creation process by:
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS, Vite
 - **Backend**: Python 3.11, FastAPI, Uvicorn
-- **Database**: Neo4j 5.15 (graph database)
+- **Database**: Supabase (PostgreSQL + Auth)
 - **Document Generation**: Pandoc + python-docx (DOCX), Jinja2 templates (Print HTML)
 - **Containerization**: Docker, Docker Compose
 

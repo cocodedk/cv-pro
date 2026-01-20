@@ -30,20 +30,6 @@ Testing strategy and how to run tests for the CV Generator.
   - `test_generate_cv_draft.py`: CV draft generation endpoint tests
   - `test_ai_rewrite.py`: Text rewrite endpoint tests
 
-#### Database Tests (`test_database/`)
-- `test_queries.py`: Database query tests
-- `test_profile_queries.py`: Profile query tests documentation (refactored)
-- `test_profile_queries_save/`: Profile save and update tests (mocked, refactored into subfolder):
-  - `test_save_profile.py`: save_profile function tests
-  - `test_create_profile.py`: create_profile function tests
-  - `test_update_profile.py`: update_profile function tests
-- `test_profile_queries_get.py`: Profile retrieval tests (mocked)
-- `test_profile_queries_delete.py`: Profile deletion tests (mocked)
-- `test_profile_queries_integration/`: Profile CRUD integration tests (live Neo4j, refactored into subfolder):
-  - `test_crud.py`: CRUD roundtrip tests
-  - `test_duplicate_person_regression.py`: Duplicate Person node prevention regression tests
-  - `helpers.py`: Shared helper functions (skip_if_no_neo4j, is_test_profile)
-
 #### Service Tests (`test_services/`)
 - `cover_letter_selection_tests/content_selection/`: Content selection tests (refactored):
   - `test_basic_selection.py`: Basic content selection functionality
@@ -68,9 +54,6 @@ Testing strategy and how to run tests for the CV Generator.
 
 #### Model Tests
 - `test_models.py`: Pydantic model validation tests
-
-**Test Helpers**:
-- `test_database/helpers/profile_queries/mocks.py`: Shared mock setup utilities for profile query tests
 
 **Framework**: pytest
 
@@ -139,28 +122,8 @@ npm test
 
 ## Test Database
 
-Most backend tests mock the Neo4j driver. Integration tests run against the live
-Neo4j database in Docker and should clean up after themselves.
-
-**Test Isolation**: Integration tests use test data prefixed with "test" to ensure
-they don't accidentally modify real profile data. Tests verify profiles are test
-profiles before updating or deleting them.
-
-### Test Cleanup Safety
-
-**Profile Deletion Protection**: Tests implement safety mechanisms to prevent
-accidental deletion of real user profiles:
-
-1. **Integration Tests** (`backend/tests/test_database/test_profile_queries_integration/`):
-   - Use `is_test_profile()` helper to verify profiles have "test" prefix before deletion
-   - Only delete profiles that pass the test profile verification
-   - Example: `test_duplicate_person_regression.py` checks both old and new profile
-     timestamps before cleanup
-
-**Why This Matters**: The `delete_profile()` function deletes the most recently updated
-profile (by `updated_at`), which could be a real user profile if tests don't properly
-isolate their test data. These safety mechanisms ensure tests only delete profiles
-they created, protecting real user data.
+Most backend tests mock Supabase clients. Integration tests (if enabled) run
+against a local Supabase instance and should clean up after themselves.
 
 ## Writing Tests
 
@@ -170,11 +133,7 @@ def test_create_cv():
     cv_data = {"personal_info": {"name": "Test"}, "experience": [], "education": [], "skills": []}
     cv_id = queries.create_cv(cv_data)
     assert cv_id is not None
-    # create_cv makes multiple tx.run() calls (CV, Person, Experience, Education, Skills)
-    # Each call is made within a single transaction for atomicity
 ```
-
-**Note**: When testing database operations that make multiple query calls (like `create_cv`), tests should account for multiple `tx.run()` invocations. The implementation uses modular functions that each make their own query call, improving maintainability while keeping operations atomic within a transaction.
 
 **Frontend Example**:
 ```typescript

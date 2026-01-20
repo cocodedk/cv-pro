@@ -5,9 +5,19 @@ interface NavigationProps {
   viewMode: ViewMode
   isDark: boolean
   onThemeToggle: () => void
+  isAuthenticated: boolean
+  isAdmin: boolean
+  onSignOut: () => void
 }
 
-export default function Navigation({ viewMode, isDark, onThemeToggle }: NavigationProps) {
+export default function Navigation({
+  viewMode,
+  isDark,
+  onThemeToggle,
+  isAuthenticated,
+  isAdmin,
+  onSignOut,
+}: NavigationProps) {
   return (
     <nav className="bg-white shadow-sm dark:bg-gray-900 dark:border-b dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,6 +47,20 @@ export default function Navigation({ viewMode, isDark, onThemeToggle }: Navigati
             >
               Introduction
             </button>
+            {!isAuthenticated ? (
+              <button
+                onClick={() => {
+                  window.location.hash = 'auth'
+                }}
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                  viewMode === 'auth'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                }`}
+              >
+                Sign in
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={onThemeToggle}
@@ -45,54 +69,78 @@ export default function Navigation({ viewMode, isDark, onThemeToggle }: Navigati
             >
               {isDark ? 'Light mode' : 'Dark mode'}
             </button>
-            <button
-              onClick={() => {
-                window.location.hash = 'form'
-              }}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                viewMode === 'form' || viewMode === 'edit'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
-              }`}
-            >
-              {viewMode === 'edit' ? 'Edit CV' : 'Create CV'}
-            </button>
-            <button
-              onClick={() => {
-                window.location.hash = 'list'
-              }}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                viewMode === 'list'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
-              }`}
-            >
-              My CVs
-            </button>
-            <button
-              onClick={() => {
-                window.location.hash = 'profile-list'
-              }}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                viewMode === 'profile-list'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
-              }`}
-            >
-              My Profiles
-            </button>
-            <button
-              onClick={() => {
-                window.location.hash = 'profile'
-              }}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                viewMode === 'profile' || viewMode === 'profile-edit'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
-              }`}
-            >
-              Profile
-            </button>
+            {isAuthenticated ? (
+              <>
+                <button
+                  onClick={() => {
+                    window.location.hash = 'form'
+                  }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    viewMode === 'form' || viewMode === 'edit'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {viewMode === 'edit' ? 'Edit CV' : 'Create CV'}
+                </button>
+                <button
+                  onClick={() => {
+                    window.location.hash = 'list'
+                  }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    viewMode === 'list'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  My CVs
+                </button>
+                <button
+                  onClick={() => {
+                    window.location.hash = 'profile-list'
+                  }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    viewMode === 'profile-list'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  My Profiles
+                </button>
+                <button
+                  onClick={() => {
+                    window.location.hash = 'profile'
+                  }}
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    viewMode === 'profile' || viewMode === 'profile-edit'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  Profile
+                </button>
+                {isAdmin ? (
+                  <button
+                    onClick={() => {
+                      window.location.hash = 'admin'
+                    }}
+                    className={`px-4 py-2 rounded-md text-sm font-medium ${
+                      viewMode === 'admin'
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    Admin
+                  </button>
+                ) : null}
+                <button
+                  onClick={onSignOut}
+                  className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : null}
           </div>
         </div>
       </div>

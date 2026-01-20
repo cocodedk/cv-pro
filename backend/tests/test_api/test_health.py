@@ -1,6 +1,23 @@
 """Tests for health check endpoint."""
+from types import SimpleNamespace
 import pytest
 from unittest.mock import patch
+
+
+class FakeAdminClient:
+    """Minimal Supabase admin client stub."""
+
+    def table(self, _name):
+        return self
+
+    def select(self, *_args, **_kwargs):
+        return self
+
+    def limit(self, *_args, **_kwargs):
+        return self
+
+    def execute(self):
+        return SimpleNamespace(data=[{"id": "test-user"}])
 
 
 @pytest.mark.asyncio
@@ -8,11 +25,11 @@ from unittest.mock import patch
 class TestHealthEndpoint:
     """Test health check endpoint."""
 
-    async def test_health_check_connected(self, client, mock_neo4j_connection):
+    async def test_health_check_connected(self, client):
         """Test health check when database is connected."""
         with patch(
-            "backend.database.connection.Neo4jConnection.verify_connectivity",
-            return_value=True,
+            "backend.app_helpers.routes.health.get_admin_client",
+            return_value=FakeAdminClient(),
         ):
             response = await client.get("/api/health")
             assert response.status_code == 200
@@ -23,8 +40,8 @@ class TestHealthEndpoint:
     async def test_health_check_disconnected(self, client):
         """Test health check when database is disconnected."""
         with patch(
-            "backend.database.connection.Neo4jConnection.verify_connectivity",
-            return_value=False,
+            "backend.app_helpers.routes.health.get_admin_client",
+            side_effect=RuntimeError("offline"),
         ):
             response = await client.get("/api/health")
             assert response.status_code == 200

@@ -1,1 +1,1 @@
-# Database module for Neo4j operations
+# Database module for Supabase operations
