@@ -9,6 +9,7 @@ These phases are small, independent milestones that lead to a multi-user app wit
 5. [Phase 05 - Frontend auth and session handling](phase-05-frontend-auth.md)
 6. [Phase 06 - Admin panel](phase-06-admin-panel.md)
 7. [Phase 07 - Data migration and cutover](phase-07-migration-and-cutover.md)
+8. [Phase 08 - Production readiness & enhancements](phase-08-production-readiness.md)
 
 Notes:
 - Phases assume the Supabase design docs in `docs/supabase`.
@@ -26,3 +27,4 @@ Status legend: ✅ Complete | 🟡 In progress | ⚪ Not started
 | Phase 05 - Frontend auth and session handling | ✅ Complete | Supabase auth UI + tokenized API requests + route guards. |
 | Phase 06 - Admin panel | ✅ Complete | Admin views migration + endpoints + UI implemented. |
 | Phase 07 - Data migration and cutover | ⚪ Not started | Legacy data migration not executed. |
+| Phase 08 - Production readiness & enhancements | 🟡 Planned | Comprehensive production readiness plan created. |
