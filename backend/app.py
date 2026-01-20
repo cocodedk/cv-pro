@@ -18,6 +18,7 @@ from backend.app_helpers.routes import (
     ai,
     pdf,
     cover_letter,
+    admin,
 )
 from backend.services.cv_file_service import CVFileService
 from backend.services.pdf_service import PDFService
@@ -94,6 +95,8 @@ ai_router = ai.create_ai_router(limiter)
 app.include_router(ai_router)
 cover_letter_router = cover_letter.create_cover_letter_router(limiter, pdf_service)
 app.include_router(cover_letter_router)
+admin_router = admin.create_admin_router(limiter)
+app.include_router(admin_router)
 
 # Mount static files for frontend (only in production/Docker)
 # This must be after all API routes to ensure routes are checked first

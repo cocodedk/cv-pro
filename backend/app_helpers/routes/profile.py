@@ -1,6 +1,6 @@
 """Profile-related routes."""
 import logging
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from slowapi import Limiter
 from backend.models import (
     ProfileData,
@@ -9,6 +9,7 @@ from backend.models import (
     ProfileListItem,
 )
 from backend.database import queries
+from backend.app_helpers.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,7 @@ def _log_profile_delete_request(
 
 def create_profile_router(limiter: Limiter, cv_file_service=None) -> APIRouter:  # noqa: C901
     """Create and return profile router with dependencies."""
-    router = APIRouter()
+    router = APIRouter(dependencies=[Depends(get_current_user)])
 
     @router.post("/api/profile", response_model=ProfileResponse)
     @limiter.limit("30/minute")

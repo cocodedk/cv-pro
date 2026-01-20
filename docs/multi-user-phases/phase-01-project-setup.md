@@ -7,10 +7,11 @@ Prereqs:
 
 Steps:
 1. Decide local vs hosted and follow `docs/supabase/local-setup.md` or `docs/supabase/production-setup.md`.
-2. Add backend env vars: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `DATABASE_PROVIDER=supabase`.
-3. Add frontend env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL`.
-4. Verify the backend can reach Supabase (health check or simple client call).
+2. Copy `.env.supabase.example` to `.env` and fill in Supabase + frontend values.
+3. If the backend runs in Docker, set `SUPABASE_URL=http://host.docker.internal:54321`.
+4. Start Supabase and the API (`npm run dev:full` or `supabase start` + backend).
+5. Verify `curl http://localhost:8000/api/health` returns `provider=supabase` and `status=healthy`.
 
 Exit criteria:
 - Env vars exist for backend and frontend.
-- Supabase project is reachable from the dev environment.
+- Supabase project is reachable from the dev environment (health check passes).

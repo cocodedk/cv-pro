@@ -8,7 +8,7 @@ from unittest.mock import patch
 class TestDeleteCV:
     """Test DELETE /api/cv/{cv_id} endpoint."""
 
-    async def test_delete_cv_success(self, client, mock_neo4j_connection):
+    async def test_delete_cv_success(self, client, mock_supabase_client):
         """Test successful CV deletion."""
         with patch("backend.database.queries.delete_cv", return_value=True):
             response = await client.delete("/api/cv/test-id")
@@ -16,7 +16,7 @@ class TestDeleteCV:
             data = response.json()
             assert data["status"] == "success"
 
-    async def test_delete_cv_not_found(self, client, mock_neo4j_connection):
+    async def test_delete_cv_not_found(self, client, mock_supabase_client):
         """Test delete non-existent CV."""
         with patch("backend.database.queries.delete_cv", return_value=False):
             response = await client.delete("/api/cv/non-existent")

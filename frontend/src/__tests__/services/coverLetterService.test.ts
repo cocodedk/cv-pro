@@ -3,7 +3,8 @@ import axios from 'axios'
 import { generateCoverLetter, downloadCoverLetterPDF } from '../../services/coverLetterService'
 
 vi.mock('axios')
-const mockedAxios = axios as any
+const mockedAxios = vi.mocked(axios, true)
+const originalCreateElement = document.createElement.bind(document)
 
 describe('coverLetterService', () => {
   beforeEach(() => {
@@ -79,12 +80,9 @@ describe('coverLetterService', () => {
       // Mock DOM methods
       global.URL.createObjectURL = vi.fn(() => 'blob:mock-url')
       global.URL.revokeObjectURL = vi.fn()
-      global.document.createElement = vi.fn(() => {
-        const link = {
-          href: '',
-          download: '',
-          click: vi.fn(),
-        } as any
+      global.document.createElement = vi.fn(tagName => {
+        const link = originalCreateElement(tagName) as HTMLAnchorElement
+        link.click = vi.fn()
         return link
       })
       global.document.body.appendChild = vi.fn()
@@ -106,19 +104,11 @@ describe('coverLetterService', () => {
     })
 
     it('handles blob error responses', async () => {
-      // Create a mock blob-like object with text() method
-      const mockBlob = {
-        text: vi.fn().mockResolvedValue('{"detail": "PDF generation failed"}'),
-      }
-
-      // Make it pass instanceof Blob check
-      Object.setPrototypeOf(mockBlob, Blob.prototype)
-
-      mockedAxios.post.mockRejectedValue({
-        response: {
-          data: mockBlob,
-        },
+      const mockBlob = new Blob(['{"detail": "PDF generation failed"}'], {
+        type: 'application/json',
       })
+
+      mockedAxios.post.mockRejectedValue({ response: { data: mockBlob } })
 
       await expect(downloadCoverLetterPDF('<html>Cover letter</html>')).rejects.toThrow()
     })

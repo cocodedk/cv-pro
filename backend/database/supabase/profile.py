@@ -1,7 +1,7 @@
 """Supabase-backed profile queries."""
 from typing import Any, Dict, Optional
 from backend.database.supabase.client import get_admin_client
-from backend.database.supabase.utils import apply_user_scope, get_user_id, require_user_id
+from backend.database.supabase.utils import apply_user_scope, require_user_id
 
 
 def _build_profile_response(row: Dict[str, Any]) -> Dict[str, Any]:
@@ -40,7 +40,7 @@ def save_profile(profile_data: Dict[str, Any]) -> bool:
 
 def get_profile() -> Optional[Dict[str, Any]]:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cv_profiles").select("profile_data, updated_at")
     query = apply_user_scope(query, user_id)
     response = query.order("updated_at", desc=True).limit(1).execute()
@@ -51,7 +51,7 @@ def get_profile() -> Optional[Dict[str, Any]]:
 
 def list_profiles() -> list[Dict[str, Any]]:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cv_profiles").select("profile_data, updated_at")
     query = apply_user_scope(query, user_id)
     response = query.order("updated_at", desc=True).execute()
@@ -69,7 +69,7 @@ def list_profiles() -> list[Dict[str, Any]]:
 
 def get_profile_by_updated_at(updated_at: str) -> Optional[Dict[str, Any]]:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = (
         client.table("cv_profiles")
         .select("profile_data, updated_at")
@@ -85,7 +85,7 @@ def get_profile_by_updated_at(updated_at: str) -> Optional[Dict[str, Any]]:
 
 def delete_profile_by_updated_at(updated_at: str) -> bool:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cv_profiles").delete().eq("updated_at", updated_at)
     query = apply_user_scope(query, user_id)
     response = query.execute()
@@ -94,7 +94,7 @@ def delete_profile_by_updated_at(updated_at: str) -> bool:
 
 def delete_profile() -> bool:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cv_profiles").select("id").order("updated_at", desc=True)
     query = apply_user_scope(query, user_id)
     response = query.limit(1).execute()

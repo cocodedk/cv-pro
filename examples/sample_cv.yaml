@@ -87,7 +87,7 @@ skills:
     category: "Databases"
     level: "Advanced"
 
-  - name: "Neo4j"
+  - name: "Supabase"
     category: "Databases"
     level: "Intermediate"
 

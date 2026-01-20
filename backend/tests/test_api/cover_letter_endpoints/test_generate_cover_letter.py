@@ -11,7 +11,7 @@ class TestGenerateCoverLetter:
     """Test POST /api/ai/generate-cover-letter endpoint."""
 
     async def test_generate_cover_letter_success(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test successful cover letter generation."""
         profile_data = {
@@ -73,7 +73,7 @@ class TestGenerateCoverLetter:
                     assert "Tech Corp" in data["cover_letter_html"]
 
     async def test_generate_cover_letter_profile_missing(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test cover letter generation when profile is missing."""
         with patch(
@@ -114,7 +114,7 @@ class TestGenerateCoverLetter:
         assert response.status_code == 422
 
     async def test_generate_cover_letter_llm_not_configured(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test cover letter generation when LLM is not configured."""
         profile_data = {
@@ -150,7 +150,7 @@ class TestGenerateCoverLetter:
                 assert "LLM" in data["detail"] and "configure" in data["detail"].lower()
 
     async def test_generate_cover_letter_optional_fields(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test cover letter generation with optional fields omitted."""
         profile_data = {

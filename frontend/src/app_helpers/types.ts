@@ -1,8 +1,10 @@
 export type ViewMode =
   | 'introduction'
+  | 'auth'
   | 'form'
   | 'list'
   | 'profile'
   | 'profile-list'
   | 'edit'
   | 'profile-edit'
+  | 'admin'

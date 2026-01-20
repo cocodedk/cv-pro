@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { useForm } from 'react-hook-form'
+import { FieldError, FieldErrors, useForm } from 'react-hook-form'
 import PersonalInfo from '../../components/PersonalInfo'
 import { CVData } from '../../types/cv'
 
@@ -73,12 +73,16 @@ describe('PersonalInfo', () => {
         },
       })
 
-      // Manually set error for testing
-      errors.personal_info = {
-        name: { type: 'required', message: 'Name is required' },
-      } as any
+      const nameError: FieldError = { type: 'required', message: 'Name is required' }
+      const customErrors: FieldErrors<CVData> = {
+        ...errors,
+        personal_info: {
+          ...errors.personal_info,
+          name: nameError,
+        },
+      }
 
-      return <PersonalInfo register={register} errors={errors} control={control} />
+      return <PersonalInfo register={register} errors={customErrors} control={control} />
     }
 
     render(<PersonalInfoWithError />)

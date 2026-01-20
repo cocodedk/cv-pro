@@ -8,7 +8,7 @@ Common problems and their solutions when working with the CV Generator.
 
 **Port Already in Use**: Find process (`lsof -i :8000` or `netstat -ano | findstr :8000`), stop it or change port.
 
-**Database Connection Failed**: Check Neo4j is running, wait 30-60s for startup, check logs, verify `.env` variables.
+**Database Connection Failed**: Check Supabase is running, wait 30-60s for startup, check logs, verify `.env` variables.
 
 ## Backend Issues
 
@@ -16,7 +16,7 @@ Common problems and their solutions when working with the CV Generator.
 
 **Pytest Import File Mismatch**: If you see "import file mismatch" errors, check for duplicate test files (both `.py` file and directory with same name). Remove the duplicate file and clear `__pycache__` directories: `find backend/tests -type d -name __pycache__ -exec rm -rf {} +`.
 
-**Database Query Errors**: Check Neo4j accessible (http://localhost:7474), verify credentials, check query syntax, verify data format.
+**Database Query Errors**: Check Supabase API (http://localhost:54321), verify credentials, check query syntax, verify data format.
 
 ## Frontend Issues
 
@@ -28,7 +28,7 @@ Common problems and their solutions when working with the CV Generator.
 
 ## Database Issues
 
-**Neo4j Won't Start**: Check logs (`docker-compose logs neo4j`), recreate (`docker-compose down -v && docker-compose up -d neo4j`).
+**Supabase Won't Start**: Check logs (`supabase status`), recreate (`supabase stop && supabase start`).
 
 **Data Not Persisting**: Verify volume mounted (`docker volume ls`), check docker-compose.yml, don't use `-v` flag with down.
 

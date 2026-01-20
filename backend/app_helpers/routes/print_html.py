@@ -1,7 +1,7 @@
 """Browser-printable HTML (A4) CV routes."""
 
 import logging
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from slowapi import Limiter
 
@@ -9,6 +9,7 @@ from backend.cv_generator.print_html_renderer import render_print_html
 from backend.database import queries
 from backend.models import CVData
 from backend.services.cv_file_service import CVFileService
+from backend.app_helpers.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 def create_print_html_router(
     limiter: Limiter, cv_file_service: CVFileService
 ) -> APIRouter:
-    router = APIRouter()
+    router = APIRouter(dependencies=[Depends(get_current_user)])
 
     @router.post("/api/render-print-html")
     @limiter.limit("20/minute")

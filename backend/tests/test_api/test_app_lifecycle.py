@@ -1,8 +1,24 @@
 """Tests for app lifecycle events."""
+from types import SimpleNamespace
 import pytest
 from unittest.mock import patch
 from backend.app import app
-from backend.database.connection import Neo4jConnection
+
+
+class FakeAdminClient:
+    """Minimal Supabase admin client stub."""
+
+    def table(self, _name):
+        return self
+
+    def select(self, *_args, **_kwargs):
+        return self
+
+    def limit(self, *_args, **_kwargs):
+        return self
+
+    def execute(self):
+        return SimpleNamespace(data=[{"id": "test-user"}])
 
 
 class TestAppLifespan:
@@ -11,35 +27,38 @@ class TestAppLifespan:
     @pytest.mark.asyncio
     async def test_lifespan_startup_success(self):
         """Test lifespan startup with successful connection."""
-        with patch.object(Neo4jConnection, "verify_connectivity", return_value=True):
+        with patch(
+            "backend.app_helpers.lifespan.get_admin_client",
+            return_value=FakeAdminClient(),
+        ) as mock_client:
             async with app.router.lifespan_context(app):
-                Neo4jConnection.verify_connectivity.assert_called()
+                mock_client.assert_called()
 
     @pytest.mark.asyncio
     async def test_lifespan_startup_retry_success(self):
         """Test lifespan startup with retry logic."""
-        with patch.object(
-            Neo4jConnection, "verify_connectivity", side_effect=[False, False, True]
-        ):
+        side_effects = [
+            RuntimeError("down"),
+            RuntimeError("down"),
+            FakeAdminClient(),
+        ]
+        with patch(
+            "backend.app_helpers.lifespan.get_admin_client",
+            side_effect=side_effects,
+        ) as mock_client:
             with patch("time.sleep"):
                 async with app.router.lifespan_context(app):
-                    assert Neo4jConnection.verify_connectivity.call_count == 3
+                    assert mock_client.call_count == 3
 
     @pytest.mark.asyncio
     async def test_lifespan_startup_max_retries_fails(self):
         """Test lifespan startup fails after max retries."""
-        with patch.object(Neo4jConnection, "verify_connectivity", return_value=False):
+        with patch(
+            "backend.app_helpers.lifespan.get_admin_client",
+            side_effect=RuntimeError("down"),
+        ) as mock_client:
             with patch("time.sleep"):
                 with pytest.raises(Exception, match="Failed to connect"):
                     async with app.router.lifespan_context(app):
                         pass
-                assert Neo4jConnection.verify_connectivity.call_count == 5
-
-    @pytest.mark.asyncio
-    async def test_lifespan_shutdown_closes_connection(self):
-        """Test lifespan shutdown closes database connection."""
-        with patch.object(Neo4jConnection, "verify_connectivity", return_value=True):
-            with patch.object(Neo4jConnection, "close") as mock_close:
-                async with app.router.lifespan_context(app):
-                    pass
-                mock_close.assert_called_once()
+                assert mock_client.call_count == 5

@@ -5,16 +5,16 @@ The CV Generator uses a hybrid development architecture where different componen
 ## Architecture Overview
 
 - **Backend (FastAPI)**: Runs in Docker container
-- **Neo4j Database**: Runs in Docker container
+- **Supabase**: Runs via Supabase CLI (local Docker services)
 - **Frontend (React/Vite)**: Runs locally on host machine
 - **Tests**: Backend tests run in Docker, frontend tests run locally
 
 ## Docker Containers
 
-### Backend Container (`cv-app`)
+### Backend Container (`cv-pro-app`)
 
 - **Service name**: `app` in docker-compose.yml
-- **Container name**: `cv-app`
+- **Container name**: `cv-pro-app`
 - **Port**: 8000 (mapped to host)
 - **What runs here**:
   - FastAPI backend application
@@ -23,14 +23,13 @@ The CV Generator uses a hybrid development architecture where different componen
   - Backend linting (flake8)
   - Backend formatting (black)
 
-### Neo4j Container (`cv-neo4j`)
+### Supabase (Local CLI)
 
-- **Service name**: `neo4j` in docker-compose.yml
-- **Container name**: `cv-neo4j`
-- **Ports**: 7474 (HTTP), 7687 (Bolt)
+- **Start**: `supabase start`
+- **Ports**: 54321 (API), 54322 (Postgres), 54323 (Studio)
 - **What runs here**:
-  - Neo4j database server
-  - Database storage and operations
+  - Postgres database
+  - Auth + API gateway
 
 ## Local Host Machine
 
@@ -79,7 +78,7 @@ npm run format:frontend  # Formatting
 
 ### Database Commands
 
-Neo4j access: Browser UI (http://localhost:7474), Bolt (bolt://localhost:7687), Cypher shell (`docker-compose exec neo4j cypher-shell`).
+Supabase access: `supabase status`, `supabase db reset`, Studio UI (http://localhost:54323).
 
 ## Important Notes
 

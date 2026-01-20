@@ -9,7 +9,7 @@ class TestUpdateCVBasic:
     """Test PUT /api/cv/{cv_id} endpoint - basic operations."""
 
     async def test_update_cv_success(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test successful CV update."""
         with patch("backend.database.queries.update_cv", return_value=True):
@@ -20,7 +20,7 @@ class TestUpdateCVBasic:
             assert data["status"] == "success"
 
     async def test_update_cv_not_found(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test update non-existent CV."""
         with patch("backend.database.queries.update_cv", return_value=False):

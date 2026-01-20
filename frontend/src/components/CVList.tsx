@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import axios from 'axios'
 import { CVListResponse, CVListItem } from '../types/cv'
 import { openDownload } from '../app_helpers/download'
 import { downloadPdf } from '../app_helpers/pdfDownload'
+import { getErrorMessage } from '../app_helpers/axiosError'
 
 interface CVListProps {
   onError: (message: string) => void
@@ -21,26 +22,29 @@ export default function CVList({ onError }: CVListProps) {
     searchRef.current = search
   }, [search])
 
-  const fetchCVs = async (searchTerm?: string) => {
-    setLoading(true)
-    try {
-      const params: any = { limit: 50, offset: 0 }
-      if (searchTerm) {
-        params.search = searchTerm
+  const fetchCVs = useCallback(
+    async (searchTerm?: string) => {
+      setLoading(true)
+      try {
+        const params: Record<string, string | number> = { limit: 50, offset: 0 }
+        if (searchTerm) {
+          params.search = searchTerm
+        }
+        const response = await axios.get<CVListResponse>('/api/cvs', { params })
+        setCvs(response.data.cvs)
+        setTotal(response.data.total)
+      } catch (error: unknown) {
+        onError(getErrorMessage(error, 'Failed to load CVs'))
+      } finally {
+        setLoading(false)
       }
-      const response = await axios.get<CVListResponse>('/api/cvs', { params })
-      setCvs(response.data.cvs)
-      setTotal(response.data.total)
-    } catch (error: any) {
-      onError(error.response?.data?.detail || 'Failed to load CVs')
-    } finally {
-      setLoading(false)
-    }
-  }
+    },
+    [onError]
+  )
 
   useEffect(() => {
     fetchCVs()
-  }, [])
+  }, [fetchCVs])
 
   // Refresh list when navigating back from edit mode
   useEffect(() => {
@@ -59,7 +63,7 @@ export default function CVList({ onError }: CVListProps) {
     // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
-  }, []) // Only run once on mount
+  }, [fetchCVs])
 
   const handleSearch = () => {
     fetchCVs(search || undefined)
@@ -72,8 +76,8 @@ export default function CVList({ onError }: CVListProps) {
     try {
       await axios.delete(`/api/cv/${cvId}`)
       fetchCVs(search || undefined)
-    } catch (error: any) {
-      onError(error.response?.data?.detail || 'Failed to delete CV')
+    } catch (error: unknown) {
+      onError(getErrorMessage(error, 'Failed to delete CV'))
     }
   }
 
@@ -89,8 +93,8 @@ export default function CVList({ onError }: CVListProps) {
       await axios.post(`/api/cv/${cvId}/generate-html`)
       // Refresh the list to show the download button
       fetchCVs(search || undefined)
-    } catch (error: any) {
-      onError(error.response?.data?.detail || 'Failed to generate CV file')
+    } catch (error: unknown) {
+      onError(getErrorMessage(error, 'Failed to generate CV file'))
     }
   }
 
@@ -103,8 +107,8 @@ export default function CVList({ onError }: CVListProps) {
     setIsGeneratingPdf(prev => ({ ...prev, [cvId]: true }))
     try {
       await downloadPdf(cvId)
-    } catch (error: any) {
-      onError(error.message || 'Failed to download PDF')
+    } catch (error: unknown) {
+      onError(error instanceof Error ? error.message : 'Failed to download PDF')
     } finally {
       setIsGeneratingPdf(prev => ({ ...prev, [cvId]: false }))
     }
@@ -115,11 +119,11 @@ export default function CVList({ onError }: CVListProps) {
   }
 
   const handleExport = () => {
-    const params: any = {}
+    const params = new URLSearchParams()
     if (search) {
-      params.search = search
+      params.append('search', search)
     }
-    const queryString = new URLSearchParams(params).toString()
+    const queryString = params.toString()
     const url = `/api/cvs/export?format=csv${queryString ? `&${queryString}` : ''}`
     window.open(url, '_blank')
   }

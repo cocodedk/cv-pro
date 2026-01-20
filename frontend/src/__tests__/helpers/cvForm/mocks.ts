@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export const setupAxiosMock = () => {
   vi.mock('axios')
-  return axios as any
+  return vi.mocked(axios, true)
 }
 
 export const setupWindowMocks = () => {

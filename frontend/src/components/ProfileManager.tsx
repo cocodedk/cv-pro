@@ -53,8 +53,8 @@ export default function ProfileManager({ onSuccess, onError, setLoading }: Profi
         await saveProfile(data)
         setHasProfile(true)
         onSuccess('Profile saved successfully!')
-      } catch (error: any) {
-        onError(error.message)
+      } catch (error: unknown) {
+        onError(error instanceof Error ? error.message : 'Failed to save profile')
       } finally {
         setIsSubmitting(false)
         setLoading(false)
@@ -63,9 +63,44 @@ export default function ProfileManager({ onSuccess, onError, setLoading }: Profi
     [setLoading, onSuccess, onError]
   )
 
+  const loadInitialProfile = useCallback(async () => {
+    setIsLoadingProfile(true)
+    try {
+      let profile: ProfileData | null = null
+      if (profileUpdatedAt) {
+        // Load specific profile from hash
+        profile = await getProfileByUpdatedAt(profileUpdatedAt)
+        // If not found (timestamp changed after update), fallback to most recent
+        if (!profile) {
+          profile = await getProfile()
+          // Update URL with current timestamp to prevent future issues
+          if (profile?.updated_at) {
+            window.location.hash = `#profile-edit/${encodeURIComponent(profile.updated_at)}`
+          }
+        }
+      } else {
+        // Load most recent profile
+        profile = await getProfile()
+      }
+      if (profile) {
+        reset(profile)
+        setHasProfile(true)
+      } else {
+        reset(defaultProfileData)
+        setHasProfile(false)
+      }
+    } catch (error: unknown) {
+      setHasProfile(false)
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      onError(`Failed to load profile: ${message}`)
+    } finally {
+      setIsLoadingProfile(false)
+    }
+  }, [onError, profileUpdatedAt, reset])
+
   useEffect(() => {
     loadInitialProfile()
-  }, [profileUpdatedAt])
+  }, [loadInitialProfile])
 
   // Keyboard shortcut handler for Ctrl+S / Cmd+S
   useEffect(() => {
@@ -113,40 +148,6 @@ export default function ProfileManager({ onSuccess, onError, setLoading }: Profi
     onSuccess('Profile loaded successfully!')
   }
 
-  const loadInitialProfile = async () => {
-    setIsLoadingProfile(true)
-    try {
-      let profile: ProfileData | null = null
-      if (profileUpdatedAt) {
-        // Load specific profile from hash
-        profile = await getProfileByUpdatedAt(profileUpdatedAt)
-        // If not found (timestamp changed after update), fallback to most recent
-        if (!profile) {
-          profile = await getProfile()
-          // Update URL with current timestamp to prevent future issues
-          if (profile?.updated_at) {
-            window.location.hash = `#profile-edit/${encodeURIComponent(profile.updated_at)}`
-          }
-        }
-      } else {
-        // Load most recent profile
-        profile = await getProfile()
-      }
-      if (profile) {
-        reset(profile)
-        setHasProfile(true)
-      } else {
-        reset(defaultProfileData)
-        setHasProfile(false)
-      }
-    } catch (error: any) {
-      setHasProfile(false)
-      onError(`Failed to load profile: ${error.message || 'Unknown error'}`)
-    } finally {
-      setIsLoadingProfile(false)
-    }
-  }
-
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       return
@@ -158,8 +159,8 @@ export default function ProfileManager({ onSuccess, onError, setLoading }: Profi
       reset(defaultProfileData)
       setHasProfile(false)
       onSuccess('Profile deleted successfully!')
-    } catch (error: any) {
-      onError(error.message)
+    } catch (error: unknown) {
+      onError(error instanceof Error ? error.message : 'Failed to delete profile')
     } finally {
       setLoading(false)
     }

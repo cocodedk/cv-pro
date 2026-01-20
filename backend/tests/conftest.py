@@ -4,11 +4,19 @@ import pytest_asyncio
 import tempfile
 import shutil
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Dict, Any
-from unittest.mock import Mock, patch
 from httpx import AsyncClient
 from backend.app import app
-from backend.database.connection import Neo4jConnection
+from backend.app_helpers import auth as auth_helpers
+from backend.app_helpers.routes import admin as admin_routes
+from backend.app_helpers.routes import health as health_routes
+from backend.app_helpers import lifespan as lifespan_module
+from backend.database.supabase import client as supabase_client
+from backend.database.supabase import cover_letter as supabase_cover_letter
+from backend.database.supabase import cv as supabase_cv
+from backend.database.supabase import cv_search as supabase_cv_search
+from backend.database.supabase import profile as supabase_profile
 
 
 def pytest_configure(config):
@@ -18,41 +26,86 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "api: API endpoint tests")
 
 
+class FakeSupabaseTable:
+    """Lightweight Supabase table stub."""
+
+    def __init__(self, data):
+        self._data = data
+        self.count = len(data) if isinstance(data, list) else None
+
+    def select(self, *_args, **_kwargs):
+        return self
+
+    def eq(self, *_args, **_kwargs):
+        return self
+
+    def single(self):
+        return self
+
+    def order(self, *_args, **_kwargs):
+        return self
+
+    def range(self, *_args, **_kwargs):
+        return self
+
+    def limit(self, *_args, **_kwargs):
+        return self
+
+    def insert(self, *_args, **_kwargs):
+        return self
+
+    def update(self, *_args, **_kwargs):
+        return self
+
+    def delete(self, *_args, **_kwargs):
+        return self
+
+    def or_(self, *_args, **_kwargs):
+        return self
+
+    def execute(self):
+        return SimpleNamespace(data=self._data, count=self.count)
+
+
+class FakeSupabaseClient:
+    """Minimal Supabase admin client stub."""
+
+    def __init__(self, tables):
+        self._tables = tables
+
+    def table(self, name):
+        return FakeSupabaseTable(self._tables.get(name, []))
+
+
+def _should_skip_supabase_mock(request) -> bool:
+    return request.node.fspath and request.node.fspath.basename == "test_supabase_env.py"
+
+
 @pytest.fixture
-def mock_neo4j_driver():
-    """Mock Neo4j driver for testing."""
-    mock_driver = Mock()
-    mock_session = Mock()
+def mock_supabase_client(monkeypatch, request):
+    """Mock Supabase admin client for testing."""
+    if _should_skip_supabase_mock(request):
+        return None
 
-    # Configure mock session
-    mock_session.__enter__ = Mock(return_value=mock_session)
-    mock_session.__exit__ = Mock(return_value=None)
-    mock_session.run = Mock(return_value=Mock(single=Mock(return_value=None)))
-    mock_session.execute_write = Mock(
-        return_value=Mock(single=Mock(return_value={"cv_id": "test-cv-id"}))
-    )
-    mock_session.execute_read = Mock(return_value=Mock(single=Mock(return_value=None)))
-    # Keep write_transaction and read_transaction for backwards compatibility in tests
-    mock_session.write_transaction = mock_session.execute_write
-    mock_session.read_transaction = mock_session.execute_read
+    monkeypatch.setenv("SUPABASE_DEFAULT_USER_ID", "test-user")
+    fake_client = FakeSupabaseClient({"user_profiles": [{"id": "test-user"}]})
 
-    # Configure mock driver
-    mock_driver.session = Mock(return_value=mock_session)
-    mock_driver.verify_connectivity = Mock(return_value=True)
-    mock_driver.close = Mock()
-
-    return mock_driver
+    monkeypatch.setattr(supabase_client, "get_admin_client", lambda: fake_client)
+    monkeypatch.setattr(lifespan_module, "get_admin_client", lambda: fake_client)
+    monkeypatch.setattr(health_routes, "get_admin_client", lambda: fake_client)
+    monkeypatch.setattr(auth_helpers, "get_admin_client", lambda: fake_client)
+    monkeypatch.setattr(admin_routes, "get_admin_client", lambda: fake_client)
+    monkeypatch.setattr(supabase_cv, "get_admin_client", lambda: fake_client)
+    monkeypatch.setattr(supabase_cover_letter, "get_admin_client", lambda: fake_client)
+    monkeypatch.setattr(supabase_profile, "get_admin_client", lambda: fake_client)
+    monkeypatch.setattr(supabase_cv_search, "get_admin_client", lambda: fake_client)
+    return fake_client
 
 
-@pytest.fixture
-def mock_neo4j_connection(mock_neo4j_driver):
-    """Mock Neo4j connection."""
-    with patch.object(Neo4jConnection, "get_driver", return_value=mock_neo4j_driver):
-        with patch.object(Neo4jConnection, "get_database", return_value="neo4j"):
-            with patch.object(
-                Neo4jConnection, "verify_connectivity", return_value=True
-            ):
-                yield mock_neo4j_driver
+@pytest.fixture(autouse=True)
+def _apply_supabase_defaults(mock_supabase_client):
+    """Ensure Supabase defaults are set for tests."""
+    yield
 
 
 @pytest_asyncio.fixture
@@ -126,14 +179,6 @@ def temp_output_dir():
     temp_dir = tempfile.mkdtemp()
     yield Path(temp_dir)
     shutil.rmtree(temp_dir)
-
-
-@pytest.fixture(autouse=True)
-def reset_neo4j_connection():
-    """Reset Neo4j connection state before each test."""
-    Neo4jConnection.reset()
-    yield
-    Neo4jConnection.reset()
 
 
 @pytest.fixture(scope="module")

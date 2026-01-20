@@ -17,8 +17,8 @@ export default function CoverLetterPreview({
   const handleDownloadPDF = async () => {
     try {
       await downloadCoverLetterPDF(result.cover_letter_html)
-    } catch (error: any) {
-      onError(error.message || 'Failed to download PDF')
+    } catch (error: unknown) {
+      onError(error instanceof Error ? error.message : 'Failed to download PDF')
     }
   }
 

@@ -10,7 +10,7 @@ class TestGenerateCvDraft:
     """Test POST /api/ai/generate-cv endpoint."""
 
     async def test_generate_cv_draft_success(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         profile_data = {
             "personal_info": sample_cv_data["personal_info"],
@@ -42,7 +42,7 @@ class TestGenerateCvDraft:
             assert "React" in skill_names
 
     async def test_generate_cv_draft_profile_missing(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         with patch(
             "backend.app_helpers.routes.ai.queries.get_profile", return_value=None
@@ -54,7 +54,7 @@ class TestGenerateCvDraft:
             assert response.status_code == 404
 
     async def test_generate_cv_draft_llm_tailor_style(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test generate-cv with llm_tailor style."""
         profile_data = {
@@ -94,7 +94,7 @@ class TestGenerateCvDraft:
                 assert mock_llm_client.rewrite_text.called
 
     async def test_generate_cv_draft_llm_tailor_fallback(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test llm_tailor style falls back gracefully when LLM not configured."""
         profile_data = {
@@ -131,7 +131,7 @@ class TestGenerateCvDraft:
                 mock_llm_client.rewrite_text.assert_not_called()
 
     async def test_generate_cv_draft_with_additional_context(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test generate-cv endpoint accepts and uses additional_context."""
         profile_data = {
@@ -165,7 +165,7 @@ class TestGenerateCvDraft:
             )
 
     async def test_generate_cv_draft_additional_context_with_llm_tailor(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test that additional_context is passed to LLM when using llm_tailor style."""
         profile_data = {

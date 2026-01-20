@@ -16,6 +16,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
+# Supabase helper
+SUPABASE_HELPER="$SCRIPT_DIR/supabase-dev.sh"
+if [ -f "$SUPABASE_HELPER" ]; then
+    # shellcheck source=/dev/null
+    . "$SUPABASE_HELPER"
+fi
+
 # PID file for build watcher
 BUILD_WATCHER_PID_FILE="$PROJECT_ROOT/.build-watcher.pid"
 
@@ -28,6 +35,10 @@ if [ -f "$BUILD_WATCHER_PID_FILE" ]; then
         echo -e "${GREEN}✅ Build watcher stopped${NC}"
     fi
     rm -f "$BUILD_WATCHER_PID_FILE"
+fi
+
+if [ "$(type -t supabase_stop)" = "function" ]; then
+    SUPABASE_FORCE_STOP=true supabase_stop
 fi
 
 docker-compose down

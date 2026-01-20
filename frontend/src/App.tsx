@@ -7,10 +7,13 @@ import Introduction from './components/Introduction'
 import Navigation from './components/Navigation'
 import NotificationModal from './components/NotificationModal'
 import Footer from './components/Footer'
+import AuthView from './components/AuthView'
+import AdminPanel from './components/admin/AdminPanel'
 import { useHashRouting } from './app_helpers/useHashRouting'
 import { useTheme } from './app_helpers/useTheme'
 import { useMessage } from './app_helpers/useMessage'
 import { BRANDING } from './app_helpers/branding'
+import { useAuth } from './contexts/AuthContext'
 import './index.css'
 
 function App() {
@@ -18,6 +21,11 @@ function App() {
   const { isDark, setIsDark } = useTheme()
   const { message, showMessage, clearMessage } = useMessage()
   const [, setLoading] = useState(false)
+  const { user, loading, role, isActive, signOut } = useAuth()
+  const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== 'false'
+  const isAuthenticated = !authEnabled || Boolean(user)
+  const isAdmin = role === 'admin' && isActive
+  const resolvedViewMode = viewMode === 'auth' && isAuthenticated ? 'form' : viewMode
 
   useEffect(() => {
     document.title = `${BRANDING.appName} — ${BRANDING.ownerName} (${BRANDING.companyName})`
@@ -36,26 +44,35 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Navigation
-        viewMode={viewMode}
+        viewMode={resolvedViewMode}
         isDark={isDark}
         onThemeToggle={() => setIsDark(current => !current)}
+        isAuthenticated={isAuthenticated}
+        isAdmin={isAdmin}
+        onSignOut={signOut}
       />
 
       <NotificationModal message={message} onClose={clearMessage} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {viewMode === 'introduction' ? (
+        {authEnabled && loading ? (
+          <div className="text-sm text-gray-500">Checking session...</div>
+        ) : authEnabled && !user && resolvedViewMode !== 'introduction' ? (
+          <AuthView />
+        ) : resolvedViewMode === 'introduction' ? (
           <Introduction />
-        ) : viewMode === 'form' || viewMode === 'edit' ? (
+        ) : resolvedViewMode === 'admin' ? (
+          <AdminPanel isAdmin={isAdmin} />
+        ) : resolvedViewMode === 'form' || resolvedViewMode === 'edit' ? (
           <CVForm
             onSuccess={handleSuccess}
             onError={handleError}
             setLoading={setLoading}
             cvId={cvId}
           />
-        ) : viewMode === 'list' ? (
+        ) : resolvedViewMode === 'list' ? (
           <CVList onError={handleError} />
-        ) : viewMode === 'profile-list' ? (
+        ) : resolvedViewMode === 'profile-list' ? (
           <ProfileList onError={handleError} />
         ) : (
           <ProfileManager onSuccess={handleSuccess} onError={handleError} setLoading={setLoading} />

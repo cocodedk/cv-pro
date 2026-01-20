@@ -52,7 +52,6 @@ export function useKeyboardShortcut({
 
   // Keyboard shortcut handler for Ctrl+S / Cmd+S
   useEffect(() => {
-    console.debug('[Ctrl+S] Keyboard shortcut handler attached')
     const handleKeyDown = (e: KeyboardEvent) => {
       // Check for Ctrl+S (Windows/Linux) or Cmd+S (Mac)
       if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
@@ -61,28 +60,23 @@ export function useKeyboardShortcut({
 
         // Use refs to get current values (avoid stale closures)
         if (isLoadingCvRef.current) {
-          console.debug('[Ctrl+S] Blocked: Form is loading CV data')
           return
         }
 
         if (isSubmittingRef.current) {
-          console.debug('[Ctrl+S] Blocked: Form is already submitting')
           return
         }
 
         if (showAiModalRef.current) {
-          console.debug('[Ctrl+S] Blocked: AI modal is open')
           return
         }
 
         if (showProfileLoaderRef.current) {
-          console.debug('[Ctrl+S] Blocked: Profile loader modal is open')
           return
         }
 
         // Trigger form submission using refs to ensure we use latest functions
         // Note: Ctrl+S works from anywhere, including while typing in fields
-        console.debug('[Ctrl+S] Triggering form submission')
         handleSubmitRef.current(onSubmitRef.current)()
       }
     }

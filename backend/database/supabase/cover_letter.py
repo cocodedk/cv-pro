@@ -1,7 +1,7 @@
 """Supabase-backed cover letter queries."""
 from typing import Any, Dict, Optional
 from backend.database.supabase.client import get_admin_client
-from backend.database.supabase.utils import apply_user_scope, get_user_id, require_user_id
+from backend.database.supabase.utils import apply_user_scope, require_user_id
 
 
 def create_cover_letter(
@@ -51,7 +51,7 @@ def list_cover_letters(
     limit: int = 50, offset: int = 0, search: Optional[str] = None
 ) -> Dict[str, Any]:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cover_letters").select(
         "id, created_at, updated_at, company_name, hiring_manager_name, tone",
         count="exact",
@@ -85,7 +85,7 @@ def list_cover_letters(
 
 def get_cover_letter_by_id(cover_letter_id: str) -> Optional[Dict[str, Any]]:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = (
         client.table("cover_letters").select("*").eq("id", cover_letter_id).limit(1)
     )
@@ -113,7 +113,7 @@ def get_cover_letter_by_id(cover_letter_id: str) -> Optional[Dict[str, Any]]:
 
 def delete_cover_letter(cover_letter_id: str) -> bool:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cover_letters").delete().eq("id", cover_letter_id)
     query = apply_user_scope(query, user_id)
     response = query.execute()

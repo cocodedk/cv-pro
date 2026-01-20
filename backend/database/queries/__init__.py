@@ -1,50 +1,26 @@
-"""Database query modules."""
-import os
-
-provider = os.getenv("DATABASE_PROVIDER", "neo4j").lower()
-
-if provider == "supabase":
-    from backend.database.supabase import (
-        create_cover_letter,
-        create_cv,
-        create_profile,
-        delete_cover_letter,
-        delete_cv,
-        delete_profile,
-        delete_profile_by_updated_at,
-        get_cover_letter_by_id,
-        get_cv_by_filename,
-        get_cv_by_id,
-        get_profile,
-        get_profile_by_updated_at,
-        list_cover_letters,
-        list_cvs,
-        list_profiles,
-        save_profile,
-        search_cvs,
-        set_cv_filename,
-        update_cv,
-        update_profile,
-    )
-else:
-    from backend.database.queries.create import create_cv
-    from backend.database.queries.cover_letter import create_cover_letter
-    from backend.database.queries.read import get_cv_by_id, get_cv_by_filename
-    from backend.database.queries.read.cover_letter_get import get_cover_letter_by_id
-    from backend.database.queries.list import list_cvs, search_cvs
-    from backend.database.queries.list.cover_letter_list import list_cover_letters
-    from backend.database.queries.update import update_cv, set_cv_filename
-    from backend.database.queries.delete import delete_cv, delete_cover_letter
-    from backend.database.queries.profile import (
-        save_profile,
-        create_profile,
-        update_profile,
-        get_profile,
-        delete_profile,
-        delete_profile_by_updated_at,
-        list_profiles,
-        get_profile_by_updated_at,
-    )
+"""Supabase database query modules."""
+from backend.database.supabase import (
+    create_cover_letter,
+    create_cv,
+    create_profile,
+    delete_cover_letter,
+    delete_cv,
+    delete_profile,
+    delete_profile_by_updated_at,
+    get_cover_letter_by_id,
+    get_cv_by_filename,
+    get_cv_by_id,
+    get_profile,
+    get_profile_by_updated_at,
+    list_cover_letters,
+    list_cvs,
+    list_profiles,
+    save_profile,
+    search_cvs,
+    set_cv_filename,
+    update_cv,
+    update_profile,
+)
 
 __all__ = [
     "create_cv",

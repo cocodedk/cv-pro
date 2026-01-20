@@ -6,7 +6,7 @@ Steps:
 1. Add migrations based on `docs/supabase/multi-user-architecture.md` into `supabase/migrations/`.
 2. Apply migrations with the Supabase CLI.
 3. Enable RLS and apply policies from `docs/supabase/multi-user-architecture.md`.
-4. Seed an initial admin role entry in `supabase/seed.sql` (after the auth user exists).
+4. Update `supabase/seed.sql` with your admin user's email and run it after the auth user exists (local: `supabase db reset`).
 
 Exit criteria:
 - Tables exist with `user_id` columns and update triggers.

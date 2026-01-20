@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # CV Generator - Development Startup Script
-# This script starts the backend/Neo4j in Docker and the frontend locally
+# This script starts the backend in Docker and the frontend locally
 
 set -e
 
@@ -12,12 +12,20 @@ echo ""
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
+
+# Supabase helper
+SUPABASE_HELPER="$SCRIPT_DIR/supabase-dev.sh"
+if [ -f "$SUPABASE_HELPER" ]; then
+    # shellcheck source=/dev/null
+    . "$SUPABASE_HELPER"
+fi
 
 # PID file for build watcher
 BUILD_WATCHER_PID_FILE="$PROJECT_ROOT/.build-watcher.pid"
@@ -37,6 +45,10 @@ cleanup() {
         rm -f "$BUILD_WATCHER_PID_FILE"
     fi
 
+    if [ "$(type -t supabase_stop)" = "function" ]; then
+        supabase_stop
+    fi
+
     docker-compose down
     exit 0
 }
@@ -50,8 +62,17 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-# Start backend and Neo4j services
-echo -e "${BLUE}📦 Starting Docker services (backend + Neo4j)...${NC}"
+# Start local Supabase
+if [ "$(type -t supabase_start)" = "function" ]; then
+    echo -e "${BLUE}🧰 Starting local Supabase...${NC}"
+    if ! supabase_start; then
+        echo -e "${RED}❌ Failed to start Supabase. Ensure the Supabase CLI is available.${NC}"
+        exit 1
+    fi
+fi
+
+# Start backend service
+echo -e "${BLUE}📦 Starting Docker services (backend)...${NC}"
 docker-compose up -d
 
 # Wait for backend to be ready
@@ -96,7 +117,8 @@ echo ""
 echo -e "Frontend (with HMR): ${BLUE}http://localhost:5173${NC}"
 echo -e "Backend API:         ${BLUE}http://localhost:8000${NC}"
 echo -e "API Docs:            ${BLUE}http://localhost:8000/docs${NC}"
-echo -e "Neo4j Browser:       ${BLUE}http://localhost:7474${NC}"
+echo -e "Supabase Studio:     ${BLUE}http://localhost:54323${NC}"
+echo -e "Supabase API:        ${BLUE}http://localhost:54321${NC}"
 echo ""
 echo -e "${YELLOW}Press Ctrl+C to stop all services${NC}"
 echo ""

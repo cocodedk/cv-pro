@@ -1,7 +1,7 @@
 """Supabase-backed CV queries."""
 from typing import Any, Dict, Optional
 from backend.database.supabase.client import get_admin_client
-from backend.database.supabase.utils import apply_user_scope, get_user_id, require_user_id
+from backend.database.supabase.utils import apply_user_scope, require_user_id
 
 
 def _build_cv_response(row: Dict[str, Any]) -> Dict[str, Any]:
@@ -43,7 +43,7 @@ def create_cv(cv_data: Dict[str, Any]) -> str:
 
 def get_cv_by_id(cv_id: str) -> Optional[Dict[str, Any]]:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cvs").select("*").eq("id", cv_id).limit(1)
     query = apply_user_scope(query, user_id)
     response = query.execute()
@@ -54,7 +54,7 @@ def get_cv_by_id(cv_id: str) -> Optional[Dict[str, Any]]:
 
 def get_cv_by_filename(filename: str) -> Optional[Dict[str, Any]]:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cvs").select("*").eq("filename", filename).limit(1)
     query = apply_user_scope(query, user_id)
     response = query.execute()
@@ -67,7 +67,7 @@ def list_cvs(
     limit: int = 50, offset: int = 0, search: Optional[str] = None
 ) -> Dict[str, Any]:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cvs").select(
         "id, created_at, updated_at, filename, target_company, target_role, cv_data",
         count="exact",
@@ -103,7 +103,7 @@ def list_cvs(
 
 def update_cv(cv_id: str, cv_data: Dict[str, Any]) -> bool:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     payload = {
         "theme": cv_data.get("theme", "classic"),
         "layout": cv_data.get("layout", "classic-two-column"),
@@ -119,7 +119,7 @@ def update_cv(cv_id: str, cv_data: Dict[str, Any]) -> bool:
 
 def set_cv_filename(cv_id: str, filename: str) -> bool:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cvs").update({"filename": filename}).eq("id", cv_id)
     query = apply_user_scope(query, user_id)
     response = query.execute()
@@ -128,7 +128,7 @@ def set_cv_filename(cv_id: str, filename: str) -> bool:
 
 def delete_cv(cv_id: str) -> bool:
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cvs").delete().eq("id", cv_id)
     query = apply_user_scope(query, user_id)
     response = query.execute()

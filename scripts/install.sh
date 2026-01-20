@@ -244,7 +244,7 @@ fi
 
 # Check Docker images
 if [ "$DOCKER_AVAILABLE" = true ]; then
-    if docker images | grep -q "cv.*app\|cv.*neo4j" 2>/dev/null || \
+    if docker images | grep -q "cv.*app" 2>/dev/null || \
        docker images | grep -q "$(basename "$PROJECT_ROOT")" 2>/dev/null; then
         print_status 0 "Docker images are built"
     else

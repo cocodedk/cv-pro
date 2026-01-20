@@ -9,7 +9,7 @@ from unittest.mock import patch
 class TestDeleteCoverLetter:
     """Test DELETE /api/cover-letters/{cover_letter_id} endpoint."""
 
-    async def test_delete_cover_letter_success(self, client, mock_neo4j_connection):
+    async def test_delete_cover_letter_success(self, client, mock_supabase_client):
         """Test successful cover letter deletion."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.return_value = True
@@ -19,7 +19,7 @@ class TestDeleteCoverLetter:
             data = response.json()
             assert data["status"] == "success"
 
-    async def test_delete_cover_letter_not_found(self, client, mock_neo4j_connection):
+    async def test_delete_cover_letter_not_found(self, client, mock_supabase_client):
         """Test deleting non-existent cover letter."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.return_value = False  # Indicates not found
@@ -29,7 +29,7 @@ class TestDeleteCoverLetter:
             data = response.json()
             assert "Cover letter not found" in data["detail"]
 
-    async def test_delete_cover_letter_database_error(self, client, mock_neo4j_connection):
+    async def test_delete_cover_letter_database_error(self, client, mock_supabase_client):
         """Test delete cover letter with database error."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.side_effect = Exception("Database error")

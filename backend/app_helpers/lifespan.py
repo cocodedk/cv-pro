@@ -3,8 +3,7 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from backend.database.connection import Neo4jConnection
-from backend.database.provider import get_provider
+from backend.database.supabase.client import get_admin_client
 
 logger = logging.getLogger(__name__)
 
@@ -17,27 +16,18 @@ async def lifespan(app: FastAPI):
     max_retries = 5
     retry_count = 0
 
-    provider = get_provider()
     while retry_count < max_retries:
-        if provider == "supabase":
-            try:
-                from backend.database.supabase.client import get_admin_client
-
-                client = get_admin_client()
-                client.table("user_profiles").select("id").limit(1).execute()
-                logger.info("Successfully connected to Supabase database")
-                break
-            except Exception:
-                pass
-        else:
-            if Neo4jConnection.verify_connectivity():
-                logger.info("Successfully connected to Neo4j database")
-                break
+        try:
+            client = get_admin_client()
+            client.table("user_profiles").select("id").limit(1).execute()
+            logger.info("Successfully connected to Supabase database")
+            break
+        except Exception:
+            pass
 
         retry_count += 1
         logger.warning(
-            "Failed to connect to %s database (attempt %d/%d)",
-            provider,
+            "Failed to connect to Supabase database (attempt %d/%d)",
             retry_count,
             max_retries,
         )
@@ -45,11 +35,7 @@ async def lifespan(app: FastAPI):
             await asyncio.sleep(2)
 
     if retry_count >= max_retries:
-        logger.error("Failed to connect to %s database after multiple attempts", provider)
-        raise RuntimeError(f"Failed to connect to {provider} database")
+        logger.error("Failed to connect to Supabase database after multiple attempts")
+        raise RuntimeError("Failed to connect to Supabase database")
 
     yield
-
-    # Shutdown
-    if provider != "supabase":
-        Neo4jConnection.close()

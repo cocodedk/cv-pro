@@ -9,7 +9,7 @@ class TestGenerateCV:
     """Test POST /api/generate-cv-docx endpoint."""
 
     async def test_generate_cv_success(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test successful DOCX CV generation."""
         with patch("backend.database.queries.create_cv", return_value="test-cv-id"):
@@ -34,7 +34,7 @@ class TestGenerateCV:
         assert response.status_code == 422
 
     async def test_generate_cv_server_error(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test CV generation with server error."""
         with patch(
@@ -45,7 +45,7 @@ class TestGenerateCV:
             assert response.status_code == 500
 
     async def test_generate_cv_saves_theme(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test that theme is saved when generating CV."""
         sample_cv_data["theme"] = "elegant"

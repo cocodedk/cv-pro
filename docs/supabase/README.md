@@ -1,11 +1,11 @@
 # Supabase Documentation
 
-This folder defines the migration from Neo4j to Supabase (PostgreSQL) and the work to turn CV Pro into a multi-user platform.
+This folder documents the Supabase (PostgreSQL) setup and the multi-user platform architecture.
 
 ## Current State
-- Backend: FastAPI with Neo4j queries under `backend/database/queries`
-- Frontend: React app calling `/api/*` via axios
-- Auth: none
+- Backend: FastAPI with Supabase-only data access
+- Frontend: React app calling `/api/*` via axios with Supabase tokens
+- Auth: Supabase Auth (backend validates bearer tokens)
 - File storage: local filesystem (`backend/output`, `frontend/public`)
 
 ## Target State (MVP)
@@ -18,7 +18,6 @@ This folder defines the migration from Neo4j to Supabase (PostgreSQL) and the wo
 ## Docs Map
 - Local setup: `local-setup.md`
 - Production setup: `production-setup.md`
-- Environment switching: `environment-switching.md`
 - Migration guide: `migration-guide.md`
 - Multi-user architecture: `multi-user-architecture.md`
 - Auth integration: `auth-integration.md`
@@ -30,8 +29,7 @@ This folder defines the migration from Neo4j to Supabase (PostgreSQL) and the wo
 2. Add Supabase client + data access layer in the backend
 3. Add auth middleware and protect API routes
 4. Add frontend auth flow + attach access tokens to axios
-5. Migrate existing Neo4j data
-6. Remove Neo4j infrastructure and update dev scripts
+5. Migrate existing data and cut over
 
 ## Non-goals (MVP)
 - Real-time subscriptions
@@ -39,6 +37,6 @@ This folder defines the migration from Neo4j to Supabase (PostgreSQL) and the wo
 - Storage migration for generated files
 
 ## Status
-- Planning: complete (see `docs/database/supabase-migration-plan.md`)
-- Documentation: updated and ready for implementation
-- Implementation: not started
+- Documentation: up to date for Supabase-only workflows
+- Implementation: phases 01-06 complete (schema, auth, admin UI)
+- Remaining: phase 07 data migration + cutover

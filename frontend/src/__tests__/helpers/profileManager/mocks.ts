@@ -1,4 +1,5 @@
 import { vi } from 'vitest'
+import type { ProfileData } from '../../../types/cv'
 
 // Note: Mock must be hoisted in each test file that uses it
 // This file only exports helper functions, not the mocked service
@@ -13,7 +14,7 @@ export const setupWindowMocks = () => {
   global.window.confirm = vi.fn(() => true)
 }
 
-export const createEmptyProfileData = () => ({
+export const createEmptyProfileData = (): ProfileData => ({
   personal_info: {
     name: '',
     email: '',
@@ -36,7 +37,11 @@ export const createEmptyProfileData = () => ({
   skills: [],
 })
 
-export const createProfileData = (overrides: any = {}) => ({
+type ProfileOverrides = Partial<ProfileData> & {
+  personal_info?: Partial<ProfileData['personal_info']>
+}
+
+export const createProfileData = (overrides: ProfileOverrides = {}): ProfileData => ({
   personal_info: {
     name: 'John Doe',
     email: 'john@example.com',
@@ -53,9 +58,9 @@ export const createProfileData = (overrides: any = {}) => ({
       country: '',
     },
     summary: '',
-    ...overrides.personal_info,
+    ...(overrides.personal_info ?? {}),
   },
-  experience: overrides.experience || [],
-  education: overrides.education || [],
-  skills: overrides.skills || [],
+  experience: overrides.experience ?? [],
+  education: overrides.education ?? [],
+  skills: overrides.skills ?? [],
 })

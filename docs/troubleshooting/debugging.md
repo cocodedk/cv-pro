@@ -30,7 +30,7 @@ docker-compose exec app python
 
 **Test database connection**:
 ```bash
-docker-compose exec app python -c "from backend.database.connection import Neo4jConnection; print(Neo4jConnection.verify_connectivity())"
+docker-compose exec app python -c "from backend.database.supabase.client import get_admin_client; get_admin_client().table('user_profiles').select('id').limit(1).execute(); print('ok')"
 ```
 
 ### API Testing
@@ -66,15 +66,13 @@ curl -X POST http://localhost:8000/api/generate-cv-docx \
 
 ## Database Debugging
 
-**Neo4j Browser** (http://localhost:7474):
-Queries: `MATCH (cv:CV) RETURN cv LIMIT 10`, `MATCH (cv:CV {id: 'id'}) RETURN cv`, `MATCH (n) RETURN labels(n), count(n)`
-
-**Cypher Shell**: `docker-compose exec neo4j cypher-shell -u neo4j -p cvpassword`
+**Supabase Studio** (http://localhost:54323):
+Use the SQL editor to inspect `cvs`, `cv_profiles`, and `cover_letters`.
 
 ## Performance Debugging
 
 **Backend**: Add timing logs, use FastAPI middleware, monitor query performance.
-**Database**: Use EXPLAIN in Cypher, monitor slow queries, check indexes.
+**Database**: Use EXPLAIN in SQL, monitor slow queries, check indexes.
 **Frontend**: Use React DevTools Profiler, check network performance, optimize renders.
 
 ## Common Scenarios

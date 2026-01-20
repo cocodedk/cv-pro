@@ -1,7 +1,7 @@
 """Supabase-backed CV search queries."""
 from typing import Any, Dict, List, Optional
 from backend.database.supabase.client import get_admin_client
-from backend.database.supabase.utils import apply_user_scope, get_user_id
+from backend.database.supabase.utils import apply_user_scope, require_user_id
 
 
 def _match_any(value: str, terms: List[str]) -> bool:
@@ -46,7 +46,7 @@ def search_cvs(
     if not any([skills, experience_keywords, education_keywords]):
         return []
     client = get_admin_client()
-    user_id = get_user_id()
+    user_id = require_user_id()
     query = client.table("cvs").select("id, created_at, cv_data").order(
         "created_at", desc=True
     )

@@ -3,17 +3,47 @@ import { cleanup } from '@testing-library/react'
 import React from 'react'
 import { afterEach, vi } from 'vitest'
 import { installNoNetworkGuards } from './noNetwork'
-;(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
+;(
+  globalThis as typeof globalThis & {
+    IS_REACT_ACT_ENVIRONMENT?: boolean
+  }
+).IS_REACT_ACT_ENVIRONMENT = true
 
 installNoNetworkGuards()
 
 // TipTap/ProseMirror relies on DOM geometry APIs not implemented in jsdom (elementFromPoint/getClientRects).
 // For unit tests, mock TipTap with a minimal contenteditable surface that preserves the public API shape.
 vi.mock('@tiptap/react', () => {
-  type EditorUpdateHandler = (payload: { editor: any }) => void
+  type EditorPropsConfig = { attributes?: Record<string, unknown> }
+  type EditorLike = {
+    getHTML: () => string
+    getText: () => string
+    isActive: () => boolean
+    getAttributes: () => Record<string, unknown>
+    commands: { setContent: (next: string, emitUpdate?: boolean) => void }
+    chain: () => {
+      focus: () => unknown
+      toggleHeading: () => unknown
+      toggleBold: () => unknown
+      toggleItalic: () => unknown
+      toggleUnderline: () => unknown
+      toggleStrike: () => unknown
+      toggleOrderedList: () => unknown
+      toggleBulletList: () => unknown
+      extendMarkRange: () => unknown
+      unsetLink: () => unknown
+      setLink: () => unknown
+      unsetAllMarks: () => unknown
+      clearNodes: () => unknown
+      run: () => boolean
+    }
+    __setHtml: (next: string) => void
+    __getEditorProps: () => EditorPropsConfig | undefined
+  }
+  type EditorUpdateHandler = (payload: { editor: EditorLike }) => void
   type UseEditorConfig = {
     content?: string
-    editorProps?: { attributes?: Record<string, unknown> }
+    editorProps?: EditorPropsConfig
     onUpdate?: EditorUpdateHandler
   }
 
@@ -76,7 +106,7 @@ vi.mock('@tiptap/react', () => {
 
   const useEditor = (config: UseEditorConfig) => createEditor(config)
 
-  const EditorContent = ({ editor }: { editor: any }) => {
+  const EditorContent = ({ editor }: { editor: EditorLike | null }) => {
     if (!editor) return null
     const attrs = (editor.__getEditorProps?.()?.attributes || {}) as Record<string, unknown>
     const className = typeof attrs.class === 'string' ? attrs.class : 'ql-editor'

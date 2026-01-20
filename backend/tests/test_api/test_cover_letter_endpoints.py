@@ -10,7 +10,7 @@ class TestGenerateCoverLetter:
     """Test POST /api/ai/generate-cover-letter endpoint."""
 
     async def test_generate_cover_letter_success(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test successful cover letter generation."""
         profile_data = {
@@ -75,7 +75,7 @@ class TestGenerateCoverLetter:
                     assert "Tech Corp" in data["cover_letter_html"]
 
     async def test_generate_cover_letter_profile_missing(
-        self, client, mock_neo4j_connection
+        self, client, mock_supabase_client
     ):
         """Test cover letter generation when profile is missing."""
         with patch(
@@ -116,7 +116,7 @@ class TestGenerateCoverLetter:
         assert response.status_code == 422
 
     async def test_generate_cover_letter_llm_not_configured(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test cover letter generation when LLM is not configured."""
         from unittest.mock import Mock
@@ -154,7 +154,7 @@ class TestGenerateCoverLetter:
                 assert "LLM" in data["detail"] and "configure" in data["detail"].lower()
 
     async def test_generate_cover_letter_optional_fields(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test cover letter generation with optional fields omitted."""
         profile_data = {
@@ -271,7 +271,7 @@ class TestExportCoverLetterPDF:
 class TestSaveCoverLetter:
     """Test POST /api/cover-letters endpoint."""
 
-    async def test_save_cover_letter_success(self, client, mock_neo4j_connection):
+    async def test_save_cover_letter_success(self, client, mock_supabase_client):
         """Test successful cover letter saving."""
         cover_letter_response = {
             "cover_letter_html": "<p>Test letter</p>",
@@ -286,20 +286,24 @@ class TestSaveCoverLetter:
             "tone": "professional"
         }
 
-        response = await client.post(
-            "/api/cover-letters",
-            json={
-                "cover_letter_response": cover_letter_response,
-                "request_data": request_data
-            },
-        )
+        with patch(
+            "backend.app_helpers.routes.cover_letter.endpoints.queries.create_cover_letter",
+            return_value="test-cover-letter-id",
+        ):
+            response = await client.post(
+                "/api/cover-letters",
+                json={
+                    "cover_letter_response": cover_letter_response,
+                    "request_data": request_data
+                },
+            )
 
         assert response.status_code == 200
         data = response.json()
         assert "cover_letter_id" in data
         assert data["status"] == "success"
 
-    async def test_save_cover_letter_validation_error(self, client, mock_neo4j_connection):
+    async def test_save_cover_letter_validation_error(self, client, mock_supabase_client):
         """Test save cover letter with invalid data."""
         response = await client.post(
             "/api/cover-letters",
@@ -310,7 +314,7 @@ class TestSaveCoverLetter:
         )
         assert response.status_code == 422
 
-    async def test_save_cover_letter_database_error(self, client, mock_neo4j_connection):
+    async def test_save_cover_letter_database_error(self, client, mock_supabase_client):
         """Test save cover letter with database error."""
         cover_letter_response = {
             "cover_letter_html": "<p>Test letter</p>",
@@ -325,10 +329,10 @@ class TestSaveCoverLetter:
             "tone": "professional"
         }
 
-        # Patch the session execute_write to raise an exception
-        with patch.object(mock_neo4j_connection.session.return_value, 'execute_write') as mock_execute:
-            mock_execute.side_effect = Exception("Database connection failed")
-
+        with patch(
+            "backend.app_helpers.routes.cover_letter.endpoints.queries.create_cover_letter",
+            side_effect=Exception("Database connection failed"),
+        ):
             response = await client.post(
                 "/api/cover-letters",
                 json={
@@ -347,7 +351,7 @@ class TestSaveCoverLetter:
 class TestListCoverLetters:
     """Test GET /api/cover-letters endpoint."""
 
-    async def test_list_cover_letters_success(self, client, mock_neo4j_connection):
+    async def test_list_cover_letters_success(self, client, mock_supabase_client):
         """Test successful cover letter listing."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.list_cover_letters") as mock_list:
             mock_list.return_value = {
@@ -357,7 +361,7 @@ class TestListCoverLetters:
             response = await client.get("/api/cover-letters")
             assert response.status_code == 200
 
-    async def test_list_cover_letters_with_pagination(self, client, mock_neo4j_connection):
+    async def test_list_cover_letters_with_pagination(self, client, mock_supabase_client):
         """Test cover letter listing with pagination."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.list_cover_letters") as mock_list:
             mock_list.return_value = {
@@ -367,7 +371,7 @@ class TestListCoverLetters:
             response = await client.get("/api/cover-letters?limit=10&offset=5")
             assert response.status_code == 200
 
-    async def test_list_cover_letters_with_search(self, client, mock_neo4j_connection):
+    async def test_list_cover_letters_with_search(self, client, mock_supabase_client):
         """Test cover letter listing with search."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.list_cover_letters") as mock_list:
             mock_list.return_value = {
@@ -377,7 +381,7 @@ class TestListCoverLetters:
             response = await client.get("/api/cover-letters?search=Tech%20Corp")
             assert response.status_code == 200
 
-    async def test_list_cover_letters_database_error(self, client, mock_neo4j_connection):
+    async def test_list_cover_letters_database_error(self, client, mock_supabase_client):
         """Test list cover letters with database error."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.list_cover_letters") as mock_list:
             mock_list.side_effect = Exception("Database error")
@@ -393,7 +397,7 @@ class TestListCoverLetters:
 class TestGetCoverLetter:
     """Test GET /api/cover-letters/{cover_letter_id} endpoint."""
 
-    async def test_get_cover_letter_success(self, client, mock_neo4j_connection):
+    async def test_get_cover_letter_success(self, client, mock_supabase_client):
         """Test successful cover letter retrieval."""
         mock_cover_letter = {
             "cover_letter_id": "test-id",
@@ -419,14 +423,18 @@ class TestGetCoverLetter:
             data = response.json()
             assert data["cover_letter_id"] == "test-id"
 
-    async def test_get_cover_letter_not_found(self, client, mock_neo4j_connection):
+    async def test_get_cover_letter_not_found(self, client, mock_supabase_client):
         """Test getting non-existent cover letter."""
-        response = await client.get("/api/cover-letters/non-existent-id")
-        assert response.status_code == 404
-        data = response.json()
-        assert "Cover letter not found" in data["detail"]
+        with patch(
+            "backend.app_helpers.routes.cover_letter.endpoints.queries.get_cover_letter_by_id",
+            return_value=None,
+        ):
+            response = await client.get("/api/cover-letters/non-existent-id")
+            assert response.status_code == 404
+            data = response.json()
+            assert "Cover letter not found" in data["detail"]
 
-    async def test_get_cover_letter_database_error(self, client, mock_neo4j_connection):
+    async def test_get_cover_letter_database_error(self, client, mock_supabase_client):
         """Test get cover letter with database error."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.get_cover_letter_by_id") as mock_get:
             mock_get.side_effect = Exception("Database error")
@@ -442,7 +450,7 @@ class TestGetCoverLetter:
 class TestDeleteCoverLetter:
     """Test DELETE /api/cover-letters/{cover_letter_id} endpoint."""
 
-    async def test_delete_cover_letter_success(self, client, mock_neo4j_connection):
+    async def test_delete_cover_letter_success(self, client, mock_supabase_client):
         """Test successful cover letter deletion."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.return_value = True
@@ -452,7 +460,7 @@ class TestDeleteCoverLetter:
             data = response.json()
             assert data["status"] == "success"
 
-    async def test_delete_cover_letter_not_found(self, client, mock_neo4j_connection):
+    async def test_delete_cover_letter_not_found(self, client, mock_supabase_client):
         """Test deleting non-existent cover letter."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.return_value = False  # Indicates not found
@@ -462,7 +470,7 @@ class TestDeleteCoverLetter:
             data = response.json()
             assert "Cover letter not found" in data["detail"]
 
-    async def test_delete_cover_letter_database_error(self, client, mock_neo4j_connection):
+    async def test_delete_cover_letter_database_error(self, client, mock_supabase_client):
         """Test delete cover letter with database error."""
         with patch("backend.app_helpers.routes.cover_letter.endpoints.queries.delete_cover_letter") as mock_delete:
             mock_delete.side_effect = Exception("Database error")

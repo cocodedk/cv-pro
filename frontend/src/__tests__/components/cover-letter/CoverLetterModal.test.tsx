@@ -6,7 +6,7 @@ import CoverLetterModal from '../../../components/cover-letter/CoverLetterModal'
 import axios from 'axios'
 
 vi.mock('axios')
-const mockedAxios = axios as any
+const mockedAxios = vi.mocked(axios, true)
 
 describe('CoverLetterModal', () => {
   const mockOnClose = vi.fn()

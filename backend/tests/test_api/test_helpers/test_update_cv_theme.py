@@ -9,7 +9,7 @@ class TestUpdateCVTheme:
     """Test PUT /api/cv/{cv_id} endpoint - theme operations."""
 
     async def test_update_cv_saves_theme(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test that theme is saved when updating CV."""
         sample_cv_data["theme"] = "accented"
@@ -22,7 +22,7 @@ class TestUpdateCVTheme:
             assert call_args[0][1]["theme"] == "accented"
 
     async def test_update_cv_preserves_theme(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test that theme persists after update."""
         sample_cv_data["theme"] = "elegant"
@@ -46,7 +46,7 @@ class TestUpdateCVTheme:
             assert data["theme"] == "elegant"
 
     async def test_update_cv_regenerates_file_on_theme_change(
-        self, client, sample_cv_data, mock_neo4j_connection
+        self, client, sample_cv_data, mock_supabase_client
     ):
         """Test that updating CV with new theme persists the theme."""
         sample_cv_data["theme"] = "modern"

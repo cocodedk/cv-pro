@@ -4,11 +4,13 @@ import App from '../App'
 import * as useHashRouting from '../app_helpers/useHashRouting'
 import * as useTheme from '../app_helpers/useTheme'
 import * as useMessage from '../app_helpers/useMessage'
+import * as useAuth from '../contexts/AuthContext'
 
 // Mock hooks
 vi.mock('../app_helpers/useHashRouting')
 vi.mock('../app_helpers/useTheme')
 vi.mock('../app_helpers/useMessage')
+vi.mock('../contexts/AuthContext')
 vi.mock('../components/CVForm', () => ({
   default: ({ cvId }: { cvId?: string | null }) => (
     <div data-testid="cv-form">CVForm {cvId ? `with cvId: ${cvId}` : 'without cvId'}</div>
@@ -21,9 +23,10 @@ vi.mock('../components/ProfileManager', () => ({
   default: () => <div data-testid="profile-manager">ProfileManager</div>,
 }))
 
-const mockedUseHashRouting = useHashRouting as any
-const mockedUseTheme = useTheme as any
-const mockedUseMessage = useMessage as any
+const mockedUseHashRouting = vi.mocked(useHashRouting, true)
+const mockedUseTheme = vi.mocked(useTheme, true)
+const mockedUseMessage = vi.mocked(useMessage, true)
+const mockedUseAuth = vi.mocked(useAuth, true)
 
 describe('App', () => {
   beforeEach(() => {
@@ -35,6 +38,14 @@ describe('App', () => {
     mockedUseMessage.useMessage.mockReturnValue({
       message: null,
       showMessage: vi.fn(),
+      clearMessage: vi.fn(),
+    })
+    mockedUseAuth.useAuth.mockReturnValue({
+      user: { id: 'user-1' },
+      loading: false,
+      role: 'user',
+      isActive: true,
+      signOut: vi.fn(),
     })
   })
 

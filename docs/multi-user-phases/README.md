@@ -12,3 +12,17 @@ These phases are small, independent milestones that lead to a multi-user app wit
 
 Notes:
 - Phases assume the Supabase design docs in `docs/supabase`.
+
+## Progress Tracker
+
+Status legend: ✅ Complete | 🟡 In progress | ⚪ Not started
+
+| Phase | Status | Notes |
+| --- | --- | --- |
+| Phase 01 - Project setup | ✅ Complete | Supabase env template + health check instructions added. |
+| Phase 02 - Schema and RLS | ✅ Complete | Schema/RLS migrations and admin seed template in place. |
+| Phase 03 - Backend data access | ✅ Complete | Supabase CRUD/search wired with user scoping. |
+| Phase 04 - Backend auth and user context | ✅ Complete | Auth dependencies + route guards + admin guard in place. |
+| Phase 05 - Frontend auth and session handling | ✅ Complete | Supabase auth UI + tokenized API requests + route guards. |
+| Phase 06 - Admin panel | ✅ Complete | Admin views migration + endpoints + UI implemented. |
+| Phase 07 - Data migration and cutover | ⚪ Not started | Legacy data migration not executed. |

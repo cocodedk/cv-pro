@@ -72,7 +72,7 @@ if [ $SHOW_HELP -eq 1 ]; then
     echo ""
     echo "Options:"
     echo "  --integration, -i    Run ONLY integration tests (WARNING: These tests run against"
-    echo "                       the live Neo4j database and may delete data!)"
+    echo "                       the live Supabase database and may delete data!)"
     echo "  --lint-only, -l      Run only linting checks (flake8, eslint, prettier)"
     echo "  --test-only, -t      Run only tests (skip linting)"
     exit 0
@@ -94,7 +94,7 @@ run_flake8() {
     fi
 
     # Check if containers are running
-    if ! docker-compose ps | grep -q "cv-app.*Up"; then
+    if ! docker-compose ps | grep -q "cv-pro-app.*Up"; then
         echo -e "${YELLOW}⚠️  Backend container is not running. Starting it...${NC}"
         docker-compose up -d app
         sleep 5
@@ -157,7 +157,7 @@ run_prettier() {
 run_backend_tests() {
     if [ $RUN_INTEGRATION -eq 1 ]; then
         echo -e "${BLUE}📦 Running backend integration tests (in Docker)...${NC}"
-        echo -e "${YELLOW}⚠️  WARNING: Integration tests run against the live Neo4j database and may delete data!${NC}"
+        echo -e "${YELLOW}⚠️  WARNING: Integration tests run against the live Supabase database and may delete data!${NC}"
     else
         echo -e "${BLUE}📦 Running backend tests (in Docker)...${NC}"
     fi
@@ -170,7 +170,7 @@ run_backend_tests() {
     fi
 
     # Check if containers are running
-    if ! docker-compose ps | grep -q "cv-app.*Up"; then
+    if ! docker-compose ps | grep -q "cv-pro-app.*Up"; then
         echo -e "${YELLOW}⚠️  Backend container is not running. Starting it...${NC}"
         docker-compose up -d app
         sleep 5

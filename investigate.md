@@ -28,7 +28,7 @@ Status: Clean working tree
 ```
 
 ### Repository Contents
-- Complete CV Generator application (React + FastAPI + Neo4j)
+- Complete CV Generator application (React + FastAPI + Supabase)
 - Comprehensive documentation in `/docs`
 - Docker configuration for development
 - Full test suite and CI/CD setup

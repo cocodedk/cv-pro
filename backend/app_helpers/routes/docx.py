@@ -2,12 +2,13 @@
 import logging
 from pathlib import Path
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse
 from slowapi import Limiter
 from backend.models import CVData, CVResponse
 from backend.database import queries
 from backend.services.cv_file_service import CVFileService
+from backend.app_helpers.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
@@ -18,12 +19,12 @@ def create_docx_router(
     output_dir: Optional[Path] = None,
 ) -> APIRouter:
     """Create and return DOCX router with dependencies."""
-    router = APIRouter()
+    router = APIRouter(dependencies=[Depends(get_current_user)])
 
     @router.post("/api/generate-cv-docx", response_model=CVResponse)
     @limiter.limit("10/minute")
     async def generate_cv_docx(request: Request, cv_data: CVData):
-        """Generate DOCX file from CV data and save to Neo4j."""
+        """Generate DOCX file from CV data and save to Supabase."""
         return await _handle_generate_cv_docx(cv_data, cv_file_service)
 
     @router.get("/api/download-docx/{filename}")

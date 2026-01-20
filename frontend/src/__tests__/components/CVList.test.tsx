@@ -6,7 +6,7 @@ import CVList from '../../components/CVList'
 
 // Mock axios
 vi.mock('axios')
-const mockedAxios = axios as any
+const mockedAxios = vi.mocked(axios, true)
 
 // Mock window.location.hash
 const mockHashChange = vi.fn()

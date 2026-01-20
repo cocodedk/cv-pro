@@ -2,7 +2,7 @@
 
 import logging
 from typing import List, Dict, Any
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import ValidationError
 from slowapi import Limiter
 import httpx
@@ -17,6 +17,7 @@ from backend.models_ai import (
 )
 from backend.services.ai.draft import generate_cv_draft
 from backend.services.ai.llm_client import get_llm_client
+from backend.app_helpers.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +143,7 @@ async def _handle_rewrite_request(payload: AIRewriteRequest) -> AIRewriteRespons
 
 def create_ai_router(limiter: Limiter) -> APIRouter:  # noqa: C901
     """Create AI router with CV generation and rewrite endpoints."""
-    router = APIRouter()
+    router = APIRouter(dependencies=[Depends(get_current_user)])
 
     @router.post("/api/ai/generate-cv", response_model=AIGenerateCVResponse)
     @limiter.limit("10/minute")

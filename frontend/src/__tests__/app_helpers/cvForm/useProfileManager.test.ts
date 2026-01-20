@@ -5,7 +5,7 @@ import { useProfileManager } from '../../../app_helpers/cvForm/useProfileManager
 import { CVData } from '../../../types/cv'
 
 vi.mock('axios')
-const mockedAxios = axios as any
+const mockedAxios = vi.mocked(axios, true)
 
 describe('useProfileManager', () => {
   const mockReset = vi.fn()
