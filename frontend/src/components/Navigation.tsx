@@ -32,9 +32,6 @@ export default function Navigation({
                 <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                   {BRANDING.appName}
                 </h1>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {BRANDING.ownerName} · {BRANDING.companyName}
-                </span>
               </div>
             </div>
           </div>
@@ -163,7 +160,9 @@ export default function Navigation({
                   </button>
                 ) : null}
                 <button
-                  onClick={onSignOut}
+                  onClick={() => {
+                    onSignOut().catch(console.error)
+                  }}
                   className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
                 >
                   {t('signOut')}

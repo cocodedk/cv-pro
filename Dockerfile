@@ -1,7 +1,7 @@
 # Multi-stage build for CV Generator
 
 # Stage 1: Frontend build
-FROM node:18-alpine AS frontend-builder
+FROM node:20.19.0-alpine AS frontend-builder
 
 WORKDIR /app
 

@@ -125,4 +125,17 @@ describe('Navigation', () => {
 
     expect(window.location.hash).toBe('#introduction')
   })
+
+  it('calls onSignOut when sign out button clicked', async () => {
+    const user = userEvent.setup()
+    const onSignOut = vi.fn().mockResolvedValue(undefined)
+    render(<Navigation viewMode="form" {...baseProps} onSignOut={onSignOut} />)
+
+    const signOutButton = screen.getByText('Sign out')
+    await act(async () => {
+      await user.click(signOutButton)
+    })
+
+    expect(onSignOut).toHaveBeenCalledOnce()
+  })
 })

@@ -1,22 +1,20 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
-pydantic==2.5.0
+pydantic==2.11.7
 email-validator==2.1.0
 python-docx==1.2.0
 pyyaml==6.0.1
 python-dateutil==2.8.2
-# Updated to current stable versions for security and compatibility
-# Frontend uses @supabase/supabase-js ^2.45.4, backend now matches with latest stable versions
-# Tested for API compatibility - core CRUD operations remain stable
-supabase>=2.27.1,<3.0
-supabase-auth>=2.25.1,<3.0
+# Pinned to keep supabase and supabase-auth compatible during Docker builds.
+supabase==2.27.1
+supabase-auth==2.27.1
 python-dotenv==1.0.0
 pytest==7.4.3
 pytest-asyncio==0.21.1
 pytest-mock==3.12.0
 pytest-cov==4.1.0
-httpx==0.24.1
+httpx==0.28.1
 flake8==6.1.0
 black==23.12.1
 pre-commit==3.6.0
