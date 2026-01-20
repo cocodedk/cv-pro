@@ -1,10 +1,13 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages (Disabled)
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+
+# Disabled - uncomment the line below to re-enable
+# if: false
 
 permissions:
   contents: read
