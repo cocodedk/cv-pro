@@ -6,6 +6,9 @@ email-validator==2.1.0
 python-docx==1.2.0
 pyyaml==6.0.1
 python-dateutil==2.8.2
+# TODO: Update to current stable versions (e.g., supabase>=2.27.0,<3.0 and gotrue>=2.12.4,<3.0)
+# Currently pinned to older versions for compatibility - frontend uses @supabase/supabase-js ^2.45.4
+# Test thoroughly after any updates as API changes may require code modifications
 supabase==2.3.0
 gotrue==2.8.0
 python-dotenv==1.0.0

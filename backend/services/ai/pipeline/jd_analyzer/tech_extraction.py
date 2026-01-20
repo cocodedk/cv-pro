@@ -66,7 +66,7 @@ _KNOWN_TECH_TERMS = frozenset({
     "c", "c++", "c#", "csharp", "objective-c", "matlab", "julia", "elixir", "erlang",
     # Databases
     "postgresql", "postgres", "mysql", "mongodb", "redis", "elasticsearch",
-    "cassandra", "dynamodb", "sqlite", "oracle", "mariadb", "couchdb",
+    "cassandra", "dynamodb", "sqlite", "oracle", "mariadb", "couchdb", "neo4j",
     # Frameworks/Libraries
     "django", "flask", "fastapi", "react", "angular", "vue", "svelte", "nextjs",
     "express", "nestjs", "spring", "rails", "laravel", "symfony",

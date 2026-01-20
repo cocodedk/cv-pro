@@ -37,6 +37,9 @@ export default function AuthView() {
           setMessage('Check your email to confirm your account.')
         }
       }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unexpected error')
+      console.error(err)
     } finally {
       setStatus('idle')
     }

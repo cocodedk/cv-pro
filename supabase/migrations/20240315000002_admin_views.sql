@@ -17,7 +17,7 @@ select
     date(created_at) as date,
     count(distinct user_id) as active_users,
     count(*) as cvs_created,
-    count(case when theme is not null then 1 end) as themed_cvs
+    count(case when theme != 'classic' then 1 end) as themed_cvs
 from cvs
 where created_at >= current_date - interval '30 days'
 group by date(created_at)

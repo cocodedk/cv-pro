@@ -2,14 +2,14 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-DB_CONTAINER=$(docker ps -a --filter "name=supabase_db" --format "{{.Names}}" | head -n1)
-STORAGE_CONTAINER=$(docker ps -a --filter "name=supabase_storage" --format "{{.Names}}" | head -n1)
+DB_CONTAINER=$(docker ps --filter "name=supabase_db" --format "{{.Names}}" | head -n1)
+STORAGE_CONTAINER=$(docker ps --filter "name=supabase_storage" --format "{{.Names}}" | head -n1)
 
 if [ -z "$DB_CONTAINER" ] || [ -z "$STORAGE_CONTAINER" ]; then
   echo "Supabase containers missing. Starting Supabase..."
   npx --yes supabase start
-  DB_CONTAINER=$(docker ps -a --filter "name=supabase_db" --format "{{.Names}}" | head -n1)
-  STORAGE_CONTAINER=$(docker ps -a --filter "name=supabase_storage" --format "{{.Names}}" | head -n1)
+  DB_CONTAINER=$(docker ps --filter "name=supabase_db" --format "{{.Names}}" | head -n1)
+  STORAGE_CONTAINER=$(docker ps --filter "name=supabase_storage" --format "{{.Names}}" | head -n1)
 fi
 
 if [ -z "$DB_CONTAINER" ] || [ -z "$STORAGE_CONTAINER" ]; then

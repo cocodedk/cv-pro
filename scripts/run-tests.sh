@@ -19,6 +19,18 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Helper function to check if cv-pro-app container is running (docker-compose v1/v2 compatible)
+wait_for_service_up() {
+    # Try docker-compose v2 first, fall back to v1
+    if command -v docker-compose &> /dev/null && docker-compose ps app --status running | grep -q "running\|Up"; then
+        return 0
+    elif docker compose ps app 2>/dev/null | grep -q "running\|Up"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -94,7 +106,7 @@ run_flake8() {
     fi
 
     # Check if containers are running
-    if ! docker-compose ps | grep -q "cv-pro-app.*Up"; then
+    if ! wait_for_service_up; then
         echo -e "${YELLOW}⚠️  Backend container is not running. Starting it...${NC}"
         docker-compose up -d app
         sleep 5
@@ -170,7 +182,7 @@ run_backend_tests() {
     fi
 
     # Check if containers are running
-    if ! docker-compose ps | grep -q "cv-pro-app.*Up"; then
+    if ! wait_for_service_up; then
         echo -e "${YELLOW}⚠️  Backend container is not running. Starting it...${NC}"
         docker-compose up -d app
         sleep 5

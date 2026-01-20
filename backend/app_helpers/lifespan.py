@@ -22,8 +22,8 @@ async def lifespan(app: FastAPI):
             client.table("user_profiles").select("id").limit(1).execute()
             logger.info("Successfully connected to Supabase database")
             break
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Supabase connection attempt failed: %s", str(e), exc_info=True)
 
         retry_count += 1
         logger.warning(

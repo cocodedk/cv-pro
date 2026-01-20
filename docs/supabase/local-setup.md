@@ -2,7 +2,7 @@
 
 ## Prerequisites
 - Docker + Docker Compose
-- Supabase CLI: `npm install -g supabase`
+- Supabase CLI: Install locally in the project with `npm install supabase --save-dev` and run via `npx supabase`, or for macOS/Linux use Homebrew: `brew install supabase/tap/supabase`
 
 ## One-time Initialization
 1. Initialize Supabase in the repo root:

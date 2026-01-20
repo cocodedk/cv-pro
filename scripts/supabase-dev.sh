@@ -60,7 +60,7 @@ supabase_start() {
         return 1
     fi
 
-    SUPABASE_DEV_STARTED=false
+    export SUPABASE_DEV_STARTED=false
 
     if supabase_is_running; then
         return 0
@@ -77,7 +77,7 @@ supabase_start() {
         return 1
     fi
 
-    SUPABASE_DEV_STARTED=true
+    export SUPABASE_DEV_STARTED=true
     return 0
 }
 

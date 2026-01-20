@@ -1,9 +1,12 @@
 """Auth helpers for Supabase-backed requests."""
 from dataclasses import dataclass
+import logging
 import os
 from fastapi import Depends, Header, HTTPException
 from backend.database.supabase.client import get_admin_client, get_client
 from backend.database.supabase.utils import set_user_id_context, reset_user_id_context
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -19,9 +22,24 @@ async def get_current_user(
 ) -> AuthUser:
     """Validate bearer token and return current user."""
     if not authorization or not authorization.startswith("Bearer "):
+        # Only allow dev fallback in non-production environments
+        allow_dev_fallback = os.getenv("ALLOW_DEV_AUTH_FALLBACK", "").lower() == "true"
+        env = os.getenv("ENV", "").lower()
+        node_env = os.getenv("NODE_ENV", "").lower()
+        is_dev_env = env in ("development", "test") or node_env in ("development", "test")
+
+        if not (allow_dev_fallback or is_dev_env):
+            raise HTTPException(status_code=401, detail="Missing token")
+
         user_id = os.getenv("SUPABASE_DEFAULT_USER_ID")
         if not user_id:
             raise HTTPException(status_code=401, detail="Missing token")
+
+        logger.warning(
+            "Using development auth fallback for user_id=%s. This should not happen in production.",
+            user_id
+        )
+
         token = set_user_id_context(user_id)
         try:
             yield AuthUser(id=user_id)
