@@ -69,6 +69,12 @@ describe('Navigation', () => {
     const onThemeToggle = vi.fn()
     render(<Navigation viewMode="form" {...baseProps} onThemeToggle={onThemeToggle} />)
 
+    // Open the user dropdown menu
+    const userMenuButton = screen.getByText('Test User')
+    await act(async () => {
+      await user.click(userMenuButton)
+    })
+
     const themeButton = screen.getByText('Dark mode')
     await act(async () => {
       await user.click(themeButton)
@@ -77,8 +83,15 @@ describe('Navigation', () => {
     expect(onThemeToggle).toHaveBeenCalledOnce()
   })
 
-  it('displays Light mode when dark', () => {
+  it('displays Light mode when dark', async () => {
+    const user = userEvent.setup()
     render(<Navigation viewMode="form" {...baseProps} isDark={true} />)
+
+    // Open the user dropdown menu
+    const userMenuButton = screen.getByText('Test User')
+    await act(async () => {
+      await user.click(userMenuButton)
+    })
 
     expect(screen.getByText('Light mode')).toBeInTheDocument()
   })
