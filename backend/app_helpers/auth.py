@@ -87,3 +87,20 @@ async def get_current_admin(
     if role != "admin" or not is_active:
         raise HTTPException(status_code=403, detail="Admin access required")
     return current_user
+
+
+async def get_admin_script_auth(
+    authorization: str | None = Header(None),
+) -> None:
+    """Authenticate admin scripts using service role key."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing token")
+
+    token = authorization.replace("Bearer ", "", 1).strip()
+    service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+
+    if not service_role_key or token != service_role_key:
+        raise HTTPException(status_code=403, detail="Invalid admin token")
+
+    # If token matches service role key, allow access
+    return None

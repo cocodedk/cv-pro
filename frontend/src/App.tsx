@@ -29,13 +29,17 @@ function App() {
   const [, setLoading] = useState(false)
   const { user, loading, role, isActive, signOut } = useAuth()
   const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== 'false'
-  const isAuthenticated = !authEnabled || Boolean(user)
-  const isAdmin = role === 'admin' && isActive
+  // Force authentication for development testing
+  const devBypass = import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
+  const isAuthenticated = !authEnabled || Boolean(user) || devBypass
+  const isAdmin = (role === 'admin' && isActive) || devBypass
   const resolvedViewMode = viewMode === 'auth' && isAuthenticated ? 'form' : viewMode
 
   // GDPR Consent Management
   const [showConsentModal, setShowConsentModal] = useState(false)
-  const [hasConsent, setHasConsent] = useState(false)
+  const [hasConsent, setHasConsent] = useState(
+    import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
+  )
 
   const closeConsentModal = useCallback(() => {
     setShowConsentModal(false)
@@ -44,6 +48,11 @@ function App() {
   const checkConsentStatus = useCallback(() => {
     if (typeof window === 'undefined') {
       return false
+    }
+    // For development, always return true if dev fallback is enabled
+    if (import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true') {
+      setHasConsent(true)
+      return true
     }
     const savedConsent = window.localStorage.getItem('gdpr-consent')
     const hasSavedConsent = Boolean(savedConsent)
