@@ -28,7 +28,7 @@
     "web": "Web",
     "print": "Print"
   },
-  "actions": {
+  "template_actions": {
     "preview": "Preview",
     "view_full": "View Full"
   },

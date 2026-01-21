@@ -28,7 +28,7 @@
     "web": "Web",
     "print": "Print"
   },
-  "actions": {
+  "template_actions": {
     "preview": "Forhåndsvisning",
     "view_full": "Se Fuld"
   },

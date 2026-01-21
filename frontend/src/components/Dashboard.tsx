@@ -310,7 +310,7 @@ export default function Dashboard() {
                         onClick={() => setPreviewTemplate(template)}
                         className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
                       >
-                        {t('actions.preview')}
+                        {t('template_actions.preview')}
                       </button>
                       <a
                         href={`${templatesBase}${template.file}`}
@@ -318,7 +318,7 @@ export default function Dashboard() {
                         rel="noopener noreferrer"
                         className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center text-sm"
                       >
-                        {t('actions.view_full')}
+                        {t('template_actions.view_full')}
                       </a>
                     </div>
                   </div>
