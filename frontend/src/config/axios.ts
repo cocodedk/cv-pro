@@ -19,9 +19,43 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 axios.defaults.baseURL = API_BASE_URL
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
+// Cache for the access token to avoid repeated getSession() calls that can hang
+let cachedToken: string | null = null
+let tokenPromise: Promise<string | null> | null = null
+
+// Listen for auth state changes to update the cached token
+supabase.auth.onAuthStateChange((_event, session) => {
+  cachedToken = session?.access_token ?? null
+})
+
+// Get token with timeout to prevent hanging
+async function getTokenWithTimeout(timeoutMs = 3000): Promise<string | null> {
+  // If we already have a cached token, use it
+  if (cachedToken) {
+    return cachedToken
+  }
+
+  // If a token fetch is in progress, wait for it
+  if (tokenPromise) {
+    return tokenPromise
+  }
+
+  // Fetch token with timeout
+  tokenPromise = Promise.race([
+    supabase.auth.getSession().then(({ data }) => {
+      cachedToken = data.session?.access_token ?? null
+      return cachedToken
+    }),
+    new Promise<null>(resolve => setTimeout(() => resolve(null), timeoutMs)),
+  ]).finally(() => {
+    tokenPromise = null
+  })
+
+  return tokenPromise
+}
+
 axios.interceptors.request.use(async config => {
-  const { data } = await supabase.auth.getSession()
-  const token = data.session?.access_token
+  const token = await getTokenWithTimeout()
   if (token) {
     config.headers = {
       ...(config.headers ?? {}),
