@@ -17,5 +17,24 @@
   "no_cvs_desc": "Opret din første CV for at komme i gang",
   "create_first_cv": "Opret Din Første CV",
   "edit": "Rediger",
-  "download": "Download"
+  "download": "Download",
+  "cv_templates": "CV Skabeloner",
+  "filters": {
+    "all": "Alle",
+    "web": "Web",
+    "print": "Print"
+  },
+  "badges": {
+    "web": "Web",
+    "print": "Print"
+  },
+  "actions": {
+    "preview": "Forhåndsvisning",
+    "view_full": "Se Fuld"
+  },
+  "template_preview": "Forhåndsvisning af {{name}}",
+  "empty": {
+    "filtered": "Ingen skabeloner matcher dine filtre."
+  },
+  "loading_templates": "Indlæser CV skabeloner..."
 }

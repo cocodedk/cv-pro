@@ -17,5 +17,24 @@
   "no_cvs_desc": "Create your first CV to get started",
   "create_first_cv": "Create Your First CV",
   "edit": "Edit",
-  "download": "Download"
+  "download": "Download",
+  "cv_templates": "CV Templates",
+  "filters": {
+    "all": "All",
+    "web": "Web",
+    "print": "Print"
+  },
+  "badges": {
+    "web": "Web",
+    "print": "Print"
+  },
+  "actions": {
+    "preview": "Preview",
+    "view_full": "View Full"
+  },
+  "template_preview": "Preview of {{name}}",
+  "empty": {
+    "filtered": "No templates match your filters."
+  },
+  "loading_templates": "Loading CV templates..."
 }
