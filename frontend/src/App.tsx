@@ -132,7 +132,18 @@ function App() {
         ) : resolvedViewMode === 'privacy' ? (
           <PrivacyPolicy />
         ) : resolvedViewMode === 'search' ? (
-          <CVSearch onCVSelected={cvId => (window.location.hash = `#edit/${cvId}`)} />
+          isAdmin ? (
+            <CVSearch onCVSelected={cvId => (window.location.hash = `#edit/${cvId}`)} />
+          ) : (
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                Access Denied
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                You don&apos;t have permission to access this feature.
+              </p>
+            </div>
+          )
         ) : resolvedViewMode === 'form' || resolvedViewMode === 'edit' ? (
           <CVForm
             onSuccess={handleSuccess}
