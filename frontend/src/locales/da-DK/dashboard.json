@@ -1,0 +1,21 @@
+{
+  "welcome_message": "Administrer dine CV'er og profiloplysninger",
+  "actions": {
+    "create_cv": "Opret Ny CV",
+    "create_cv_desc": "Begynd at bygge en ny professionel CV",
+    "create_now": "Opret Nu",
+    "my_cvs": "Mine CV'er",
+    "my_cvs_desc": "Se og administrer alle dine CV'er",
+    "view_cvs": "Se CV'er",
+    "profile": "Min Profil",
+    "profile_desc": "Opdater dine personlige oplysninger",
+    "manage_profile": "Administrer Profil"
+  },
+  "recent_cvs": "Seneste CV'er",
+  "loading": "Indlæser...",
+  "no_cvs_yet": "Ingen CV'er endnu",
+  "no_cvs_desc": "Opret din første CV for at komme i gang",
+  "create_first_cv": "Opret Din Første CV",
+  "edit": "Rediger",
+  "download": "Download"
+}

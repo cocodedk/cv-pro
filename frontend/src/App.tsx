@@ -3,7 +3,7 @@ import CVForm from './components/CVForm'
 import CVList from './components/CVList'
 import ProfileList from './components/ProfileList'
 import ProfileManager from './components/ProfileManager'
-import Introduction from './components/Introduction'
+import Dashboard from './components/Dashboard'
 import Navigation from './components/Navigation'
 import NotificationModal from './components/NotificationModal'
 import Footer from './components/Footer'
@@ -33,7 +33,8 @@ function App() {
   const devBypass = import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
   const isAuthenticated = !authEnabled || Boolean(user) || devBypass
   const isAdmin = (role === 'admin' && isActive) || devBypass
-  const resolvedViewMode = viewMode === 'auth' && isAuthenticated ? 'form' : viewMode
+  const resolvedViewMode = viewMode === 'auth' && isAuthenticated ? 'form' :
+    viewMode === 'introduction' && !isAuthenticated ? 'auth' : viewMode
 
   // GDPR Consent Management
   const [showConsentModal, setShowConsentModal] = useState(false)
@@ -121,10 +122,10 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {authEnabled && loading ? (
           <div className="text-sm text-gray-500">{t('checkingSession')}</div>
-        ) : authEnabled && !user && resolvedViewMode !== 'introduction' ? (
+        ) : authEnabled && !user ? (
           <AuthView onSignUpSuccess={maybeOpenConsentModal} />
         ) : resolvedViewMode === 'introduction' ? (
-          <Introduction />
+          <Dashboard />
         ) : resolvedViewMode === 'admin' ? (
           <AdminPanel isAdmin={isAdmin} />
         ) : resolvedViewMode === 'settings' ? (

@@ -24,17 +24,17 @@ describe('Navigation', () => {
   it('renders all navigation buttons', () => {
     render(<Navigation viewMode="form" {...baseProps} />)
 
-    expect(screen.getByText('Introduction')).toBeInTheDocument()
+    expect(screen.getByText('Dashboard')).toBeInTheDocument()
     expect(screen.getByText('Create CV')).toBeInTheDocument()
     expect(screen.getByText('My CVs')).toBeInTheDocument()
     expect(screen.getByText('Profile')).toBeInTheDocument()
   })
 
-  it('highlights active introduction button', () => {
+  it('highlights active dashboard button', () => {
     render(<Navigation viewMode="introduction" {...baseProps} />)
 
-    const introductionButton = screen.getByText('Introduction')
-    expect(introductionButton).toHaveClass('bg-blue-600')
+    const dashboardButton = screen.getByText('Dashboard')
+    expect(dashboardButton).toHaveClass('bg-blue-600')
   })
 
   it('highlights active form button', () => {
@@ -132,13 +132,13 @@ describe('Navigation', () => {
     expect(window.location.hash).toBe('#profile')
   })
 
-  it('navigates to introduction when Introduction clicked', async () => {
+  it('navigates to dashboard when Dashboard clicked', async () => {
     const user = userEvent.setup()
     render(<Navigation viewMode="form" {...baseProps} />)
 
-    const introductionButton = screen.getByText('Introduction')
+    const dashboardButton = screen.getByText('Dashboard')
     await act(async () => {
-      await user.click(introductionButton)
+      await user.click(dashboardButton)
     })
 
     expect(window.location.hash).toBe('#introduction')

@@ -58,18 +58,20 @@ export default function Navigation({
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <button
-              onClick={() => {
-                window.location.hash = 'introduction'
-              }}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                viewMode === 'introduction'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
-              }`}
-            >
-              {t('introduction')}
-            </button>
+            {isAuthenticated && (
+              <button
+                onClick={() => {
+                  window.location.hash = 'introduction'
+                }}
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                  viewMode === 'introduction'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                }`}
+              >
+                {t('dashboard')}
+              </button>
+            )}
             {!isAuthenticated ? (
               <button
                 onClick={() => {

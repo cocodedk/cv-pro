@@ -1,0 +1,21 @@
+{
+  "welcome_message": "Manage your CVs and profile information",
+  "actions": {
+    "create_cv": "Create New CV",
+    "create_cv_desc": "Start building a new professional CV",
+    "create_now": "Create Now",
+    "my_cvs": "My CVs",
+    "my_cvs_desc": "View and manage all your CVs",
+    "view_cvs": "View CVs",
+    "profile": "My Profile",
+    "profile_desc": "Update your personal information",
+    "manage_profile": "Manage Profile"
+  },
+  "recent_cvs": "Recent CVs",
+  "loading": "Loading...",
+  "no_cvs_yet": "No CVs yet",
+  "no_cvs_desc": "Create your first CV to get started",
+  "create_first_cv": "Create Your First CV",
+  "edit": "Edit",
+  "download": "Download"
+}
