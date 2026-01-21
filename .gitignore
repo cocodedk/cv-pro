@@ -57,7 +57,8 @@ logs/
 htmlcov/
 test-results/
 playwright-report/
-.playwright-mcp/*.png
+.playwright/
+.playwright-mcp/
 *.png
 !frontend/public/*.png
 
@@ -74,6 +75,7 @@ build/
 
 # Scripts
 .build-watcher.pid
+.dev-server.pid
 
 # Encryption keys - NEVER COMMIT
 secure-keys/

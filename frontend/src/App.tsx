@@ -96,6 +96,7 @@ function App() {
         onThemeToggle={() => setIsDark(current => !current)}
         isAuthenticated={isAuthenticated}
         isAdmin={isAdmin}
+        user={user}
         onSignOut={signOut}
       />
 
@@ -134,6 +135,8 @@ function App() {
           <CVList onError={handleError} />
         ) : resolvedViewMode === 'profile-list' ? (
           <ProfileList onError={handleError} />
+        ) : resolvedViewMode === 'profile' ? (
+          <ProfileManager onSuccess={handleSuccess} onError={handleError} setLoading={setLoading} />
         ) : (
           <ProfileManager onSuccess={handleSuccess} onError={handleError} setLoading={setLoading} />
         )}

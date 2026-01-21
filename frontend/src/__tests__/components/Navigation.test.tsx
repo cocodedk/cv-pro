@@ -14,6 +14,11 @@ describe('Navigation', () => {
     isAuthenticated: true,
     isAdmin: false,
     onSignOut: () => {},
+    user: {
+      id: 'test-user-id',
+      email: 'test@example.com',
+      user_metadata: { full_name: 'Test User' },
+    } as any,
   }
 
   it('renders all navigation buttons', () => {
@@ -131,6 +136,13 @@ describe('Navigation', () => {
     const onSignOut = vi.fn().mockResolvedValue(undefined)
     render(<Navigation viewMode="form" {...baseProps} onSignOut={onSignOut} />)
 
+    // Open the user dropdown menu
+    const userMenuButton = screen.getByText('Test User')
+    await act(async () => {
+      await user.click(userMenuButton)
+    })
+
+    // Now click the sign out button
     const signOutButton = screen.getByText('Sign out')
     await act(async () => {
       await user.click(signOutButton)
