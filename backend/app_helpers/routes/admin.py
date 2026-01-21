@@ -1,6 +1,5 @@
 """Admin routes for user management and stats."""
 import logging
-import os
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 from slowapi import Limiter
@@ -24,74 +23,60 @@ class ResetPasswordRequest(BaseModel):
 
 def _search_user_by_email_or_id(query: str):
     """Search for a user by email or user ID using admin client."""
-    from supabase import create_client
-
-    # Use direct Supabase client with service role for auth access
-    supabase_url = os.getenv("SUPABASE_URL")
-    service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-
-    if not supabase_url or not service_role_key:
-        raise HTTPException(status_code=500, detail="Supabase configuration missing")
-
-    # Create admin client that can access auth schema
-    admin_supabase = create_client(supabase_url, service_role_key)
+    admin_supabase = get_admin_client()
 
     # First try to find by email
     try:
-        response = admin_supabase.table("auth.users").select("id, email, created_at").eq("email", query).execute()
-        if response.data:
-            user = response.data[0]
+        response = admin_supabase.auth.admin.list_users(page=1, per_page=1, filter=f"email.eq.{query}")
+        if response.users:
+            user = response.users[0]
             # Also get profile info
             profile_response = admin_supabase.table("user_profiles").select("role, is_active").eq("id", user["id"]).execute()
             profile = profile_response.data[0] if profile_response.data else None
             return {
                 "user": {
-                    **user,
+                    "id": user["id"],
+                    "email": user["email"],
+                    "created_at": user["created_at"],
                     "role": profile.get("role") if profile else "user",
                     "is_active": profile.get("is_active") if profile else True
                 }
             }
-    except Exception:
-        pass  # Continue to user ID search
+    except Exception as e:
+        logger.error("Error searching user by email %s: %s", query, str(e))
+        # Continue to user ID search
 
     # If not found by email, try by user ID
     try:
-        response = admin_supabase.table("auth.users").select("id, email, created_at").eq("id", query).execute()
-        if response.data:
-            user = response.data[0]
+        response = admin_supabase.auth.admin.get_user_by_id(query)
+        if response.user:
+            user = response.user
             # Also get profile info
             profile_response = admin_supabase.table("user_profiles").select("role, is_active").eq("id", user["id"]).execute()
             profile = profile_response.data[0] if profile_response.data else None
             return {
                 "user": {
-                    **user,
+                    "id": user["id"],
+                    "email": user["email"],
+                    "created_at": user["created_at"],
                     "role": profile.get("role") if profile else "user",
                     "is_active": profile.get("is_active") if profile else True
                 }
             }
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error("Error searching user by ID %s: %s", query, str(e))
 
     raise HTTPException(status_code=404, detail="User not found")
 
 
 def _reset_user_password(user_id: str, new_password: str):
     """Reset a user's password using Supabase admin API."""
-    if len(new_password) < 6:
+    if len(new_password) < 8:
         raise HTTPException(
-            status_code=422, detail="Password must be at least 6 characters long"
+            status_code=422, detail="Password must be at least 8 characters long"
         )
 
-    from supabase import create_client
-
-    # Use direct Supabase client with service role for auth operations
-    supabase_url = os.getenv("SUPABASE_URL")
-    service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-
-    if not supabase_url or not service_role_key:
-        raise HTTPException(status_code=500, detail="Supabase configuration missing")
-
-    admin_supabase = create_client(supabase_url, service_role_key)
+    admin_supabase = get_admin_client()
 
     try:
         # Use Supabase admin API to update user password

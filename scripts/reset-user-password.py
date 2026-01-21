@@ -77,26 +77,39 @@ def find_user_by_email_or_id(identifier: str):
                 'created_at': None  # Not available in user_profiles
             }
 
-        # If not found in user_profiles, check if it's a UUID and try auth.users
+        # If not found in user_profiles, check if it's a UUID and try admin API
         import re
         uuid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 
         if uuid_pattern.match(identifier):
-            # For UUIDs, assume they exist in auth.users
-            return {
-                'id': identifier,
-                'email': f'user-{identifier[:8]}@example.com',  # Placeholder email
-                'created_at': None
-            }
+            # For UUIDs, verify user exists via admin API
+            try:
+                response = client.auth.admin.get_user_by_id(identifier)
+                if response.user:
+                    return {
+                        'id': response.user['id'],
+                        'email': response.user['email'],
+                        'created_at': response.user['created_at']
+                    }
+                else:
+                    return None  # User not found
+            except Exception:
+                return None  # User not found or error
 
-        # For email that's not in user_profiles, we'll assume it needs to be created
-        # Return a placeholder that indicates the user might not exist
-        return {
-            'id': identifier,  # Use email as ID for now
-            'email': identifier,
-            'created_at': None,
-            'needs_creation': True
-        }
+        # For emails, verify user exists via admin API
+        try:
+            response = client.auth.admin.list_users(page=1, per_page=1, filter=f"email.eq.{identifier}")
+            if response.users:
+                user = response.users[0]
+                return {
+                    'id': user['id'],
+                    'email': user['email'],
+                    'created_at': user['created_at']
+                }
+            else:
+                return None  # User not found
+        except Exception:
+            return None  # User not found or error
 
     except Exception as e:
         print(f"❌ Error querying user: {e}")
@@ -110,30 +123,6 @@ def reset_user_password(user_id: str, new_password: str) -> bool:
         return False
 
     try:
-        # First check if this is an email being used as ID (user might not exist)
-        import re
-        email_pattern = re.compile(r'^[^@]+@[^@]+\.[^@]+$')
-
-        if email_pattern.match(user_id):
-            # This looks like an email, try to create the user first
-            try:
-                # Try to sign up the user (this will create them if they don't exist)
-                signup_response = client.auth.sign_up({
-                    'email': user_id,
-                    'password': new_password
-                })
-
-                if signup_response.user:
-                    print(f"✅ Created new user: {user_id}")
-                    return True
-                else:
-                    print("❌ Failed to create user")
-                    return False
-            except Exception as create_error:
-                print(f"❌ Error creating user: {create_error}")
-                # User might already exist, try to reset password
-                pass
-
         # Try to update existing user password
         # Supabase admin API might require attributes parameter
         response = client.auth.admin.update_user_by_id(

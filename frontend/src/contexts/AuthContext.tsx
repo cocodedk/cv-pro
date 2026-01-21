@@ -4,11 +4,6 @@ import { supabase } from '../config/supabase'
 
 type UserRole = 'user' | 'admin' | null
 
-interface UserProfileRecord {
-  role: UserRole
-  is_active: boolean | null
-}
-
 interface AuthContextValue {
   user: User | null
   session: Session | null
@@ -22,29 +17,8 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   console.log('AuthProvider: Starting up')
-  const [user, setUser] = useState<User | null>(() => {
-    // Force development auth for testing
-    const devUser = {
-      id: '550e8400-e29b-41d4-a716-446655440000',
-      email: 'dev@example.com',
-      user_metadata: {},
-      app_metadata: {},
-      aud: 'authenticated',
-      created_at: new Date().toISOString(),
-    }
-    console.log('AuthProvider: Setting dev user', devUser)
-    return devUser as any
-  })
-  const [session, setSession] = useState<Session | null>(() => {
-    const devSession = {
-      access_token: 'dev-token',
-      refresh_token: 'dev-refresh',
-      expires_at: Date.now() / 1000 + 3600,
-      user: user,
-    }
-    console.log('AuthProvider: Setting dev session', devSession)
-    return devSession as any
-  })
+  const [user, setUser] = useState<User | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(false)
   const [role, setRole] = useState<UserRole>('user')
   const [isActive, setIsActive] = useState(true)
@@ -57,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const { data, error } = await supabase
-      .from<UserProfileRecord>('user_profiles')
+      .from('user_profiles')
       .select('role, is_active')
       .eq('id', currentUser.id)
       .single()
@@ -75,9 +49,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true
 
-    // Check for development auth fallback - if enabled, always use dev auth
-    const allowDevFallback =
-      import.meta.env.DEV || import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
+    // Check for development auth fallback - only enable when explicitly set
+    const allowDevFallback = import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
     console.log(
       'AuthContext: DEV =',
       import.meta.env.DEV,
@@ -169,8 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     // Check if we're in development mode with fake auth
-    const allowDevFallback =
-      import.meta.env.DEV || import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
+    const allowDevFallback = import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
 
     if (allowDevFallback) {
       // In development mode, just reset the local state
