@@ -53,26 +53,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true
 
+    // Set a timeout to ensure loading is set to false even if auth operations hang
+    const loadingTimeout = setTimeout(() => {
+      if (isMounted) {
+        setLoading(false)
+      }
+    }, 2000)
+
     const initialize = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (!isMounted) return
-      setSession(data.session)
-      setUser(data.session?.user ?? null)
-      await loadProfile(data.session?.user ?? null)
-      setLoading(false)
+      try {
+        // Try to get the session, but don't wait indefinitely
+        const sessionPromise = supabase.auth.getSession()
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Session timeout')), 5000)
+        )
+
+        const { data } = (await Promise.race([sessionPromise, timeoutPromise])) as Awaited<
+          ReturnType<typeof supabase.auth.getSession>
+        >
+        if (!isMounted) return
+
+        setSession(data.session)
+        setUser(data.session?.user ?? null)
+        await loadProfile(data.session?.user ?? null)
+        setLoading(false)
+        clearTimeout(loadingTimeout)
+      } catch (error) {
+        // If getSession fails or times out, rely on onAuthStateChange
+        // Silent catch - onAuthStateChange will handle session restoration
+      }
     }
 
     initialize()
 
     const { data } = supabase.auth.onAuthStateChange(async (_event, next) => {
-      setSession(next)
-      setUser(next?.user ?? null)
-      await loadProfile(next?.user ?? null)
-      setLoading(false)
+      if (!isMounted) return
+      try {
+        setSession(next)
+        setUser(next?.user ?? null)
+        await loadProfile(next?.user ?? null)
+        setLoading(false)
+        clearTimeout(loadingTimeout)
+      } catch (error) {
+        console.error('Error in auth state change:', error)
+        setLoading(false)
+        clearTimeout(loadingTimeout)
+      }
     })
 
     return () => {
       isMounted = false
+      clearTimeout(loadingTimeout)
       data.subscription.unsubscribe()
     }
   }, [loadProfile])
