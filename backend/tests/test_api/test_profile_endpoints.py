@@ -1,6 +1,6 @@
 """Tests for profile endpoints."""
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 
 
 @pytest.mark.asyncio
@@ -289,3 +289,200 @@ class TestDeleteProfileByUpdatedAt:
                 headers={"X-Confirm-Delete-Profile": "true"},
             )
             assert response.status_code == 500
+
+
+@pytest.mark.asyncio
+@pytest.mark.api
+class TestTranslateProfile:
+    """Test POST /api/profile/translate endpoint."""
+
+    async def test_translate_profile_success(
+        self, client, sample_cv_data, mock_supabase_client
+    ):
+        """Test successful profile translation and saving."""
+        profile_data = {
+            "personal_info": sample_cv_data["personal_info"],
+            "experience": sample_cv_data["experience"],
+            "education": sample_cv_data["education"],
+            "skills": sample_cv_data["skills"],
+            "language": "en",
+        }
+
+        translated_profile = {
+            "personal_info": sample_cv_data["personal_info"],
+            "experience": sample_cv_data["experience"],
+            "education": sample_cv_data["education"],
+            "skills": sample_cv_data["skills"],
+            "language": "es",
+        }
+
+        with patch(
+            "backend.services.profile_translation.get_translation_service"
+        ) as mock_get_service, patch(
+            "backend.database.queries.save_profile", return_value=True
+        ) as mock_save_profile, patch(
+            "backend.database.queries.profile_exists_for_language", return_value=False
+        ) as mock_profile_exists:
+            mock_service = mock_get_service.return_value
+            mock_service.translate_profile = AsyncMock(return_value=translated_profile)
+
+            payload = {
+                "profile_data": profile_data,
+                "target_language": "es"
+            }
+            response = await client.post("/api/profile/translate", json=payload)
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "success"
+            assert data["translated_profile"]["language"] == "es"
+            assert "Profile created in ES successfully" in data["message"]
+            mock_save_profile.assert_called_once()
+            mock_profile_exists.assert_called_once_with("es")
+
+    async def test_translate_profile_update_existing(
+        self, client, sample_cv_data, mock_supabase_client
+    ):
+        """Test translation when profile already exists in target language."""
+        profile_data = {
+            "personal_info": sample_cv_data["personal_info"],
+            "experience": sample_cv_data["experience"],
+            "education": sample_cv_data["education"],
+            "skills": sample_cv_data["skills"],
+            "language": "en",
+        }
+
+        translated_profile = {
+            "personal_info": sample_cv_data["personal_info"],
+            "experience": sample_cv_data["experience"],
+            "education": sample_cv_data["education"],
+            "skills": sample_cv_data["skills"],
+            "language": "es",
+        }
+
+        with patch(
+            "backend.services.profile_translation.get_translation_service"
+        ) as mock_get_service, patch(
+            "backend.database.queries.save_profile", return_value=True
+        ) as mock_save_profile, patch(
+            "backend.database.queries.profile_exists_for_language", return_value=True
+        ) as mock_profile_exists:
+            mock_service = mock_get_service.return_value
+            mock_service.translate_profile = AsyncMock(return_value=translated_profile)
+
+            payload = {
+                "profile_data": profile_data,
+                "target_language": "es"
+            }
+            response = await client.post("/api/profile/translate", json=payload)
+            assert response.status_code == 200
+            data = response.json()
+            assert data["status"] == "success"
+            assert "Profile updated in ES successfully" in data["message"]
+            mock_save_profile.assert_called_once()
+            mock_profile_exists.assert_called_once_with("es")
+
+    async def test_translate_profile_ai_not_configured(
+        self, client, sample_cv_data, mock_supabase_client
+    ):
+        """Test translation when AI is not configured."""
+        profile_data = {
+            "personal_info": sample_cv_data["personal_info"],
+            "experience": sample_cv_data["experience"],
+            "education": sample_cv_data["education"],
+            "skills": sample_cv_data["skills"],
+            "language": "en",
+        }
+
+        with patch(
+            "backend.services.profile_translation.get_translation_service"
+        ) as mock_get_service:
+            mock_service = mock_get_service.return_value
+            mock_service.translate_profile = AsyncMock(
+                side_effect=ValueError("AI service is not configured")
+            )
+
+            payload = {
+                "profile_data": profile_data,
+                "target_language": "es"
+            }
+            response = await client.post("/api/profile/translate", json=payload)
+            assert response.status_code == 503
+            data = response.json()
+            assert "not configured" in data["detail"].lower()
+
+    async def test_translate_profile_server_error(
+        self, client, sample_cv_data, mock_supabase_client
+    ):
+        """Test translation with server error."""
+        profile_data = {
+            "personal_info": sample_cv_data["personal_info"],
+            "experience": sample_cv_data["experience"],
+            "education": sample_cv_data["education"],
+            "skills": sample_cv_data["skills"],
+            "language": "en",
+        }
+
+        with patch(
+            "backend.services.profile_translation.get_translation_service"
+        ) as mock_get_service:
+            mock_service = mock_get_service.return_value
+            mock_service.translate_profile = AsyncMock(
+                side_effect=Exception("Translation failed")
+            )
+
+            payload = {
+                "profile_data": profile_data,
+                "target_language": "es"
+            }
+            response = await client.post("/api/profile/translate", json=payload)
+            assert response.status_code == 500
+            data = response.json()
+            assert "failed" in data["detail"].lower()
+
+    async def test_translate_profile_save_error(
+        self, client, sample_cv_data, mock_supabase_client
+    ):
+        """Test translation when saving fails."""
+        profile_data = {
+            "personal_info": sample_cv_data["personal_info"],
+            "experience": sample_cv_data["experience"],
+            "education": sample_cv_data["education"],
+            "skills": sample_cv_data["skills"],
+            "language": "en",
+        }
+
+        translated_profile = {
+            "personal_info": sample_cv_data["personal_info"],
+            "experience": sample_cv_data["experience"],
+            "education": sample_cv_data["education"],
+            "skills": sample_cv_data["skills"],
+            "language": "es",
+        }
+
+        with patch(
+            "backend.services.profile_translation.get_translation_service"
+        ) as mock_get_service, patch(
+            "backend.database.queries.save_profile", return_value=False
+        ) as _mock_save_profile, patch(  # noqa: F841
+            "backend.database.queries.profile_exists_for_language", return_value=False
+        ) as _mock_profile_exists:  # noqa: F841
+            mock_service = mock_get_service.return_value
+            mock_service.translate_profile = AsyncMock(return_value=translated_profile)
+
+            payload = {
+                "profile_data": profile_data,
+                "target_language": "es"
+            }
+            response = await client.post("/api/profile/translate", json=payload)
+            assert response.status_code == 500
+            data = response.json()
+            assert "save translated profile" in data["detail"].lower()
+
+    async def test_translate_profile_validation_error(self, client):
+        """Test translation with invalid request data."""
+        invalid_payload = {
+            "profile_data": {"invalid": "data"},
+            "target_language": "invalid"
+        }
+        response = await client.post("/api/profile/translate", json=invalid_payload)
+        assert response.status_code == 422

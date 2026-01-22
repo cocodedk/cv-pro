@@ -39,10 +39,13 @@ export const createEmptyProfileData = (): ProfileData => ({
 
 type ProfileOverrides = Partial<ProfileData> & {
   personal_info?: Partial<ProfileData['personal_info']>
+  language?: string
 }
 
-export const createProfileData = (overrides: ProfileOverrides = {}): ProfileData => ({
-  personal_info: {
+export const createProfileData = (overrides: ProfileOverrides = {}): ProfileData => {
+  const { personal_info: personalInfoOverrides, ...restOverrides } = overrides
+
+  const defaultPersonalInfo = {
     name: 'John Doe',
     email: 'john@example.com',
     phone: '',
@@ -58,9 +61,16 @@ export const createProfileData = (overrides: ProfileOverrides = {}): ProfileData
       country: '',
     },
     summary: '',
-    ...(overrides.personal_info ?? {}),
-  },
-  experience: overrides.experience ?? [],
-  education: overrides.education ?? [],
-  skills: overrides.skills ?? [],
-})
+  }
+
+  return {
+    personal_info: {
+      ...defaultPersonalInfo,
+      ...(personalInfoOverrides || {}),
+    },
+    experience: [],
+    education: [],
+    skills: [],
+    ...restOverrides,
+  }
+}

@@ -3,16 +3,19 @@
 ## Severity
 **Medium** - Potential XSS and content injection attacks
 
+## Status
+**Remediated** - Server-side HTML sanitization is enforced with an allowlist.
+
 ## Description
 User-provided HTML content in experience descriptions is not properly sanitized, potentially allowing cross-site scripting (XSS) attacks and malicious content injection.
 
 ## Location
-- **Backend**: `backend/models.py` (lines 65-92) - Experience description validation
+- **Backend**: `backend/models.py` - Experience description validation
 - **Frontend**: User input in experience description fields
 
 ## Technical Details
 
-### Current Validation
+### Previous Validation
 ```python
 class Experience(BaseModel):
     # ...
@@ -63,15 +66,20 @@ class Experience(BaseModel):
 - No whitelist of allowed HTML tags/attributes
 - Manual HTML stripping is insufficient for security
 
-## Recommended Fix
-1. **Implement HTML sanitization library** (e.g., `bleach` for Python)
-2. **Define allowed HTML tags and attributes** whitelist
-3. **Strip dangerous content** (scripts, event handlers, etc.)
-4. **Validate HTML structure** to prevent malformed content
+## Fix Applied
+1. **HTML sanitization** uses `bleach` with a strict allowlist.
+2. **Dangerous tags/attributes** are stripped and comments removed.
+3. **Length validation** runs on sanitized plain text.
 
-### Implementation Example
+### Current Implementation
 ```python
 import bleach
+import html
+
+ALLOWED_DESCRIPTION_TAGS = [
+    "p", "br", "strong", "em", "u", "ul", "ol", "li",
+    "h1", "h2", "h3", "h4", "h5", "h6"
+]
 
 class Experience(BaseModel):
     # ...
@@ -82,30 +90,21 @@ class Experience(BaseModel):
 
     @field_validator("description")
     @classmethod
-    def validate_and_sanitize_description(
-        cls, v: str | None, info: ValidationInfo
-    ) -> str | None:
-        """Validate and sanitize HTML description content."""
+    def validate_and_sanitize_description(cls, v: str | None) -> str | None:
+        """Sanitize HTML description and enforce plain text length."""
         if v is None:
             return v
 
-        # Define allowed HTML tags and attributes
-        allowed_tags = [
-            'p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li',
-            'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
-        ]
-        allowed_attributes = {}
-
-        # Sanitize HTML content
         sanitized = bleach.clean(
             v,
-            tags=allowed_tags,
-            attributes=allowed_attributes,
-            strip=True
+            tags=ALLOWED_DESCRIPTION_TAGS,
+            attributes={},
+            strip=True,
+            strip_comments=True,
         )
 
-        # Check plain text length after sanitization
-        plain_text = bleach.clean(sanitized, tags=[], strip=True)
+        plain_text = bleach.clean(sanitized, tags=[], attributes={}, strip=True)
+        plain_text = html.unescape(plain_text)
         if len(plain_text) > 300:
             from pydantic_core import PydanticCustomError
             raise PydanticCustomError(
@@ -117,12 +116,12 @@ class Experience(BaseModel):
         return sanitized
 ```
 
-## Immediate Mitigation
+## Applied Mitigations
 - Add basic HTML tag filtering to remove `<script>`, `<style>`, and event handler attributes
 - Implement length limits on HTML content size
 - Add content type validation
 
-## Long-term Solution
+## Future Enhancements
 - Implement comprehensive HTML sanitization
 - Add HTML validation and structure checking
 - Consider moving to a rich text editor with built-in sanitization

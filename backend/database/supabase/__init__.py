@@ -12,9 +12,12 @@ from backend.database.supabase.cv_search import search_cvs
 from backend.database.supabase.profile import (
     delete_profile,
     delete_profile_by_updated_at,
+    delete_default_profile,
     get_profile,
     get_profile_by_updated_at,
+    get_default_profile,
     list_profiles,
+    profile_exists_for_language,
     save_profile,
 )
 from backend.database.supabase.cover_letter import (
@@ -45,7 +48,10 @@ __all__ = [
     "update_profile",
     "get_profile",
     "get_profile_by_updated_at",
+    "get_default_profile",
     "list_profiles",
+    "profile_exists_for_language",
     "delete_profile",
     "delete_profile_by_updated_at",
+    "delete_default_profile",
 ]

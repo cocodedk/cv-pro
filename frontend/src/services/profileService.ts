@@ -5,6 +5,17 @@ import { normalizeProfileDataForApi } from '../app_helpers/cvForm/normalizeCvDat
 import { getErrorDetail, getErrorMessage, getErrorResponse } from '../app_helpers/axiosError'
 import i18n from '../i18n'
 
+interface TranslateProfileRequest {
+  profile_data: ProfileData
+  target_language: string
+}
+
+interface TranslateProfileResponse {
+  status: string
+  translated_profile: ProfileData
+  message?: string
+}
+
 /**
  * Get the master profile from the server.
  * @returns Profile data or null if not found
@@ -103,5 +114,33 @@ export async function deleteProfileByUpdatedAt(updatedAt: string): Promise<Profi
     return response.data
   } catch (error: unknown) {
     throw new Error(getErrorMessage(error, i18n.t('profile:errors.deleteFailed')))
+  }
+}
+
+/**
+ * Translate a profile to another language using AI.
+ * @param profileData - Profile data to translate
+ * @param targetLanguage - ISO 639-1 language code for target language
+ * @returns Translated profile data
+ * @throws Error if translation fails
+ */
+export async function translateProfile(
+  profileData: ProfileData,
+  targetLanguage: string
+): Promise<TranslateProfileResponse> {
+  try {
+    const payload: TranslateProfileRequest = {
+      profile_data: profileData,
+      target_language: targetLanguage,
+    }
+    const response = await axios.post<TranslateProfileResponse>('/api/profile/translate', payload)
+    return response.data
+  } catch (error: unknown) {
+    throw new Error(
+      getErrorMessage(
+        error,
+        i18n.t('profile:errors.translationFailed', 'Failed to translate profile')
+      )
+    )
   }
 }

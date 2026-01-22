@@ -3,15 +3,18 @@
 ## Severity
 **High** - Potential privilege escalation
 
+## Status
+**Remediated** - Admin endpoints now require verified admin JWTs.
+
 ## Description
 Admin scripts authenticate using direct comparison of the authorization token with the Supabase service role key, bypassing proper JWT validation and role-based access control.
 
 ## Location
-- **Backend**: `backend/app_helpers/auth.py` (lines 92-106)
+- **Backend**: `backend/app_helpers/routes/admin.py`
 
 ## Technical Details
 
-### Current Implementation
+### Previous Implementation
 ```python
 async def get_admin_script_auth(
     authorization: str | None = Header(None),
@@ -41,19 +44,14 @@ async def get_admin_script_auth(
 - Lack of role-based access control for admin operations
 - Missing integration with Supabase's authentication system
 
-## Recommended Fix
-1. **Implement proper JWT validation** for admin users
-2. **Use admin user authentication** instead of service role key
-3. **Integrate with existing auth system** (`get_current_admin` dependency)
-4. **Add audit logging** for admin operations
+## Fix Applied
+1. **Admin guard applied globally** to admin routes via `get_current_admin`.
+2. **Service role key removed** from request authentication flow.
+3. **Role checks centralized** to Supabase profile validation.
 
-### Corrected Implementation
+### Current Implementation
 ```python
-async def get_admin_script_auth(
-    current_admin: AuthUser = Depends(get_current_admin),
-) -> AuthUser:
-    """Authenticate admin scripts using proper admin authentication."""
-    return current_admin
+router = APIRouter(dependencies=[Depends(get_current_admin)])
 ```
 
 ## Immediate Mitigation

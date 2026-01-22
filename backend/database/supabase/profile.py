@@ -14,25 +14,59 @@ def _build_profile_response(row: Dict[str, Any]) -> Dict[str, Any]:
     return profile_data
 
 
-def save_profile(profile_data: Dict[str, Any]) -> bool:
+def save_profile(profile_data: Dict[str, Any], create_new: bool = False) -> bool:
     client = get_admin_client()
     user_id = require_user_id(profile_data.get("user_id"))
+    language = profile_data.get("language", "en")
 
     # Encrypt sensitive data before storage
     encrypted_profile_data = encrypt_cv_data(profile_data)
 
-    response = (
-        client.table("cv_profiles")
-        .upsert({"user_id": user_id, "profile_data": encrypted_profile_data}, on_conflict="user_id")
-        .execute()
-    )
+    if create_new:
+        # Create new profile record
+        response = (
+            client.table("cv_profiles")
+            .insert({
+                "user_id": user_id,
+                "language": language,
+                "profile_data": encrypted_profile_data
+            })
+            .execute()
+        )
+    else:
+        # Upsert based on user_id and language
+        response = (
+            client.table("cv_profiles")
+            .upsert({
+                "user_id": user_id,
+                "language": language,
+                "profile_data": encrypted_profile_data
+            }, on_conflict="user_id,language")
+            .execute()
+        )
     return bool(response.data)
 
 
-def get_profile() -> Optional[Dict[str, Any]]:
+def get_profile(language: str = "en") -> Optional[Dict[str, Any]]:
     client = get_admin_client()
     user_id = require_user_id()
-    query = client.table("cv_profiles").select("profile_data, updated_at")
+    query = (
+        client.table("cv_profiles")
+        .select("profile_data, updated_at")
+        .eq("language", language)
+    )
+    query = apply_user_scope(query, user_id)
+    response = query.order("updated_at", desc=True).limit(1).execute()
+    if not response.data:
+        return None
+    return _build_profile_response(response.data[0])
+
+
+def get_default_profile() -> Optional[Dict[str, Any]]:
+    """Get the most recently updated profile (for backward compatibility)."""
+    client = get_admin_client()
+    user_id = require_user_id()
+    query = client.table("cv_profiles").select("profile_data, updated_at, language")
     query = apply_user_scope(query, user_id)
     response = query.order("updated_at", desc=True).limit(1).execute()
     if not response.data:
@@ -43,7 +77,7 @@ def get_profile() -> Optional[Dict[str, Any]]:
 def list_profiles() -> list[Dict[str, Any]]:
     client = get_admin_client()
     user_id = require_user_id()
-    query = client.table("cv_profiles").select("profile_data, updated_at")
+    query = client.table("cv_profiles").select("profile_data, updated_at, language")
     query = apply_user_scope(query, user_id)
     response = query.order("updated_at", desc=True).execute()
     profiles = []
@@ -53,9 +87,25 @@ def list_profiles() -> list[Dict[str, Any]]:
             {
                 "name": personal_info.get("name", "Unknown"),
                 "updated_at": row.get("updated_at"),
+                "language": row.get("language", "en"),
             }
         )
     return profiles
+
+
+def profile_exists_for_language(language: str) -> bool:
+    """Check if a profile exists for the given language."""
+    client = get_admin_client()
+    user_id = require_user_id()
+    query = (
+        client.table("cv_profiles")
+        .select("id")
+        .eq("language", language)
+        .limit(1)
+    )
+    query = apply_user_scope(query, user_id)
+    response = query.execute()
+    return bool(response.data)
 
 
 def get_profile_by_updated_at(updated_at: str) -> Optional[Dict[str, Any]]:
@@ -83,7 +133,21 @@ def delete_profile_by_updated_at(updated_at: str) -> bool:
     return bool(response.data)
 
 
-def delete_profile() -> bool:
+def delete_profile(language: str = "en") -> bool:
+    client = get_admin_client()
+    user_id = require_user_id()
+    response = (
+        client.table("cv_profiles")
+        .delete()
+        .eq("user_id", user_id)
+        .eq("language", language)
+        .execute()
+    )
+    return bool(response.data)
+
+
+def delete_default_profile() -> bool:
+    """Delete the most recently updated profile (for backward compatibility)."""
     client = get_admin_client()
     user_id = require_user_id()
     response = (

@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Dict, Any
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 from backend.app import app
 from backend.app_helpers import auth as auth_helpers
 from backend.app_helpers.routes import admin as admin_routes
@@ -111,7 +111,7 @@ def _apply_supabase_defaults(mock_supabase_client):
 @pytest_asyncio.fixture
 async def client():
     """FastAPI test client."""
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
 
 

@@ -110,6 +110,7 @@ export interface ProfileData {
   experience: Experience[]
   education: Education[]
   skills: Skill[]
+  language?: string
   updated_at?: string
 }
 

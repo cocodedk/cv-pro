@@ -17,40 +17,35 @@ class AuthUser:
     email: str | None = None
 
 
-async def get_current_user(
-    authorization: str | None = Header(None),
-) -> AuthUser:
-    """Validate bearer token and return current user."""
-    if not authorization or not authorization.startswith("Bearer "):
-        # Only allow dev fallback in non-production environments
-        allow_dev_fallback = os.getenv("ALLOW_DEV_AUTH_FALLBACK", "").lower() == "true"
-        env = os.getenv("ENV", "").lower()
-        node_env = os.getenv("NODE_ENV", "").lower()
-        is_dev_env = env in ("development", "test") or node_env in ("development", "test")
+def _should_allow_dev_fallback() -> bool:
+    """Check if development auth fallback should be allowed."""
+    allow_dev_fallback = os.getenv("ALLOW_DEV_AUTH_FALLBACK", "").lower() == "true"
+    env = os.getenv("ENV", "").lower()
+    node_env = os.getenv("NODE_ENV", "").lower()
+    is_dev_env = env in ("development", "test") or node_env in ("development", "test")
+    return allow_dev_fallback and is_dev_env
 
-        if not (allow_dev_fallback or is_dev_env):
-            raise HTTPException(status_code=401, detail="Missing token")
 
-        user_id = os.getenv("SUPABASE_DEFAULT_USER_ID")
-        if not user_id:
-            raise HTTPException(status_code=401, detail="Missing token")
-
-        logger.warning(
-            "Using development auth fallback for user_id=%s. This should not happen in production.",
-            user_id
-        )
-
-        token = set_user_id_context(user_id)
-        try:
-            yield AuthUser(id=user_id)
-        finally:
-            reset_user_id_context(token)
-        return
-
-    token_value = authorization.replace("Bearer ", "", 1).strip()
-    if not token_value:
+async def _handle_dev_fallback():
+    """Handle development authentication fallback."""
+    user_id = os.getenv("SUPABASE_DEFAULT_USER_ID")
+    if not user_id:
         raise HTTPException(status_code=401, detail="Missing token")
 
+    logger.warning(
+        "Using development auth fallback for user_id=%s. This should not happen in production.",
+        user_id
+    )
+
+    token = set_user_id_context(user_id)
+    try:
+        yield AuthUser(id=user_id)
+    finally:
+        reset_user_id_context(token)
+
+
+async def _validate_token_and_get_user(token_value: str):
+    """Validate token and extract user information."""
     client = get_client()
     try:
         response = client.auth.get_user(token_value)
@@ -67,6 +62,31 @@ async def get_current_user(
         yield AuthUser(id=user_id, email=getattr(user, "email", None))
     finally:
         reset_user_id_context(token)
+
+
+async def get_current_user(
+    authorization: str | None = Header(None),
+) -> AuthUser:
+    """Validate bearer token and return current user."""
+    if not authorization or not authorization.startswith("Bearer "):
+        if not _should_allow_dev_fallback():
+            allow_dev_fallback = os.getenv("ALLOW_DEV_AUTH_FALLBACK", "").lower() == "true"
+            if allow_dev_fallback:
+                logger.error(
+                    "Development auth fallback enabled outside dev/test; refusing request."
+                )
+            raise HTTPException(status_code=401, detail="Missing token")
+
+        async for user in _handle_dev_fallback():
+            yield user
+        return
+
+    token_value = authorization.replace("Bearer ", "", 1).strip()
+    if not token_value:
+        raise HTTPException(status_code=401, detail="Missing token")
+
+    async for user in _validate_token_and_get_user(token_value):
+        yield user
 
 
 async def get_current_admin(
@@ -87,20 +107,3 @@ async def get_current_admin(
     if role != "admin" or not is_active:
         raise HTTPException(status_code=403, detail="Admin access required")
     return current_user
-
-
-async def get_admin_script_auth(
-    authorization: str | None = Header(None),
-) -> None:
-    """Authenticate admin scripts using service role key."""
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Missing token")
-
-    token = authorization.replace("Bearer ", "", 1).strip()
-    service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-
-    if not service_role_key or token != service_role_key:
-        raise HTTPException(status_code=403, detail="Invalid admin token")
-
-    # If token matches service role key, allow access
-    return None

@@ -1,7 +1,25 @@
 """Pydantic models for CV data validation."""
 from typing import Optional, List
-import re
-from pydantic import BaseModel, EmailStr, Field, field_validator, ValidationInfo
+import html as std_html
+from lxml.html.clean import Cleaner
+from pydantic import BaseModel, EmailStr, Field, field_validator
+
+ALLOWED_DESCRIPTION_TAGS = [
+    "p",
+    "br",
+    "strong",
+    "em",
+    "u",
+    "ul",
+    "ol",
+    "li",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+]
 
 
 class Address(BaseModel):
@@ -64,23 +82,26 @@ class Experience(BaseModel):
 
     @field_validator("description")
     @classmethod
-    def validate_description_length(
-        cls, v: str | None, info: ValidationInfo
-    ) -> str | None:
-        """Validate description length by counting plain text (HTML stripped)."""
+    def validate_and_sanitize_description(cls, v: str | None) -> str | None:
+        """Sanitize HTML description and enforce plain text length."""
         if v is None:
             return v
-        # Strip HTML tags to count only plain text
-        plain_text = re.sub(r"<[^>]+>", "", v)
-        # Replace HTML entities with single characters
-        plain_text = plain_text.replace("&nbsp;", " ")
-        plain_text = plain_text.replace("&amp;", "&")
-        plain_text = plain_text.replace("&lt;", "<")
-        plain_text = plain_text.replace("&gt;", ">")
-        plain_text = plain_text.replace("&quot;", '"')
-        plain_text = plain_text.replace("&#39;", "'")
-        # Decode numeric entities
-        plain_text = re.sub(r"&#(\d+);", lambda m: chr(int(m.group(1))), plain_text)
+
+        # Create cleaner that allows only specified tags and strips everything else
+        cleaner = Cleaner(
+            allow_tags=ALLOWED_DESCRIPTION_TAGS,
+            kill_tags=['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'link', 'meta'],
+            safe_attrs=set(),  # Strip all attributes
+            safe_attrs_only=True,
+            page_structure=False,  # Return cleaned fragment instead of full HTML document
+        )
+        sanitized = cleaner.clean_html(v)
+
+        # Extract plain text from sanitized HTML
+        from lxml import html as lxml_html
+        plain_text = lxml_html.fromstring(sanitized).text_content()
+        plain_text = std_html.unescape(plain_text)
+
         if len(plain_text) > 300:
             from pydantic_core import PydanticCustomError
 
@@ -89,7 +110,7 @@ class Experience(BaseModel):
                 "String should have at most 300 characters",
                 {"max_length": 300},
             )
-        return v
+        return sanitized
 
 
 class Education(BaseModel):

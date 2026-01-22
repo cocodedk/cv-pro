@@ -7,7 +7,9 @@
     "update": "Opdater profil",
     "save": "Gem profil",
     "cancel": "Annuller",
-    "close": "Luk"
+    "close": "Luk",
+    "translate": "Oversæt",
+    "translating": "Oversætter..."
   },
   "header": {
     "title": "Hovedprofil",
@@ -24,7 +26,8 @@
     "saved": "Profil gemt!",
     "loaded": "Profil indlæst!",
     "deleted": "Profil slettet!",
-    "savedToProfile": "Nuværende formulardata gemt i profilen!"
+    "savedToProfile": "Nuværende formulardata gemt i profilen!",
+    "translated": "Profil oprettet på {{lang}}!"
   },
   "errors": {
     "saveFailed": "Kunne ikke gemme profil",
@@ -34,7 +37,9 @@
     "unknown": "Ukendt fejl",
     "noProfile": "Ingen profil fundet. Gem en profil først.",
     "saveToProfileFailed": "Kunne ikke gemme til profil",
-    "listFailed": "Kunne ikke hente profiler"
+    "listFailed": "Kunne ikke hente profiler",
+    "translationFailed": "Kunne ikke oversætte profil",
+    "noProfileData": "Ingen profildata at oversætte"
   },
   "profileList": {
     "title": "Mine profiler ({{count}})",
@@ -62,5 +67,24 @@
     "at": "hos",
     "from": "fra",
     "loadSelected": "Indlæs valgte"
+  },
+  "translation": {
+    "translateTo": "Oversæt til"
+  },
+  "languages": {
+    "spanish": "Spansk",
+    "french": "Fransk",
+    "german": "Tysk",
+    "italian": "Italiensk",
+    "portuguese": "Portugisisk",
+    "dutch": "Hollandsk",
+    "danish": "Dansk",
+    "swedish": "Svensk",
+    "norwegian": "Norsk",
+    "russian": "Russisk",
+    "chinese": "Kinesisk",
+    "japanese": "Japansk",
+    "korean": "Koreansk",
+    "arabic": "Arabisk"
   }
 }

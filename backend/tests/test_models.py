@@ -154,7 +154,39 @@ class TestExperience:
             start_date="2020-01",
             description=text_with_entities,
         )
-        assert exp.description == text_with_entities
+        assert exp.description is not None
+
+        text_over_limit = "x" * 300 + "&nbsp;"
+        with pytest.raises(ValidationError):
+            Experience(
+                title="Developer",
+                company="Tech Corp",
+                start_date="2020-01",
+                description=text_over_limit,
+            )
+
+    def test_description_sanitizes_disallowed_tags(self):
+        """Test that disallowed tags are stripped from descriptions."""
+        html_desc = "<p>Safe</p><script>alert('x')</script>"
+        exp = Experience(
+            title="Developer",
+            company="Tech Corp",
+            start_date="2020-01",
+            description=html_desc,
+        )
+        assert exp.description is not None
+        assert "<script" not in exp.description
+
+    def test_description_strips_disallowed_attributes(self):
+        """Test that dangerous attributes are removed."""
+        html_desc = '<p onclick="alert(1)" style="color:red">Safe</p>'
+        exp = Experience(
+            title="Developer",
+            company="Tech Corp",
+            start_date="2020-01",
+            description=html_desc,
+        )
+        assert exp.description == "<p>Safe</p>"
 
 
 class TestProject:

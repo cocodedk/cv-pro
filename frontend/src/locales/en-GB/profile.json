@@ -7,7 +7,9 @@
     "update": "Update Profile",
     "save": "Save Profile",
     "cancel": "Cancel",
-    "close": "Close"
+    "close": "Close",
+    "translate": "Translate",
+    "translating": "Translating..."
   },
   "header": {
     "title": "Master Profile",
@@ -24,7 +26,8 @@
     "saved": "Profile saved successfully!",
     "loaded": "Profile loaded successfully!",
     "deleted": "Profile deleted successfully!",
-    "savedToProfile": "Current form data saved to profile!"
+    "savedToProfile": "Current form data saved to profile!",
+    "translated": "Profile created in {{lang}} successfully!"
   },
   "errors": {
     "saveFailed": "Failed to save profile",
@@ -34,7 +37,9 @@
     "unknown": "Unknown error",
     "noProfile": "No profile found. Please save a profile first.",
     "saveToProfileFailed": "Failed to save to profile",
-    "listFailed": "Failed to list profiles"
+    "listFailed": "Failed to list profiles",
+    "translationFailed": "Failed to translate profile",
+    "noProfileData": "No profile data to translate"
   },
   "profileList": {
     "title": "My Profiles ({{count}})",
@@ -62,5 +67,24 @@
     "at": "at",
     "from": "from",
     "loadSelected": "Load Selected"
+  },
+  "translation": {
+    "translateTo": "Translate to"
+  },
+  "languages": {
+    "spanish": "Spanish",
+    "french": "French",
+    "german": "German",
+    "italian": "Italian",
+    "portuguese": "Portuguese",
+    "dutch": "Dutch",
+    "danish": "Danish",
+    "swedish": "Swedish",
+    "norwegian": "Norwegian",
+    "russian": "Russian",
+    "chinese": "Chinese",
+    "japanese": "Japanese",
+    "korean": "Korean",
+    "arabic": "Arabic"
   }
 }

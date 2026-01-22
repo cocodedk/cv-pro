@@ -29,10 +29,10 @@ function App() {
   const [, setLoading] = useState(false)
   const { user, loading, role, isActive, signOut } = useAuth()
   const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== 'false'
-  // Force authentication for development testing
-  const devBypass = import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
-  const isAuthenticated = !authEnabled || Boolean(user) || devBypass
-  const isAdmin = (role === 'admin' && isActive) || devBypass
+  const devAuthFallbackEnabled =
+    import.meta.env.DEV && import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
+  const isAuthenticated = !authEnabled || Boolean(user)
+  const isAdmin = role === 'admin' && isActive
   const resolvedViewMode =
     viewMode === 'auth' && isAuthenticated
       ? 'form'
@@ -41,10 +41,11 @@ function App() {
         : viewMode
 
   // GDPR Consent Management
+  // NOTE: devAuthFallbackEnabled automatically grants GDPR consent (hasConsent=true) ONLY for local/dev testing.
+  // This is intentionally gated by devAuthFallbackEnabled + additional dual-gate checks to NEVER activate in production.
+  // State variables: showConsentModal/setShowConsentModal control modal visibility, hasConsent/setHasConsent track consent status.
   const [showConsentModal, setShowConsentModal] = useState(false)
-  const [hasConsent, setHasConsent] = useState(
-    import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
-  )
+  const [hasConsent, setHasConsent] = useState(devAuthFallbackEnabled)
 
   const closeConsentModal = useCallback(() => {
     setShowConsentModal(false)
@@ -55,7 +56,7 @@ function App() {
       return false
     }
     // For development, always return true if dev fallback is enabled
-    if (import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true') {
+    if (devAuthFallbackEnabled) {
       setHasConsent(true)
       return true
     }
@@ -63,7 +64,7 @@ function App() {
     const hasSavedConsent = Boolean(savedConsent)
     setHasConsent(hasSavedConsent)
     return hasSavedConsent
-  }, [])
+  }, [devAuthFallbackEnabled])
 
   const openConsentModal = useCallback(() => {
     checkConsentStatus()

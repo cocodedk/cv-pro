@@ -16,12 +16,13 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  console.log('AuthProvider: Starting up')
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [role, setRole] = useState<UserRole>('user')
   const [isActive, setIsActive] = useState(true)
+  const devFallbackEnabled =
+    import.meta.env.DEV && import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
 
   const loadProfile = useCallback(async (currentUser: User | null) => {
     if (!currentUser) {
@@ -49,35 +50,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true
 
-    // Check for development auth fallback - only enable when explicitly set
-    const allowDevFallback = import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
-    console.log(
-      'AuthContext: DEV =',
-      import.meta.env.DEV,
-      'ALLOW_DEV_FALLBACK =',
-      import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK,
-      'allowDevFallback =',
-      allowDevFallback
-    )
-
-    if (allowDevFallback) {
+    if (devFallbackEnabled) {
       // Force development authentication - always use dev user when enabled
-      const devUser = {
-        id: '550e8400-e29b-41d4-a716-446655440000',
-        email: 'dev@example.com',
+      const devUser: User = {
+        id: import.meta.env.VITE_DEV_AUTH_USER_ID ?? '550e8400-e29b-41d4-a716-446655440000',
+        email: import.meta.env.VITE_DEV_AUTH_USER_EMAIL ?? 'dev@example.com',
         user_metadata: {},
         app_metadata: {},
         aud: 'authenticated',
         created_at: new Date().toISOString(),
       }
-      const devSession = {
+      const devSession: Session = {
         access_token: 'dev-token',
         refresh_token: 'dev-refresh',
-        expires_at: Date.now() / 1000 + 3600,
+        expires_in: 3600,
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        token_type: 'bearer',
         user: devUser,
       }
-      setSession(devSession as any)
-      setUser(devUser as any)
+      setSession(devSession)
+      setUser(devUser)
       // Skip profile loading for development user to avoid Supabase API issues
       setRole('user')
       setIsActive(true)
@@ -138,13 +130,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(loadingTimeout)
       data.subscription.unsubscribe()
     }
-  }, [loadProfile])
+  }, [devFallbackEnabled, loadProfile])
 
   const signOut = useCallback(async () => {
     // Check if we're in development mode with fake auth
-    const allowDevFallback = import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
-
-    if (allowDevFallback) {
+    if (devFallbackEnabled) {
       // In development mode, just reset the local state
       setUser(null)
       setSession(null)
@@ -155,7 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // In production, sign out from Supabase
     await supabase.auth.signOut()
-  }, [])
+  }, [devFallbackEnabled])
 
   return (
     <AuthContext.Provider value={{ user, session, loading, role, isActive, signOut }}>

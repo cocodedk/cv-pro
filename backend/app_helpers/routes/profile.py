@@ -7,8 +7,11 @@ from backend.models import (
     ProfileResponse,
     ProfileListResponse,
     ProfileListItem,
+    TranslateProfileRequest,
+    TranslateProfileResponse,
 )
 from backend.database import queries
+from backend.services.profile_translation import get_translation_service
 from backend.app_helpers.auth import get_current_user
 
 logger = logging.getLogger(__name__)
@@ -68,10 +71,10 @@ def create_profile_router(limiter: Limiter, cv_file_service=None) -> APIRouter: 
             raise HTTPException(status_code=500, detail="Failed to save profile")
 
     @router.get("/api/profile")
-    async def get_profile_endpoint():
-        """Get master profile."""
+    async def get_profile_endpoint(language: str = "en"):
+        """Get profile for specified language (defaults to English)."""
         try:
-            profile = queries.get_profile()
+            profile = queries.get_profile(language)
             if not profile:
                 raise HTTPException(status_code=404, detail="Profile not found")
             return profile
@@ -110,8 +113,8 @@ def create_profile_router(limiter: Limiter, cv_file_service=None) -> APIRouter: 
             raise HTTPException(status_code=500, detail="Failed to get profile")
 
     @router.delete("/api/profile", response_model=ProfileResponse)
-    async def delete_profile_endpoint(request: Request):
-        """Delete master profile."""
+    async def delete_profile_endpoint(request: Request, language: str = "en"):
+        """Delete profile for specified language (defaults to English)."""
         try:
             if not _is_delete_confirmed(request):
                 raise HTTPException(
@@ -119,7 +122,7 @@ def create_profile_router(limiter: Limiter, cv_file_service=None) -> APIRouter: 
                     detail=f"Missing header `{_DELETE_CONFIRM_HEADER}: true`",
                 )
             _log_profile_delete_request(request)
-            success = queries.delete_profile()
+            success = queries.delete_profile(language)
             if not success:
                 raise HTTPException(status_code=404, detail="Profile not found")
             return ProfileResponse(
@@ -152,5 +155,54 @@ def create_profile_router(limiter: Limiter, cv_file_service=None) -> APIRouter: 
         except Exception as e:
             logger.error("Failed to delete profile", exc_info=e)
             raise HTTPException(status_code=500, detail="Failed to delete profile")
+
+    @router.post("/api/profile/translate", response_model=TranslateProfileResponse)
+    @limiter.limit("10/minute")
+    async def translate_profile_endpoint(request: Request, translate_request: TranslateProfileRequest):
+        """Translate a profile to another language and save it as a new profile."""
+        try:
+            translation_service = get_translation_service()
+
+            profile_dict = translate_request.profile_data.model_dump()
+            source_language = profile_dict.get("language", "en")
+            target_language = translate_request.target_language
+
+            # Don't translate if source and target languages are the same
+            if source_language == target_language:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Source and target languages are the same ({target_language})"
+                )
+
+            # Translate the profile
+            translated_profile_dict = await translation_service.translate_profile(
+                profile_dict, target_language, source_language
+            )
+
+            # Check if a profile already exists for the target language
+            profile_exists = queries.profile_exists_for_language(target_language)
+            action = "updated" if profile_exists else "created"
+
+            # Save the translated profile (this will create or update based on language)
+            success = queries.save_profile(translated_profile_dict)
+            if not success:
+                raise HTTPException(status_code=500, detail="Failed to save translated profile")
+
+            # Convert back to ProfileData model for response
+            translated_profile = ProfileData(**translated_profile_dict)
+
+            return TranslateProfileResponse(
+                status="success",
+                translated_profile=translated_profile,
+                message=f"Profile {action} in {target_language.upper()} successfully"
+            )
+        except ValueError as e:
+            logger.error("Translation service not configured", exc_info=e)
+            raise HTTPException(status_code=503, detail="AI translation service is not configured")
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error("Failed to translate profile", exc_info=e)
+            raise HTTPException(status_code=500, detail="Failed to translate profile")
 
     return router

@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 from slowapi import Limiter
-from backend.app_helpers.auth import get_admin_script_auth
+from backend.app_helpers.auth import get_current_admin
 from backend.database.supabase.client import get_admin_client
 
 logger = logging.getLogger(__name__)
@@ -99,7 +99,7 @@ def _reset_user_password(user_id: str, new_password: str):
 
 def create_admin_router(limiter: Limiter) -> APIRouter:  # noqa: C901
     """Create admin router with user management endpoints."""
-    router = APIRouter()
+    router = APIRouter(dependencies=[Depends(get_current_admin)])
 
     @router.get("/api/admin/users")
     @limiter.limit("30/minute")
@@ -125,7 +125,6 @@ def create_admin_router(limiter: Limiter) -> APIRouter:  # noqa: C901
     async def search_users(
         request: Request,
         q: str = Query(..., min_length=1, description="Email or user ID to search for"),
-        _auth: None = Depends(get_admin_script_auth),  # Script authentication
     ):
         """Search for users by email or user ID."""
         return _search_user_by_email_or_id(q)
@@ -171,7 +170,6 @@ def create_admin_router(limiter: Limiter) -> APIRouter:  # noqa: C901
         request: Request,
         user_id: str,
         payload: ResetPasswordRequest,
-        _auth: None = Depends(get_admin_script_auth),  # Script authentication
     ):
         """Reset a user's password (admin only)."""
         return _reset_user_password(user_id, payload.new_password)
