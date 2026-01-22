@@ -1,5 +1,6 @@
 {
   "welcome_message": "Manage your CVs and profile information",
+  "default_user": "User",
   "actions": {
     "create_cv": "Create New CV",
     "create_cv_desc": "Start building a new professional CV",

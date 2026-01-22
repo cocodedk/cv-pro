@@ -19,7 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   console.log('AuthProvider: Starting up')
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [role, setRole] = useState<UserRole>('user')
   const [isActive, setIsActive] = useState(true)
 

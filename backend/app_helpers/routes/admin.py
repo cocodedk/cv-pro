@@ -31,13 +31,13 @@ def _search_user_by_email_or_id(query: str):
         if response.users:
             user = response.users[0]
             # Also get profile info
-            profile_response = admin_supabase.table("user_profiles").select("role, is_active").eq("id", user["id"]).execute()
-            profile = profile_response.data[0] if profile_response.data else None
+            profile_response = admin_supabase.table("user_profiles").select("role, is_active").eq("id", user.id).execute()
+            profile = profile_response.data[0] if profile_response.data else {}
             return {
                 "user": {
-                    "id": user["id"],
-                    "email": user["email"],
-                    "created_at": user["created_at"],
+                    "id": user.id,
+                    "email": user.email,
+                    "created_at": user.created_at,
                     "role": profile.get("role") if profile else "user",
                     "is_active": profile.get("is_active") if profile else True
                 }
@@ -52,13 +52,13 @@ def _search_user_by_email_or_id(query: str):
         if response.user:
             user = response.user
             # Also get profile info
-            profile_response = admin_supabase.table("user_profiles").select("role, is_active").eq("id", user["id"]).execute()
-            profile = profile_response.data[0] if profile_response.data else None
+            profile_response = admin_supabase.table("user_profiles").select("role, is_active").eq("id", user.id).execute()
+            profile = profile_response.data[0] if profile_response.data else {}
             return {
                 "user": {
-                    "id": user["id"],
-                    "email": user["email"],
-                    "created_at": user["created_at"],
+                    "id": user.id,
+                    "email": user.email,
+                    "created_at": user.created_at,
                     "role": profile.get("role") if profile else "user",
                     "is_active": profile.get("is_active") if profile else True
                 }

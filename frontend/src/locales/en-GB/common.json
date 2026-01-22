@@ -3,6 +3,8 @@
   "error": "Error",
   "success": "Success",
   "close": "Close",
+  "accessDenied": "Access Denied",
+  "accessDeniedMessage": "You don't have permission to access this feature.",
   "errorBoundary": {
     "title": "Something went wrong",
     "description": "An unexpected error occurred. Please refresh the page or contact support if the problem persists.",

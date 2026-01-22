@@ -33,8 +33,12 @@ function App() {
   const devBypass = import.meta.env.VITE_ALLOW_DEV_AUTH_FALLBACK === 'true'
   const isAuthenticated = !authEnabled || Boolean(user) || devBypass
   const isAdmin = (role === 'admin' && isActive) || devBypass
-  const resolvedViewMode = viewMode === 'auth' && isAuthenticated ? 'form' :
-    viewMode === 'introduction' && !isAuthenticated ? 'auth' : viewMode
+  const resolvedViewMode =
+    viewMode === 'auth' && isAuthenticated
+      ? 'form'
+      : viewMode === 'introduction' && !isAuthenticated
+        ? 'auth'
+        : viewMode
 
   // GDPR Consent Management
   const [showConsentModal, setShowConsentModal] = useState(false)
@@ -138,11 +142,9 @@ function App() {
           ) : (
             <div className="text-center py-12">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                Access Denied
+                {t('accessDenied')}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                You don&apos;t have permission to access this feature.
-              </p>
+              <p className="text-gray-600 dark:text-gray-400">{t('accessDeniedMessage')}</p>
             </div>
           )
         ) : resolvedViewMode === 'form' || resolvedViewMode === 'edit' ? (

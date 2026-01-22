@@ -20,6 +20,7 @@ Examples:
 
 import sys
 import os
+import re
 import secrets
 import string
 
@@ -78,7 +79,6 @@ def find_user_by_email_or_id(identifier: str):
             }
 
         # If not found in user_profiles, check if it's a UUID and try admin API
-        import re
         uuid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 
         if uuid_pattern.match(identifier):
@@ -87,9 +87,9 @@ def find_user_by_email_or_id(identifier: str):
                 response = client.auth.admin.get_user_by_id(identifier)
                 if response.user:
                     return {
-                        'id': response.user['id'],
-                        'email': response.user['email'],
-                        'created_at': response.user['created_at']
+                        'id': response.user.id,
+                        'email': response.user.email,
+                        'created_at': response.user.created_at
                     }
                 else:
                     return None  # User not found
@@ -98,16 +98,16 @@ def find_user_by_email_or_id(identifier: str):
 
         # For emails, verify user exists via admin API
         try:
-            response = client.auth.admin.list_users(page=1, per_page=1, filter=f"email.eq.{identifier}")
-            if response.users:
-                user = response.users[0]
-                return {
-                    'id': user['id'],
-                    'email': user['email'],
-                    'created_at': user['created_at']
-                }
-            else:
-                return None  # User not found
+            response = client.auth.admin.list_users(page=1, per_page=100)
+            # Filter client-side by email
+            for user in response.users:
+                if user.email == identifier:
+                    return {
+                        'id': user.id,
+                        'email': user.email,
+                        'created_at': user.created_at
+                    }
+            return None  # User not found
         except Exception:
             return None  # User not found or error
 

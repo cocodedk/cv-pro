@@ -1,5 +1,6 @@
 {
   "welcome_message": "Administrer dine CV'er og profiloplysninger",
+  "default_user": "Bruger",
   "actions": {
     "create_cv": "Opret Ny CV",
     "create_cv_desc": "Begynd at bygge en ny professionel CV",

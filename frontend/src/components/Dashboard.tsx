@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
-import { BRANDING } from '../app_helpers/branding'
 
 type CVSummary = {
   id: string
@@ -80,11 +79,9 @@ export default function Dashboard() {
       {/* Welcome Section */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-          Welcome back, {user?.user_metadata?.full_name || user?.email || 'User'}!
+          Welcome back, {user?.user_metadata?.full_name || user?.email || t('default_user')}!
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400">
-          {t('welcome_message')}
-        </p>
+        <p className="text-xl text-gray-600 dark:text-gray-400">{t('welcome_message')}</p>
       </div>
 
       {/* Quick Actions */}
@@ -92,19 +89,29 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {t('actions.create_cv')}
             </h3>
           </div>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            {t('actions.create_cv_desc')}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{t('actions.create_cv_desc')}</p>
           <button
-            onClick={() => { window.location.hash = 'form' }}
+            onClick={() => {
+              window.location.hash = 'form'
+            }}
             className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             {t('actions.create_now')}
@@ -114,19 +121,29 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {t('actions.my_cvs')}
             </h3>
           </div>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            {t('actions.my_cvs_desc')}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{t('actions.my_cvs_desc')}</p>
           <button
-            onClick={() => { window.location.hash = 'list' }}
+            onClick={() => {
+              window.location.hash = 'list'
+            }}
             className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
             {t('actions.view_cvs')}
@@ -136,19 +153,29 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {t('actions.profile')}
             </h3>
           </div>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            {t('actions.profile_desc')}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{t('actions.profile_desc')}</p>
           <button
-            onClick={() => { window.location.hash = 'profile' }}
+            onClick={() => {
+              window.location.hash = 'profile'
+            }}
             className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             {t('actions.manage_profile')}
@@ -169,17 +196,27 @@ export default function Dashboard() {
           </div>
         ) : recentCVs.length === 0 ? (
           <div className="text-center py-8">
-            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg
+              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               {t('no_cvs_yet')}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              {t('no_cvs_desc')}
-            </p>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">{t('no_cvs_desc')}</p>
             <button
-              onClick={() => { window.location.hash = 'form' }}
+              onClick={() => {
+                window.location.hash = 'form'
+              }}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               {t('create_first_cv')}
@@ -187,8 +224,11 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="space-y-4">
-            {recentCVs.map((cv) => (
-              <div key={cv.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+            {recentCVs.map(cv => (
+              <div
+                key={cv.id}
+                className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+              >
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">{cv.name}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -197,7 +237,9 @@ export default function Dashboard() {
                 </div>
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => { window.location.hash = `edit/${cv.id}` }}
+                    onClick={() => {
+                      window.location.hash = `edit/${cv.id}`
+                    }}
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                   >
                     {t('edit')}
@@ -240,7 +282,8 @@ export default function Dashboard() {
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
-                {t('filters.web')} ({templateData.templates.filter(t => t.web_optimized).length})
+                {t('filters.web')} (
+                {templateData.templates.filter(template => template.web_optimized).length})
               </button>
               <button
                 onClick={() => setSelectedFilter('print')}
@@ -250,7 +293,8 @@ export default function Dashboard() {
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
-                {t('filters.print')} ({templateData.templates.filter(t => t.print_friendly).length})
+                {t('filters.print')} (
+                {templateData.templates.filter(template => template.print_friendly).length})
               </button>
             </div>
 
@@ -353,7 +397,12 @@ export default function Dashboard() {
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>

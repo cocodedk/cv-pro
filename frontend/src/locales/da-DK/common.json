@@ -3,6 +3,8 @@
   "error": "Fejl",
   "success": "Succes",
   "close": "Luk",
+  "accessDenied": "Adgang nægtet",
+  "accessDeniedMessage": "Du har ikke tilladelse til at få adgang til denne funktion.",
   "errorBoundary": {
     "title": "Noget gik galt",
     "description": "Der opstod en uventet fejl. Opdater siden eller kontakt support, hvis problemet fortsætter.",
